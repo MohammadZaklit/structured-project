@@ -1,0 +1,53 @@
+button {
+  &[type='submit'] {
+    border: solid black 1px;
+    background: transparent;
+    color: black;
+    font-size: 50px;
+    border-radius: 10px;
+    &:hover {
+      background-color: black;
+      color: white;
+    }
+  }
+
+  /*&[type='clear'] {
+  }
+  &[type='button'] {
+  /* SCSS for magical button */
+  &.default {
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(45deg, #00fff7, #ff00ff);
+    box-shadow: 0 0 20px #00fff7, 0 0 40px #ff00ff, 0 0 60px #00ffff;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-transform: uppercase;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px #00fff7, 0 0 60px #ff00ff, 0 0 90px #00ffff;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 40px #00fff7, 0 0 80px #ff00ff, 0 0 120px #00ffff;
+    }
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 0 15px #00fff7, 0 0 30px #ff00ff;
+    }
+  }
+
+  &.primary {
+    color: blue;
+  }
+  /*&.secondary {
+  }*/
+}

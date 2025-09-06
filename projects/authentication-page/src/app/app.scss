@@ -1,0 +1,29 @@
+/* Full-page background */
+html,
+body {
+  height: 100%; /* make body full height */
+  margin: 0; /* remove default margin */
+  font-family: Arial, sans-serif;
+}
+
+.page-container {
+  height: 100vh; /* full viewport height */
+  width: 100vw; /* full viewport width */
+  display: flex;
+  justify-content: center; /* center cards horizontally */
+  align-items: center; /* center cards vertically */
+  background: linear-gradient(135deg, #1a1a2e, #162447, #1f4068);
+}
+
+/* Cards side by side */
+.card-container lib-register-card,
+.card-container lib-login-card {
+  display: inline-block; /* sit next to each other */
+  vertical-align: top;
+  margin-right: 20px; /* space between cards */
+}
+
+/* Remove margin from the last card */
+.card-container lib-login-card {
+  margin-right: 0;
+}
