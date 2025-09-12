@@ -1,7 +1,4 @@
 /* Page container */
-body {
-  overflow-x: hidden;
-}
 .sign-page {
   display: flex;
   justify-content: center;
@@ -28,6 +25,12 @@ body {
 
 /* Subtitle */
 .sign-subtitle {
-  font-size: 0.5rem;
+  font-size: 0.95rem;
   color: #666;
+  margin-bottom: 25px;
+}
+.password-strength {
+  font-size: 14px;
+  margin-top: -5px;
+  margin-bottom: 10px;
 }

@@ -1,29 +1,58 @@
-/* Full-page background */
+/* Full-page setup */
 html,
 body {
-  height: 100%; /* make body full height */
-  margin: 0; /* remove default margin */
-  font-family: Arial, sans-serif;
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f7fa; /* light, professional background */
+  overflow-x: hidden !important;
 }
 
+/* Center container */
 .page-container {
-  height: 100vh; /* full viewport height */
-  width: 100vw; /* full viewport width */
+  height: 100vh;
   display: flex;
-  justify-content: center; /* center cards horizontally */
-  align-items: center; /* center cards vertically */
-  background: linear-gradient(135deg, #1a1a2e, #162447, #1f4068);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
-/* Cards side by side */
-.card-container lib-register-card,
-.card-container lib-login-card {
-  display: inline-block; /* sit next to each other */
-  vertical-align: top;
-  margin-right: 20px; /* space between cards */
+/* Card container */
+.card-container {
+  display: flex;
+  gap: 30px; /* space between cards */
+  flex-wrap: wrap; /* responsive wrap on small screens */
+  justify-content: center;
 }
 
-/* Remove margin from the last card */
-.card-container lib-login-card {
-  margin-right: 0;
+/* Shared card style */
+.card-container lib-login-card,
+.card-container lib-register-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 40px 30px;
+  width: 350px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Hover effect for cards */
+.card-container lib-login-card:hover,
+.card-container lib-register-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+  .card-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .card-container lib-login-card,
+  .card-container lib-register-card {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
 }

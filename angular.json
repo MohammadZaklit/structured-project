@@ -44,9 +44,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "projects/authentication-page/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/authentication-page/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -55,9 +53,7 @@
                 "input": "projects/authentication-page/public"
               }
             ],
-            "styles": [
-              "projects/authentication-page/src/styles.scss"
-            ]
+            "styles": ["projects/authentication-page/src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -101,10 +97,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/authentication-page/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -113,9 +106,7 @@
                 "input": "projects/authentication-page/public"
               }
             ],
-            "styles": [
-              "projects/authentication-page/src/styles.scss"
-            ]
+            "styles": ["projects/authentication-page/src/styles.scss"]
           }
         }
       }

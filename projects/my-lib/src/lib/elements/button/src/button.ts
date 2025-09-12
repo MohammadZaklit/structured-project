@@ -5,7 +5,7 @@ import { Button } from './button.interface';
   selector: 'lib-button',
   standalone: true,
   templateUrl: './button.html',
-  styleUrls: ['./button.scss'], // ✅ fixed plural
+  styleUrls: ['./button.scss'],
 })
 export class ButtonComponent {
   @Input() public config!: Button;

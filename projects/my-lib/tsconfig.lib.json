@@ -8,6 +8,9 @@
     "declarationMap": true,
     "types": []
   },
+  "paths": {
+    "@my-lib/ui-library/*": ["projects/ui-library/*", "dist/ui-library/*"]
+  },
   "include": ["src/**/*.ts"],
   "exclude": ["**/*.spec.ts"]
 }

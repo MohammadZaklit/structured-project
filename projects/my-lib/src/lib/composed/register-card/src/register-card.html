@@ -1,11 +1,15 @@
-<!-- login.component.html -->
-<div class="login-container">
-  <div class="login-box">
-    <h1 class="login-title">register Page</h1>
-    <div class="login-form">
+<div class="sign-page">
+  <div class="sign-card">
+    <lib-heading class="sign-title" [config]="headingconfig"></lib-heading>
+    <div class="sign-form">
       <lib-text [config]="emailconfig"></lib-text>
       <lib-text [config]="passwordconfig"></lib-text>
-      <lib-buttons [config]="loginconfig"></lib-buttons>
+      <div id="strength" class="password-strength"></div>
+      <lib-buttons [config]="registerconfig"></lib-buttons>
+      <div class="account-switch">
+        <span>Already have an account?</span>
+        <lib-buttons (click)="goToLogin()" [config]="backtologinconfig"></lib-buttons>
+      </div>
     </div>
   </div>
 </div>

@@ -4,7 +4,7 @@ import { RegisterCard } from '../../../my-lib/src/lib/composed/register-card/src
 import { LoginCard } from '../../../my-lib/src/lib/composed/login-card/src/login-card';
 @Component({
   selector: 'app-root',
-  imports: [RegisterCard, LoginCard],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
