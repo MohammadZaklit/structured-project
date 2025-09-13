@@ -3,17 +3,18 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "paths": {
-      "my-lib": [
-        "./dist/my-lib"
-      ]
+      "@angular/": ["./node_modules/@angular/"],
+      "@zak-lib/ui-library/*": ["projects/my-lib/src/lib/*", "dist/my-lib/src/lib/*"]
     },
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
+    "sourceMap": true,
     "isolatedModules": true,
     "experimentalDecorators": true,
     "importHelpers": true,
@@ -40,6 +41,12 @@
     },
     {
       "path": "./projects/authentication-page/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/my-first-app/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/my-first-app/tsconfig.spec.json"
     }
   ]
 }

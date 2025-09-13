@@ -3,6 +3,5 @@
   "dest": "../../dist/my-lib",
   "lib": {
     "entryFile": "src/public-api.ts"
-  },
-  "styleIncludePaths": ["src/lib/assets/theme"]
+  }
 }

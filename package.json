@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "ng serve --project=my-first-app --ssl",
+    "build": "npm run build:lib ng build",
     "watch": "ng build --watch --configuration development",
+    "build:lib": "ng build my-lib",
     "test": "ng test"
   },
   "prettier": {
