@@ -1,11 +1,9 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { AccountPage } from '@zak-lib/ui-library/composed/account-page';
 @Component({
   selector: 'app-account',
-  imports: [],
+  imports: [AccountPage],
   templateUrl: './account.html',
-  styleUrl: './account.scss'
+  styleUrl: './account.scss',
 })
-export class Account {
-
-}
+export class Account {}

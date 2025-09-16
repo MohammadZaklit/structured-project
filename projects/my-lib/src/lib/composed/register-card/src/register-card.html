@@ -2,12 +2,11 @@
   <div class="sign-card">
     <lib-heading class="sign-title" [config]="headingconfig"></lib-heading>
     <div class="sign-form">
-      <lib-text [config]="emailconfig"></lib-text>
-      <lib-text [config]="passwordconfig"></lib-text>
+      <lib-input [config]="emailconfig"></lib-input>
+      <lib-input [config]="passwordconfig"></lib-input>
       <div id="strength" class="password-strength"></div>
       <lib-buttons [config]="registerconfig"></lib-buttons>
       <div class="account-switch">
-        <span>Already have an account?</span>
         <lib-buttons (click)="goToLogin()" [config]="backtologinconfig"></lib-buttons>
       </div>
     </div>

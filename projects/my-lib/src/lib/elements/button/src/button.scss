@@ -38,7 +38,23 @@ button {
 }
 .back-button {
   margin-top: 20px;
+  padding: 5px;
   background-color: black;
   border-radius: 10px;
   color: white;
+}
+
+.sign-in {
+  background-color: black;
+  color: white;
+  padding: 10px;
+  width: 100px;
+  border-radius: 20px;
+}
+.sign-in:hover {
+  background-color: white;
+  color: black;
+  width: 200px;
+  border-radius: 20px;
+  transition: width ease 1s;
 }

@@ -1,30 +1,50 @@
 import { Component, OnInit } from '@angular/core';
-import { Buttons } from '../../../components/standardbutton/src/standardbutton';
-import { StandardButton } from '../../../components/standardbutton/src/standardbutton.interface';
-import { Text } from '../../../elements/text';
-import { email } from '../../../components/email/src/email.interface';
-import { password } from '../../../components/password/src/password.interface';
-import { heading } from '../../../components/heading/src/heading.interface';
-import { Heading } from '../../../components/heading';
-import { paragraph } from '../../../components/paragraph/src/paragraph.interface';
-import { Paragraph } from '../../../components/paragraph';
+import { Buttons } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton';
+import { StandardButton } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton.interface';
+import { InputElement } from '@zak-lib/ui-library/elements/input';
+import { email } from '@zak-lib/ui-library/components/email/src/email.interface';
+import { password } from '@zak-lib/ui-library/components/password/src/password.interface';
+import { heading } from '@zak-lib/ui-library/components/heading/src/heading.interface';
+import { Heading } from '@zak-lib/ui-library/components/heading';
+import { paragraph } from '@zak-lib/ui-library/components/paragraph/src/paragraph.interface';
+import { Paragraph } from '@zak-lib/ui-library/components/paragraph';
 import { Router } from '@angular/router';
+import SupabaseClient from '@supabase/supabase-js/dist/module/SupabaseClient';
+import { createClient } from '@supabase/supabase-js';
+import { environment } from './environment';
 @Component({
   selector: 'lib-login-card',
-  imports: [Buttons, Text, Heading, Paragraph],
+  imports: [Buttons, InputElement, Heading, Paragraph],
   templateUrl: './login-card.html',
   styleUrl: './login-card.scss',
 })
 export class LoginCard implements OnInit {
+  private supabase: SupabaseClient;
   public headingconfig!: heading;
   public emailconfig!: email;
   public passwordconfig!: password;
   public loginconfig!: StandardButton;
   public paragraphconfig!: paragraph;
   public gotoregisterconfig!: StandardButton;
-  constructor(private router: Router) {}
+  email: string = '';
+  password: string = '';
+  constructor(private router: Router) {
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
+  }
   goToRegister(): void {
     this.router.navigate(['/register']);
+  }
+  async login(): Promise<void> {
+    const storedEmail = this.emailconfig.value!;
+    const storedpassword = this.passwordconfig.value!;
+    const userExists = await this.checkUser(storedEmail, storedpassword);
+    if (userExists) {
+      localStorage.setItem('useremail', this.emailconfig.value!);
+      alert('signed in successfully');
+      this.router.navigate(['/account']);
+    } else {
+      alert('invalid email or password please try again');
+    }
   }
   ngOnInit(): void {
     this.headingconfig = {
@@ -41,26 +61,44 @@ export class LoginCard implements OnInit {
       id: 'emailinput',
       label: 'enter an email',
       textstyle: 'email',
+      value: this.email,
     };
     this.passwordconfig = {
       id: 'passwordinput',
       label: 'enter a Password',
       textstyle: 'password',
+      value: this.password,
     };
     this.loginconfig = {
       id: 'loginbutton',
       label: 'submit',
       style: 'default',
-      onclick() {
-        alert('s');
-        return;
+      onclick: () => {
+        this.login();
       },
     };
     this.gotoregisterconfig = {
       id: 'gotoregister',
       label: 'Create Account',
       style: 'back-button',
-      onclick() {},
+      onclick: () => {
+        this.goToRegister();
+      },
     };
+  }
+  /* ==============================
+         Backend service
+     ==============================*/
+  async checkUser(email: string, password: string) {
+    const { data, error } = await this.supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .eq('password', password);
+    if (error) {
+      console.log('error fetching user: ', error.message);
+      return false;
+    }
+    return data && data.length > 0;
   }
 }

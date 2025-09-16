@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { text, Text } from '../../../elements/text';
+import { text, Text } from '@zak-lib/ui-library/elements/text';
 import { password } from './password.interface';
 
 @Component({

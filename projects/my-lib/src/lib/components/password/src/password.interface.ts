@@ -1,3 +1,2 @@
-import { text } from '../../../elements/text/src/text.interface';
-
-export interface password extends text {}
+import { inputInterface } from '@zak-lib/ui-library/elements/input';
+export interface password extends inputInterface {}

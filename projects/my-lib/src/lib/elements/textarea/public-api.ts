@@ -4,5 +4,4 @@
 //components
 
 //elements
-export * from './src/text';
-export * from './src/text.interface';
+export * from './src/textarea';

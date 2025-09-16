@@ -3,11 +3,10 @@
     <lib-heading class="sign-title" [config]="headingconfig"></lib-heading>
     <lib-paragraph class="sign-subtitle" [config]="paragraphconfig"></lib-paragraph>
     <div class="sign-form">
-      <lib-text [config]="emailconfig"></lib-text>
-      <lib-text [config]="passwordconfig"></lib-text>
+      <lib-input [config]="emailconfig"></lib-input>
+      <lib-input [config]="passwordconfig"></lib-input>
       <lib-buttons [config]="loginconfig"></lib-buttons>
       <div class="account-switch">
-        <span>Don't have an account?</span>
         <lib-buttons
           (click)="goToRegister()"
           class="register-button"

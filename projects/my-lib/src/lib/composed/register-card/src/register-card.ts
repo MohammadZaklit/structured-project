@@ -1,19 +1,27 @@
-import { Component } from '@angular/core';
-import { email } from '../../../components/email/src/email.interface';
-import { password } from '../../../components/password/src/password.interface';
-import { StandardButton } from '../../../components/standardbutton/src/standardbutton.interface';
-import { Buttons } from '../../../components/standardbutton/src/standardbutton';
-import { Text } from '../../../elements/text';
-import { heading } from '../../../components/heading/src/heading.interface';
-import { Heading } from '../../../components/heading';
+import { Component, Injectable } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { email } from '@zak-lib/ui-library/components/email/src/email.interface';
+import { password } from '@zak-lib/ui-library/components/password/src/password.interface';
+import { StandardButton } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton.interface';
+import { Buttons } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton';
+import { InputElement } from '@zak-lib/ui-library/elements/input';
+import { heading } from '@zak-lib/ui-library/components/heading/src/heading.interface';
+import { Heading } from '@zak-lib/ui-library/components/heading';
 import { Router } from '@angular/router';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import { environment } from './environment';
+@Injectable({
+  providedIn: 'root',
+})
 @Component({
   selector: 'lib-register-card',
-  imports: [Buttons, Text, Heading],
+  imports: [Buttons, InputElement, Heading],
   templateUrl: './register-card.html',
   styleUrl: './register-card.scss',
 })
 export class RegisterCard {
+  message = '';
+  private supabase: SupabaseClient;
   public emailconfig!: email;
   public passwordconfig!: password;
   public registerconfig!: StandardButton;
@@ -21,7 +29,10 @@ export class RegisterCard {
   public backtologinconfig!: StandardButton;
   email: string = '';
   password: string = '';
-  constructor(private router: Router) {}
+  form!: FormGroup;
+  constructor(private fb: FormBuilder, private router: Router) {
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
+  }
   ngOnInit(): void {
     this.headingconfig = {
       id: 'headingconfig',
@@ -52,13 +63,18 @@ export class RegisterCard {
       style: 'back-button',
       onclick() {},
     };
+    this.form = this.fb.group({
+      email: [this.emailconfig.value],
+      password: [this.passwordconfig.value],
+    });
   }
-
-  handleRegister(): void {
+  async handleRegister() {
     if (
       this.validateEmail(this.emailconfig.value!) &&
       this.checkPasswordStrength(this.passwordconfig.value!)
     ) {
+      localStorage.setItem('useremail', this.emailconfig.value!);
+      await this.submit();
       alert('Account created successfully 🎉');
       this.goToLogin();
     } else {
@@ -81,5 +97,22 @@ export class RegisterCard {
   }
   goToLogin() {
     this.router.navigate(['/login']);
+  }
+
+  /* ===============================
+       backend service 
+     =============================== */
+  async insertUser(email: string, password: string) {
+    const { error } = await this.supabase.from('users').insert([{ email, password }]);
+    if (error) throw error;
+    return true;
+  }
+  async submit() {
+    if (this.form.invalid) return;
+    try {
+      await this.insertUser(this.emailconfig.value!, this.passwordconfig.value!);
+    } catch (err: any) {
+      this.message = 'Error: ' + err.message;
+    }
   }
 }

@@ -1,3 +1,3 @@
-import { typography } from '../../../elements/typography/src/typography.interface';
+import { typography } from '@zak-lib/ui-library/elements/typography/src/typography.interface';
 
 export interface paragraph extends typography {}

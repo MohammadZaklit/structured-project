@@ -1,13 +1,3 @@
-/* Full-page setup */
-html,
-body {
-  height: 100%;
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f5f7fa; /* light, professional background */
-  overflow-x: hidden !important;
-}
-
 /* Center container */
 .page-container {
   height: 100vh;
@@ -15,44 +5,5 @@ body {
   justify-content: center;
   align-items: center;
   padding: 20px;
-}
-
-/* Card container */
-.card-container {
-  display: flex;
-  gap: 30px; /* space between cards */
-  flex-wrap: wrap; /* responsive wrap on small screens */
-  justify-content: center;
-}
-
-/* Shared card style */
-.card-container lib-login-card,
-.card-container lib-register-card {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  padding: 40px 30px;
-  width: 350px;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-/* Hover effect for cards */
-.card-container lib-login-card:hover,
-.card-container lib-register-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-/* Responsive adjustments */
-@media (max-width: 800px) {
-  .card-container {
-    flex-direction: column;
-    gap: 20px;
-  }
-  .card-container lib-login-card,
-  .card-container lib-register-card {
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-  }
+  overflow-x: hidden;
 }

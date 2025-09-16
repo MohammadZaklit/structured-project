@@ -1,3 +1,3 @@
-import { text } from '@zak-lib/ui-library/elements/text';
+import { inputInterface } from '@zak-lib/ui-library/elements/input';
 
-export interface email extends text {}
+export interface email extends inputInterface {}

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Text, text } from '../../../elements/text';
+import { Text, text } from '@zak-lib/ui-library/elements/text';
 import { email } from './email.interface';
 
 @Component({

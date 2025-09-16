@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { typography, Typography } from '../../../elements/typography';
+import { typography, Typography } from '@zak-lib/ui-library/elements/typography';
 import { paragraph } from './paragraph.interface';
 
 @Component({

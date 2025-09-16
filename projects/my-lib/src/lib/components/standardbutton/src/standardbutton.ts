@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Button, ButtonComponent } from '../../../elements/button';
+import { Button, ButtonComponent } from '@zak-lib/ui-library/elements/button';
 import { StandardButton } from './standardbutton.interface';
 
 @Component({

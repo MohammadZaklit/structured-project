@@ -1,14 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { text } from './text.interface';
+import { inputInterface } from './input.interface';
 import { FormsModule } from '@angular/forms';
 @Component({
-  selector: 'lib-text',
+  selector: 'lib-input',
   imports: [FormsModule],
-  templateUrl: './text.html',
-  styleUrl: './text.scss',
+  templateUrl: './input.html',
+  styleUrl: './input.scss',
 })
-export class Text implements OnInit {
-  @Input() public config!: text;
+export class InputElement implements OnInit {
+  @Input() public config!: inputInterface;
 
   public textstyle: string = '';
 

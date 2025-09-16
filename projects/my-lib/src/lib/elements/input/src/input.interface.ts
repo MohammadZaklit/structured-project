@@ -1,4 +1,4 @@
-export interface text {
+export interface inputInterface {
   id: string;
   type?: 'email' | 'password';
   label: string;
