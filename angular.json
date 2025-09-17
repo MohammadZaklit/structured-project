@@ -53,7 +53,12 @@
                 "input": "projects/authentication-page/public"
               }
             ],
-            "styles": ["projects/authentication-page/src/styles.scss"]
+            "styles": [
+              "node_modules/primeng/resources/themes/saga-blue/theme.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/primeicons/primeicons.css",
+              "projects/authentication-page/src/styles.scss"
+            ]
           },
           "configurations": {
             "production": {
@@ -126,9 +131,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "projects/my-first-app/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/my-first-app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -137,9 +140,7 @@
                 "input": "projects/my-first-app/public"
               }
             ],
-            "styles": [
-              "projects/my-first-app/src/styles.scss"
-            ]
+            "styles": ["projects/my-first-app/src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -183,10 +184,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/my-first-app/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -195,9 +193,7 @@
                 "input": "projects/my-first-app/public"
               }
             ],
-            "styles": [
-              "projects/my-first-app/src/styles.scss"
-            ]
+            "styles": ["projects/my-first-app/src/styles.scss"]
           }
         }
       }

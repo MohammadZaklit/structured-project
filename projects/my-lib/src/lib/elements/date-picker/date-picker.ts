@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'lib-date-picker',
   imports: [],
   templateUrl: './date-picker.html',
-  styleUrl: './date-picker.css'
+  styleUrl: './date-picker.css',
 })
-export class DatePicker {
-
-}
+export class DatePicker {}
