@@ -4,9 +4,12 @@ import { Router } from '@angular/router';
 import { ButtonComponent } from '@zak-lib/ui-library/elements/button';
 import { Paragraph } from '@zak-lib/ui-library/components/paragraph';
 import { paragraph } from '@zak-lib/ui-library/components/paragraph/src/paragraph.interface';
+import { DatePicker } from '@zak-lib/ui-library/elements/date-picker/date-picker';
+import { PhoneNumber } from '@zak-lib/ui-library/elements/phone-number';
+
 @Component({
   selector: 'lib-account-page',
-  imports: [ButtonComponent, Paragraph],
+  imports: [ButtonComponent, Paragraph, DatePicker, PhoneNumber],
   templateUrl: './account-page.html',
   styleUrl: './account-page.css',
 })
