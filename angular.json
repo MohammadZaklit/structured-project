@@ -53,10 +53,7 @@
                 "input": "projects/authentication-page/public"
               }
             ],
-            "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "projects/authentication-page/src/styles.scss"
-            ]
+            "styles": ["projects/authentication-page/src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -109,10 +106,7 @@
                 "input": "projects/authentication-page/public"
               }
             ],
-            "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "projects/authentication-page/src/styles.scss"
-            ]
+            "styles": ["projects/authentication-page/src/styles.scss"]
           }
         }
       }
@@ -141,11 +135,7 @@
                 "input": "projects/my-first-app/public"
               }
             ],
-            "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "projects/my-first-app/src/styles.scss"
-            ],
-            "scripts": ["node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"]
+            "styles": ["projects/my-first-app/src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -198,11 +188,7 @@
                 "input": "projects/my-first-app/public"
               }
             ],
-            "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "projects/my-first-app/src/styles.scss"
-            ],
-            "scripts": ["node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"]
+            "styles": ["projects/my-first-app/src/styles.scss"]
           }
         }
       }

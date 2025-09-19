@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
   selector: 'lib-textarea',
-  imports: [],
+  imports: [TextareaModule],
   templateUrl: './textarea.html',
-  styleUrl: './textarea.css'
+  styleUrl: './textarea.css',
 })
-export class Textarea {
-
-}
+export class Textarea {}

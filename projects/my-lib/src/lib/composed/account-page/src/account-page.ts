@@ -6,10 +6,11 @@ import { Paragraph } from '@zak-lib/ui-library/components/paragraph';
 import { paragraph } from '@zak-lib/ui-library/components/paragraph/src/paragraph.interface';
 import { DatePicker } from '@zak-lib/ui-library/elements/date-picker/date-picker';
 import { PhoneNumber } from '@zak-lib/ui-library/elements/phone-number';
+import { Textarea } from '@zak-lib/ui-library/elements/textarea';
 
 @Component({
   selector: 'lib-account-page',
-  imports: [ButtonComponent, Paragraph, DatePicker, PhoneNumber],
+  imports: [ButtonComponent, Paragraph, DatePicker, PhoneNumber, Textarea],
   templateUrl: './account-page.html',
   styleUrl: './account-page.css',
 })

@@ -1,9 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { Button } from './button.interface';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'lib-button',
   standalone: true,
+  imports: [ButtonModule],
   templateUrl: './button.html',
   styleUrls: ['./button.scss'],
 })
