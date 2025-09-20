@@ -40,16 +40,24 @@ export class LoginCard implements OnInit {
   }
   async login(): Promise<void> {
     const storedEmail = this.emailconfig.value!;
-    const storedpassword = this.passwordconfig.value!;
-    const userExists = await this.checkUser(storedEmail, storedpassword);
-    if (userExists) {
-      localStorage.setItem('useremail', this.emailconfig.value!);
-      alert('signed in successfully');
+    const storedPassword = this.passwordconfig.value!;
+
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email: storedEmail,
+      password: storedPassword,
+    });
+
+    if (error) {
+      console.error('Supabase login error:', error.message);
+      alert(error.message);
+      return;
+    }
+    if (data) {
+      alert('Signed in successfully');
       this.router.navigate(['/account']);
-    } else {
-      alert('invalid email or password please try again');
     }
   }
+
   ngOnInit(): void {
     this.headingconfig = {
       id: 'headingconfig',
@@ -101,7 +109,7 @@ export class LoginCard implements OnInit {
   /* ==============================
          Backend service
      ==============================*/
-  async checkUser(email: string, password: string) {
+  /* async checkUser(email: string, password: string) {
     const { data, error } = await this.supabase
       .from('users')
       .select('*')
@@ -111,6 +119,6 @@ export class LoginCard implements OnInit {
       console.log('error fetching user: ', error.message);
       return false;
     }
-    return data && data.length > 0;
-  }
+    return data;
+  }*/
 }

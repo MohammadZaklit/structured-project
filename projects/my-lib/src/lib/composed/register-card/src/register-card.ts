@@ -87,7 +87,6 @@ export class RegisterCard {
       this.validateEmail(this.emailconfig.value!) &&
       this.checkPasswordStrength(this.passwordconfig.value!)
     ) {
-      localStorage.setItem('username', this.nameconfig.value!);
       await this.submit();
       alert('Account created successfully 🎉');
       this.goToLogin();
@@ -129,12 +128,33 @@ export class RegisterCard {
   }
   async submit() {
     if (this.form.invalid) return;
+
     try {
+      // Sign up with Supabase Auth (Authentication → Users)
+      const { data, error } = await this.supabase.auth.signUp({
+        email: this.emailconfig.value!,
+        password: this.passwordconfig.value!,
+        options: {
+          data: {
+            name: this.nameconfig.value!,
+          },
+        },
+      });
+
+      if (error) {
+        this.message = 'Auth error: ' + error.message;
+        return;
+      }
+
+      // If signup is successful, insert extra profile data into your users table
+      // Only do this if Auth signup succeeded
       await this.insertUser(
         this.emailconfig.value!,
         this.passwordconfig.value!,
         this.nameconfig.value!
       );
+
+      this.message = 'Account created successfully!';
     } catch (err: any) {
       this.message = 'Error: ' + err.message;
     }

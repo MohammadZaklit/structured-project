@@ -22,7 +22,7 @@ export class AccountPage {
   public successedconfig!: paragraph;
   public datepickerconfig!: paragraph;
   public messageconfig!: paragraph;
-  userEmail: string | null = null;
+  userName: string | undefined | null = null;
   isSignedin = false;
   constructor(private router: Router) {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
@@ -30,41 +30,70 @@ export class AccountPage {
   gotosignin() {
     this.router.navigate(['/login']);
   }
-  async signOut() {
-    const { error } = await this.supabase.auth.signOut();
-    if (!error) {
-      this.gotosigninconfig.label = 'sign in';
-      this.successedconfig.label = 'Not signed in';
-    }
-  }
 
   ngOnInit() {
-    this.userEmail = localStorage.getItem('username');
-    this.isSignedin = !!this.userEmail;
+    // Initialize configs so UI library has something to bind to immediately
+    this.successedconfig = {
+      id: 'successconfig',
+      label: 'Loading...', // temporary text
+      textstyle: 'display-congrats',
+    };
+
     this.gotosigninconfig = {
       id: 'gotosigninconfig',
-      label: this.isSignedin ? 'sign out' : 'sign in',
+      label: 'sign in', // default
       style: 'sign-in',
       onclick: () => {
-        if (this.gotosigninconfig.label === 'sign in') {
+        if (!this.isSignedin) {
           this.gotosignin();
-        } else if (this.isSignedin) {
+        } else {
           this.signOut();
         }
       },
     };
-    this.successedconfig = {
-      id: 'successconfig',
-      label: this.isSignedin ? `Name : ${this.userEmail}` : `Not signed in`,
-      textstyle: 'display-congrats',
-    };
+
     this.datepickerconfig = {
       id: 'datepickerconfig',
       label: 'pick a date',
     };
+
     this.messageconfig = {
       id: 'messageconfig',
       label: 'type your message here : ',
     };
+
+    // Now load actual Supabase user
+    this.loadUser();
+  }
+
+  async loadUser() {
+    const { data, error } = await this.supabase.auth.getUser();
+
+    if (error || !data.user) {
+      this.isSignedin = false;
+      this.userName = null;
+
+      this.successedconfig.label = `Not signed in`;
+      this.gotosigninconfig.label = 'sign in';
+      return;
+    }
+
+    this.isSignedin = true;
+    this.userName = data.user.user_metadata['name'];
+
+    this.successedconfig.label = `Name : ${this.userName}`;
+    this.gotosigninconfig.label = 'sign out';
+  }
+
+  async signOut() {
+    const { error } = await this.supabase.auth.signOut();
+
+    if (!error) {
+      this.isSignedin = false;
+      this.userName = null;
+
+      this.gotosigninconfig.label = 'sign in';
+      this.successedconfig.label = 'Not signed in';
+    }
   }
 }
