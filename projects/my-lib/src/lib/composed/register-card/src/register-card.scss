@@ -1,26 +1,14 @@
-/* Page container */
-.sign-page {
+.sign-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.account-switch {
   display: flex;
   justify-content: center;
-  align-items: center;
-}
-
-/* Card */
-.sign-card {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 40px 30px;
-  width: 360px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-/* Title */
-.sign-title {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 10px;
+  flex-direction: column;
+  padding: 5px;
+  gap: 5px;
 }
 
 /* Subtitle */

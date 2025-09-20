@@ -4,24 +4,30 @@ import { email } from '@zak-lib/ui-library/components/email/src/email.interface'
 import { password } from '@zak-lib/ui-library/components/password/src/password.interface';
 import { StandardButton } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton.interface';
 import { Buttons } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton';
-import { InputElement } from '@zak-lib/ui-library/elements/input';
 import { heading } from '@zak-lib/ui-library/components/heading/src/heading.interface';
 import { Heading } from '@zak-lib/ui-library/components/heading';
 import { Router } from '@angular/router';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from './environment';
+import { PhoneNumber } from '@zak-lib/ui-library/elements/phone-number';
+
+import { nameInterface } from '@zak-lib/ui-library/components/name/src/name.interface';
+import { Email } from '@zak-lib/ui-library/components/email';
+import { Password } from '@zak-lib/ui-library/components/password/src/password';
+import { InputElement } from '@zak-lib/ui-library/elements/input';
 @Injectable({
   providedIn: 'root',
 })
 @Component({
   selector: 'lib-register-card',
-  imports: [Buttons, InputElement, Heading],
+  imports: [Buttons, Heading, PhoneNumber, Email, Password, InputElement],
   templateUrl: './register-card.html',
   styleUrl: './register-card.scss',
 })
 export class RegisterCard {
   message = '';
   private supabase: SupabaseClient;
+  public nameconfig!: nameInterface;
   public emailconfig!: email;
   public passwordconfig!: password;
   public registerconfig!: StandardButton;
@@ -29,6 +35,7 @@ export class RegisterCard {
   public backtologinconfig!: StandardButton;
   email: string = '';
   password: string = '';
+  name: string = '';
   form!: FormGroup;
   constructor(private fb: FormBuilder, private router: Router) {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
@@ -37,7 +44,13 @@ export class RegisterCard {
     this.headingconfig = {
       id: 'headingconfig',
       label: 'register now',
-      textstyle: 'h1',
+      textstyle: 'title',
+    };
+    this.nameconfig = {
+      id: 'nameinput',
+      label: 'enter your name',
+      textstyle: 'email',
+      value: this.name,
     };
     this.emailconfig = {
       id: 'emailinput',
@@ -70,16 +83,23 @@ export class RegisterCard {
   }
   async handleRegister() {
     if (
+      this.validateName(this.nameconfig.value!) &&
       this.validateEmail(this.emailconfig.value!) &&
       this.checkPasswordStrength(this.passwordconfig.value!)
     ) {
-      localStorage.setItem('useremail', this.emailconfig.value!);
+      localStorage.setItem('username', this.nameconfig.value!);
       await this.submit();
       alert('Account created successfully 🎉');
       this.goToLogin();
     } else {
       alert('Email or password are not confirmed yet, or write a strong password ❌');
     }
+  }
+  // Use class methods for validation
+  public validateName(name: string): boolean {
+    // Only letters, spaces, hyphens, and apostrophes allowed, min 2 chars
+    const re = /^[a-zA-ZÀ-ÿ' -]{2,}$/;
+    return re.test(name.trim());
   }
 
   // Use class methods for validation
@@ -102,15 +122,19 @@ export class RegisterCard {
   /* ===============================
        backend service 
      =============================== */
-  async insertUser(email: string, password: string) {
-    const { error } = await this.supabase.from('users').insert([{ email, password }]);
+  async insertUser(email: string, password: string, name: string) {
+    const { error } = await this.supabase.from('users').insert([{ email, password, name }]);
     if (error) throw error;
     return true;
   }
   async submit() {
     if (this.form.invalid) return;
     try {
-      await this.insertUser(this.emailconfig.value!, this.passwordconfig.value!);
+      await this.insertUser(
+        this.emailconfig.value!,
+        this.passwordconfig.value!,
+        this.nameconfig.value!
+      );
     } catch (err: any) {
       this.message = 'Error: ' + err.message;
     }

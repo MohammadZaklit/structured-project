@@ -5,26 +5,41 @@ import { ButtonComponent } from '@zak-lib/ui-library/elements/button';
 import { Paragraph } from '@zak-lib/ui-library/components/paragraph';
 import { paragraph } from '@zak-lib/ui-library/components/paragraph/src/paragraph.interface';
 import { DatePicker } from '@zak-lib/ui-library/elements/date-picker/date-picker';
-import { PhoneNumber } from '@zak-lib/ui-library/elements/phone-number';
 import { Textarea } from '@zak-lib/ui-library/elements/textarea';
+
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { environment } from './environment';
 
 @Component({
   selector: 'lib-account-page',
-  imports: [ButtonComponent, Paragraph, DatePicker, PhoneNumber, Textarea],
+  imports: [ButtonComponent, Paragraph, DatePicker, Textarea],
   templateUrl: './account-page.html',
   styleUrl: './account-page.css',
 })
 export class AccountPage {
+  supabase: SupabaseClient;
   public gotosigninconfig!: StandardButton;
   public successedconfig!: paragraph;
+  public datepickerconfig!: paragraph;
+  public messageconfig!: paragraph;
   userEmail: string | null = null;
   isSignedin = false;
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
+  }
   gotosignin() {
     this.router.navigate(['/login']);
   }
+  async signOut() {
+    const { error } = await this.supabase.auth.signOut();
+    if (!error) {
+      this.gotosigninconfig.label = 'sign in';
+      this.successedconfig.label = 'Not signed in';
+    }
+  }
+
   ngOnInit() {
-    this.userEmail = localStorage.getItem('useremail');
+    this.userEmail = localStorage.getItem('username');
     this.isSignedin = !!this.userEmail;
     this.gotosigninconfig = {
       id: 'gotosigninconfig',
@@ -34,15 +49,22 @@ export class AccountPage {
         if (this.gotosigninconfig.label === 'sign in') {
           this.gotosignin();
         } else if (this.isSignedin) {
-          this.gotosigninconfig.label = 'sign in';
-          this.successedconfig.label = 'Not signed in';
+          this.signOut();
         }
       },
     };
     this.successedconfig = {
       id: 'successconfig',
-      label: this.isSignedin ? `hello , signed In as: ${this.userEmail}` : `Not signed in`,
+      label: this.isSignedin ? `Name : ${this.userEmail}` : `Not signed in`,
       textstyle: 'display-congrats',
+    };
+    this.datepickerconfig = {
+      id: 'datepickerconfig',
+      label: 'pick a date',
+    };
+    this.messageconfig = {
+      id: 'messageconfig',
+      label: 'type your message here : ',
     };
   }
 }

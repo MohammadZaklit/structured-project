@@ -135,7 +135,10 @@
                 "input": "projects/my-first-app/public"
               }
             ],
-            "styles": ["projects/my-first-app/src/styles.scss"]
+            "styles": [
+              "node_modules/primeflex/primeflex.css",
+              "projects/my-first-app/src/styles.scss"
+            ]
           },
           "configurations": {
             "production": {
@@ -188,7 +191,10 @@
                 "input": "projects/my-first-app/public"
               }
             ],
-            "styles": ["projects/my-first-app/src/styles.scss"]
+            "styles": [
+              "node_modules/primeflex/primeflex.css",
+              "projects/my-first-app/src/styles.scss"
+            ]
           }
         }
       }

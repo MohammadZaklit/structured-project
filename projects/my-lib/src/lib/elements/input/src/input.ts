@@ -2,10 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { inputInterface } from './input.interface';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
-
+import { InputGroupModule } from 'primeng/inputgroup';
 @Component({
   selector: 'lib-input',
-  imports: [FormsModule, InputTextModule],
+  imports: [FormsModule, InputTextModule, InputGroupModule],
   templateUrl: './input.html',
   styleUrl: './input.scss',
 })

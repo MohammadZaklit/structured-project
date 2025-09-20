@@ -1,8 +1,13 @@
-.display-congrats {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px black solid;
-  border-radius: 10px;
-  padding: 20px;
+/* Title */
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #16a34a;
+  margin-bottom: 10px;
+}
+
+/* Subtitle */
+.subtitle {
+  font-size: 1rem;
+  color: #16a34a;
 }

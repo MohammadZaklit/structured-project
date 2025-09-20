@@ -26,6 +26,7 @@ export class LoginCard implements OnInit {
   public loginconfig!: StandardButton;
   public paragraphconfig!: paragraph;
   public gotoregisterconfig!: StandardButton;
+  public gotohomeconfig!: StandardButton;
   email: string = '';
   password: string = '';
   constructor(private router: Router) {
@@ -33,6 +34,9 @@ export class LoginCard implements OnInit {
   }
   goToRegister(): void {
     this.router.navigate(['/register']);
+  }
+  goTohome(): void {
+    this.router.navigate(['/account']);
   }
   async login(): Promise<void> {
     const storedEmail = this.emailconfig.value!;
@@ -50,12 +54,12 @@ export class LoginCard implements OnInit {
     this.headingconfig = {
       id: 'headingconfig',
       label: 'sign in',
-      textstyle: 'h1',
+      textstyle: 'title',
     };
     this.paragraphconfig = {
       id: 'paragraphconfig',
       label: 'Welcome back! Please log in to your account.',
-      textstyle: 'signin-description',
+      textstyle: 'subtitle',
     };
     this.emailconfig = {
       id: 'emailinput',
@@ -83,6 +87,14 @@ export class LoginCard implements OnInit {
       style: 'back-button',
       onclick: () => {
         this.goToRegister();
+      },
+    };
+    this.gotohomeconfig = {
+      id: 'gotohome',
+      label: 'back to home ',
+      style: 'back-button',
+      onclick: () => {
+        this.goTohome();
       },
     };
   }

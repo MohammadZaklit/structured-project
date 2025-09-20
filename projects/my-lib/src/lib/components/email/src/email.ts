@@ -1,17 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Text, text } from '@zak-lib/ui-library/elements/text';
+import { InputElement, inputInterface } from '@zak-lib/ui-library/elements/input';
 import { email } from './email.interface';
 
 @Component({
   selector: 'lib-email',
-  imports: [Text],
+  imports: [InputElement],
   templateUrl: './email.html',
-  styleUrl: './email.css',
+  styleUrl: './email.scss',
 })
 export class Email implements OnInit {
   @Input() public config!: email;
-  public emailconfig!: text;
+  public emailconfig!: inputInterface;
   ngOnInit(): void {
-    this.emailconfig = this.config as text;
+    this.emailconfig = this.config as inputInterface;
   }
 }

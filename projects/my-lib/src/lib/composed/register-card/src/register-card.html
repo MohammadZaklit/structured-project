@@ -1,12 +1,16 @@
-<div class="sign-page">
-  <div class="sign-card">
+<div class="flex justify-content-center align-items-center min-h-screen">
+  <div class="surface-card p-6 shadow-2 border-round w-full md:w-6">
     <lib-heading class="sign-title" [config]="headingconfig"></lib-heading>
-    <div class="sign-form">
-      <lib-input [config]="emailconfig"></lib-input>
-      <lib-input [config]="passwordconfig"></lib-input>
+    <div class="flex flex-column gap-1 pt-2">
+      <lib-input [config]="nameconfig"></lib-input>
+      <lib-email [config]="emailconfig"></lib-email>
+      <lib-password [config]="passwordconfig"></lib-password>
+      <div>
+        <lib-phone-number></lib-phone-number>
+      </div>
       <div id="strength" class="password-strength"></div>
-      <lib-buttons [config]="registerconfig"></lib-buttons>
-      <div class="account-switch">
+      <div class="flex flex-column gap-1 pt-2">
+        <lib-buttons [config]="registerconfig"></lib-buttons>
         <lib-buttons (click)="goToLogin()" [config]="backtologinconfig"></lib-buttons>
       </div>
     </div>
