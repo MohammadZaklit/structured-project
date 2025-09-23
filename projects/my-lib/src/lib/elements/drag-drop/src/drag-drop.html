@@ -1,0 +1,26 @@
+<!-- Draggable product list -->
+<div
+  *ngFor="let product of products"
+  pDraggable="products"
+  (onDragStart)="dragStart(product)"
+  class="p-2 border-round bg-primary text-white m-2"
+>
+  {{ product.name }} - ${{ product.price }}
+</div>
+
+<!-- Droppable cart -->
+<div
+  pDroppable="products"
+  (onDrop)="drop()"
+  class="p-3 border-round border-2 border-dashed surface-border mt-3"
+  style="min-height: 100px"
+>
+  <h4>Cart:</h4>
+  <div
+    *ngFor="let item of cart; let i = index"
+    class="flex align-items-center justify-content-between p-2 border-bottom"
+  >
+    <span>{{ item.name }} - ${{ item.price }}</span>
+    <button class="p-2 border-round bg-primary" (click)="dropdelete(i)">remove</button>
+  </div>
+</div>

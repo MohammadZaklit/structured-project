@@ -1,12 +1,20 @@
 <div class="flex justify-content-center align-items-center min-h-screen">
-  <div class="surface-card p-6 shadow-2 border-round w-full md:w-6">
+  <!-- Card -->
+  <div class="surface-card shadow-2 border-round p-6 w-full md:w-6 lg:w-4 flex flex-column gap-4">
+    <!-- Heading -->
     <lib-heading class="sign-title" [config]="headingconfig"></lib-heading>
+
+    <!-- Paragraph / Subtitle -->
     <lib-paragraph class="sign-subtitle" [config]="paragraphconfig"></lib-paragraph>
-    <div class="flex flex-column gap-1 pt-2">
+
+    <!-- Inputs -->
+    <div class="flex flex-column gap-3">
       <lib-input [config]="emailconfig"></lib-input>
       <lib-input [config]="passwordconfig"></lib-input>
     </div>
-    <div class="flex flex-column gap-1 pt-2">
+
+    <!-- Buttons -->
+    <div class="flex flex-column sm:flex-row gap-2 justify-content-between">
       <lib-buttons [config]="loginconfig"></lib-buttons>
       <lib-buttons (click)="goToRegister()" [config]="gotoregisterconfig"></lib-buttons>
       <lib-buttons (click)="goTohome()" [config]="gotohomeconfig"></lib-buttons>

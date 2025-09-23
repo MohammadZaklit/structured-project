@@ -1,18 +1,15 @@
 import { Component } from '@angular/core';
 import { StandardButton } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton.interface';
 import { Router } from '@angular/router';
-import { ButtonComponent } from '@zak-lib/ui-library/elements/button';
+import { Buttons } from '@zak-lib/ui-library/components/standardbutton';
 import { Paragraph } from '@zak-lib/ui-library/components/paragraph';
 import { paragraph } from '@zak-lib/ui-library/components/paragraph/src/paragraph.interface';
-import { DatePicker } from '@zak-lib/ui-library/elements/date-picker/date-picker';
-import { Textarea } from '@zak-lib/ui-library/elements/textarea';
-
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from './environment';
-
+import { CardModule } from 'primeng/card';
 @Component({
   selector: 'lib-account-page',
-  imports: [ButtonComponent, Paragraph, DatePicker, Textarea],
+  imports: [Buttons, Paragraph, CardModule],
   templateUrl: './account-page.html',
   styleUrl: './account-page.css',
 })
@@ -21,7 +18,7 @@ export class AccountPage {
   public gotosigninconfig!: StandardButton;
   public successedconfig!: paragraph;
   public datepickerconfig!: paragraph;
-  public messageconfig!: paragraph;
+
   userName: string | undefined | null = null;
   isSignedin = false;
   constructor(private router: Router) {
@@ -56,12 +53,6 @@ export class AccountPage {
       id: 'datepickerconfig',
       label: 'pick a date',
     };
-
-    this.messageconfig = {
-      id: 'messageconfig',
-      label: 'type your message here : ',
-    };
-
     // Now load actual Supabase user
     this.loadUser();
   }
@@ -81,7 +72,7 @@ export class AccountPage {
     this.isSignedin = true;
     this.userName = data.user.user_metadata['name'];
 
-    this.successedconfig.label = `Name : ${this.userName}`;
+    this.successedconfig.label = `${this.userName}`;
     this.gotosigninconfig.label = 'sign out';
   }
 

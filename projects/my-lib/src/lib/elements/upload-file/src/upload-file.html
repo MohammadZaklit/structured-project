@@ -1,0 +1,13 @@
+<p-fileupload
+  name="demo[]"
+  url="https://www.primefaces.org/cdn/api/upload.php"
+  [multiple]="true"
+  accept="image/*"
+  maxFileSize="1000000"
+  mode="advanced"
+  (onSelect)="handleFileSelect($event)"
+>
+  <ng-template #empty>
+    <div>Drag and drop files to here to upload.</div>
+  </ng-template>
+</p-fileupload>

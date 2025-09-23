@@ -1,0 +1,6 @@
+.birthday-border {
+  border-style: double;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 10px var(--primary-color);
+  background: linear-gradient(135deg, #ffdc7d 0%, #ff9a9e 100%);
+}
