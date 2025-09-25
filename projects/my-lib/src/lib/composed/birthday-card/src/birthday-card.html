@@ -1,44 +1,27 @@
 <div class="flex justify-content-center align-items-center min-h-screen flex-column gap-4">
   <!-- Form to create card -->
-  <p-card class="w-11 md:w-6 lg:w-4 p-4 shadow-3 border-round">
+  <lib-standard-card class="w-11 md:w-6 lg:w-4 p-4 shadow-3 border-round">
     <lib-paragraph [config]="messageconfig"></lib-paragraph>
 
     <lib-standardtextarea (input)="onTextAreaInput($event)"></lib-standardtextarea>
-
-    <!-- Your uploader -->
-    <div class="uploader-container">
-      <p-fileUpload
-        name="demo[]"
-        url="https://www.primefaces.org/cdn/api/upload.php"
-        [multiple]="false"
-        accept="image/*"
-        maxFileSize="1000000"
-        mode="advanced"
-        (onSelect)="onFileSelected($event)"
-      >
-        <ng-template #empty>
-          <div>Drag and drop files to here to upload.</div>
-        </ng-template>
-      </p-fileUpload>
-    </div>
+    <lib-standarduploadfile (imageSelected)="onImageSelected($event)"></lib-standarduploadfile>
 
     <!-- Button -->
     <lib-buttons [config]="createcard" class="flex justify-content-end pt-2"></lib-buttons>
-  </p-card>
+  </lib-standard-card>
 
-  <!-- Display created cards -->
-  <div class="flex flex-wrap justify-content-center gap-4 mt-5 w-full max-h-screen">
-    <p-card
-      *ngFor="let card of birthdayCards"
-      class="w-72 p-4 shadow-2 border-round flex flex-column align-items-center gap-2"
-    >
-      <p>{{ card.message }}</p>
-      <img
-        *ngIf="card.image"
-        [src]="card.image"
-        alt="Birthday Image"
-        class="w-full border-round shadow-1"
-      />
-    </p-card>
+  <!-- Display created birthday cards -->
+  <div class="birthday-cards-container">
+    <lib-standard-card *ngFor="let card of birthdayCards" class="birthday-card">
+      <div class="card-image-container" *ngIf="card.image">
+        <img [src]="card.image" alt="Birthday Image" class="card-image" />
+      </div>
+      <div class="card-content">
+        <p class="card-message">{{ card.message }}</p>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-primary">Send Wishes</button>
+      </div>
+    </lib-standard-card>
   </div>
 </div>

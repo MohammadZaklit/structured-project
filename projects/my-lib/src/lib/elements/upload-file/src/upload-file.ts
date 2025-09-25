@@ -12,8 +12,18 @@ import { CommonModule } from '@angular/common';
 })
 export class UploadFile {
   @Output() onSelect = new EventEmitter<any>();
-
-  handleFileSelect(event: any) {
-    this.onSelect.emit(event); // re-emit to parent
+  currentImage!: string | ArrayBuffer | null;
+  @Output() imageSelected = new EventEmitter<string | ArrayBuffer | null>();
+  // uploader input
+  onFileSelected(event: any) {
+    const file = event?.files?.[0]; // Step 1: Get the first file the user picked
+    if (file) {
+      const reader = new FileReader(); // Step 2: Create a tool to read files
+      reader.onload = () => {
+        this.currentImage = reader.result; // Step 4: Save the file’s data when it’s done loading
+        this.imageSelected.emit(this.currentImage);
+      };
+      reader.readAsDataURL(file); // Step 3: Read the file as a "base64" image (like a text version of the image)
+    }
   }
 }

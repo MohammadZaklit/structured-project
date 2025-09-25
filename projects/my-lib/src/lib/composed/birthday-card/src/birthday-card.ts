@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FileUpload } from 'primeng/fileupload';
 import { HttpClientModule } from '@angular/common/http';
+import { StandardCard } from '@zak-lib/ui-library/components/standard-card';
 
 @Component({
   selector: 'lib-birthday-card',
@@ -21,7 +22,8 @@ import { HttpClientModule } from '@angular/common/http';
     CardModule,
     CommonModule,
     FormsModule,
-    FileUpload,
+    StandardCard,
+    Standarduploadfile,
   ],
   templateUrl: './birthday-card.html',
   styleUrls: ['./birthday-card.css'],
@@ -33,7 +35,6 @@ export class BirthdayCard implements OnInit {
 
   // State
   currentMessage: string = '';
-  currentImage: string | ArrayBuffer | null = null;
 
   birthdayCards: { message: string; image?: string | ArrayBuffer | null }[] = [];
 
@@ -61,18 +62,12 @@ export class BirthdayCard implements OnInit {
     this.currentMessage = target.value;
   }
 
-  // uploader input
-  onFileSelected(event: any) {
-    const file = event?.files?.[0]; // Step 1: Get the first file the user picked
-    if (file) {
-      const reader = new FileReader(); // Step 2: Create a tool to read files
-      reader.onload = () => {
-        this.currentImage = reader.result; // Step 4: Save the file’s data when it’s done loading
-      };
-      reader.readAsDataURL(file); // Step 3: Read the file as a "base64" image (like a text version of the image)
-    }
-  }
+  currentImage!: string | ArrayBuffer | null;
 
+  onImageSelected(image: string | ArrayBuffer | null) {
+    this.currentImage = image; // now the image will show
+    console.log('Selected image in composed:', image);
+  }
   // create card
   createCard() {
     if (!this.currentMessage && !this.currentImage) return;
