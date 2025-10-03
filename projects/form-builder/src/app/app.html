@@ -1,0 +1,148 @@
+<div class="container-fluid">
+  <div class="row">
+    <!-- Left Container: Form Fields Palette -->
+    <div class="col-md-3 bg-light p-3 border-right">
+      <h4>FORM FIELDS</h4>
+      <div class="form-field-palette" [dragula]="bagFieldsName" [dragulaModel]="availableFields">
+        <!-- @for loop for availableFields -->
+        @for (field of availableFields; track field.id) {
+        <div class="card mb-2 p-2 draggable-field">{{ field.label }} ({{ field.type }})</div>
+        }
+      </div>
+    </div>
+
+    <!-- Middle Container: Drag & Drop Area -->
+    <div class="col-md-6 p-3 border-right">
+      <h4>DRAG & DROP AREA</h4>
+      <button class="btn btn-primary mb-3" (click)="addRow()">Add Row</button>
+      <button class="btn btn-success mb-3 ml-2" (click)="submitForm()">Submit Form</button>
+
+      <div class="form-preview-area">
+        <!-- @if condition for no droppedRows -->
+        @if (droppedRows.length === 0) {
+        <div class="alert alert-info">Drag fields or add rows here!</div>
+        }
+
+        <!-- @for loop for droppedRows -->
+        @for (row of droppedRows; track row.id; let rIndex = $index) {
+        <div class="form-row-container mb-3 p-2 border rounded bg-white">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong>Row {{ rIndex + 1 }}</strong>
+            <button class="btn btn-danger btn-sm" (click)="removeRow(rIndex)">Remove Row</button>
+          </div>
+
+          <!-- @if condition for new row column selection -->
+          @if (row.columns.length === 0) {
+          <div class="mb-2">
+            <label for="numCols{{ rIndex }}">Columns in this row:</label>
+            <select
+              id="numCols{{ rIndex }}"
+              class="form-control form-control-sm d-inline-block w-auto ml-2"
+              [(ngModel)]="row.tempNumColumns"
+            >
+              <!-- @for loop for column number options -->
+              @for (i of [1,2,3,4,5,6]; track i) {
+              <option [ngValue]="i">{{ i }}</option>
+              }
+            </select>
+            <button class="btn btn-sm btn-info ml-2" (click)="generateColumns(row)">
+              Generate Columns
+            </button>
+          </div>
+          }
+
+          <!-- @if condition for displaying columns -->
+          @if (row.columns.length > 0) {
+          <div class="d-flex form-columns-wrapper">
+            <!-- @for loop for columns -->
+            @for (col of row.columns; track $index; let cIndex = $index) {
+            <div
+              [ngClass]="'col-' + 12 / row.columns.length"
+              class="form-column p-2 border mx-1 rounded bg-light"
+              [dragula]="bagFormBuilderName"
+              [dragulaModel]="col.fields"
+            >
+              <small>Column {{ cIndex + 1 }}</small>
+              <!-- @for loop for fields within a column -->
+              @for (field of col.fields; track field.id) {
+              <div
+                class="card mb-2 p-2 draggable-field dropped-field"
+                [class.selected-field]="selectedField === field"
+                (click)="selectField(field)"
+              >
+                {{ field.label }} ({{ field.type }})
+                <i
+                  class="fa fa-times float-right text-danger"
+                  (click)="removeField(rIndex, cIndex, field)"
+                ></i>
+              </div>
+              } @empty {
+              <div class="text-muted text-center small mt-3">Drag fields here</div>
+              }
+            </div>
+            }
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Right Container: Field Customization -->
+    <div class="col-md-3 bg-light p-3 border-left">
+      <h4>FIELD CUSTOMIZATION</h4>
+      <!-- @if condition for selectedField -->
+      @if (selectedField) {
+      <div class="customization-pane p-3 bg-white border rounded">
+        <h5>Edit: {{ selectedField!.label }}</h5>
+        <div class="form-group">
+          <label for="fieldLabel">Label</label>
+          <input
+            type="text"
+            id="fieldLabel"
+            class="form-control"
+            [(ngModel)]="selectedField!.label"
+          />
+        </div>
+        <div class="form-group">
+          <label for="fieldType">Type</label>
+          <input
+            type="text"
+            id="fieldType"
+            class="form-control"
+            [(ngModel)]="selectedField!.type"
+            disabled
+          />
+        </div>
+        <!-- @if condition for specific field types -->
+        @if (selectedField!.type === 'text' || selectedField!.type === 'number') {
+        <div class="form-group">
+          <label for="placeholder">Placeholder</label>
+          <input
+            type="text"
+            id="placeholder"
+            class="form-control"
+            [(ngModel)]="selectedField!.placeholder"
+          />
+        </div>
+        }
+        <div class="form-group form-check">
+          <input
+            type="checkbox"
+            id="required"
+            class="form-check-input"
+            [(ngModel)]="selectedField!.required"
+          />
+          <label class="form-check-label" for="required">Required</label>
+        </div>
+
+        <button class="btn btn-danger btn-block mt-3" (click)="deleteSelectedField()">
+          Delete Field
+        </button>
+      </div>
+      } @else {
+      <div class="alert alert-info">Select a field from the middle container to customize.</div>
+      }
+    </div>
+  </div>
+</div>

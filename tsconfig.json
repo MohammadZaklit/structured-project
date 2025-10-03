@@ -47,6 +47,12 @@
     },
     {
       "path": "./projects/my-first-app/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/form-builder/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/form-builder/tsconfig.spec.json"
     }
   ]
 }
