@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve --project=my-first-app --ssl",
     "start:form-builder": "ng serve --project=form-builder --ssl",
-    "build": "npm run build:lib ng build",
+    "build": "npm run build:lib && ng build",
     "watch": "ng build --watch --configuration development",
     "build:lib": "ng build my-lib",
     "test": "ng test"
