@@ -53,6 +53,12 @@
     },
     {
       "path": "./projects/form-builder/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/admin-generator/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/admin-generator/tsconfig.spec.json"
     }
   ]
 }
