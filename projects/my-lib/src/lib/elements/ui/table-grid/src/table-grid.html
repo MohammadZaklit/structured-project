@@ -1,0 +1,207 @@
+<div class="card">
+  <div class="flex justify-content-between align-items-center mb-3">
+    <div class="flex gap-2">
+      @if (config()?.showQuickSearch) {
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          [(ngModel)]="quickSearchValue"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          placeholder="Quick Search"
+        />
+      </span>
+      <p-button
+        icon="pi pi-sliders-h"
+        label="Advanced Search"
+        (onClick)="onAdvancedSearch.emit()"
+        styleClass="p-button-outlined"
+      ></p-button>
+      }
+    </div>
+    <div class="flex gap-2">
+      @for (button of config()?.dynamicHeaderButtons; track button.label) {
+      <p-button
+        [label]="button.label"
+        [icon]="button.icon"
+        (onClick)="button.callback()"
+        [styleClass]="button.styleClass"
+        [pTooltip]="button.tooltip"
+        tooltipPosition="bottom"
+        [disabled]="button.disabled && button.disabled(null)"
+        [style]="button.visible && !button.visible(null) ? { display: 'none' } : {}"
+      ></p-button>
+      } @if (config()?.showAddButton) {
+      <p-button
+        icon="pi pi-plus"
+        label="Add New"
+        (onClick)="onAddItem.emit()"
+        styleClass="p-button-success"
+      ></p-button>
+      } @if (config()?.exportToExcel) {
+      <p-button
+        icon="pi pi-file-excel"
+        label="Export"
+        (onClick)="exportExcel()"
+        styleClass="p-button-help"
+      ></p-button>
+      }
+    </div>
+  </div>
+
+  <p-table
+    #dt
+    [value]="tableData()"
+    [paginator]="config()?.paginator ?? false"
+    [rows]="config()?.rows ?? 10"
+    [showCurrentPageReport]="config()?.showCurrentPageReport ?? true"
+    [rowsPerPageOptions]="config()?.rowsPerPageOptions ?? [10, 25, 50]"
+    [reorderableRows]="config()?.sortableRows ?? false"
+    (onRowReorder)="onRowReorder.emit($event)"
+    [selectionMode]="config()?.rowSelection === 'none' ? undefined : config()?.rowSelection"
+    [(selection)]="selectedRows"
+    dataKey="id"
+    [lazy]="true"
+    (onLazyLoad)="onLazyLoad($event)"
+    [globalFilterFields]="config()?.columns.map(c => c.field) || []"
+    (onSort)="onColumnSort.emit($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        @if (config()?.rowSelection !== 'none' && config()?.rowSelection === 'multiple') {
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        } @if (config()?.sortableRows) {
+        <th style="width: 3rem"></th>
+        } @for (col of config()?.columns; track col.field) {
+        <th
+          [pSortableColumn]="
+            config()?.enableColumnSorting && col.sortable !== false ? col.field : null
+          "
+        >
+          {{ col.header }}
+          @if (config()?.enableColumnSorting && col.sortable !== false) {
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+          }
+        </th>
+        } @if (config()?.enableStaticActions || config()?.dynamicActions?.length > 0) {
+        <th>Actions</th>
+        }
+      </tr>
+      @if (config()?.showQuickSearch && config()?.columns.some(c => c.filter)) {
+      <tr>
+        @if (config()?.rowSelection !== 'none' && config()?.rowSelection === 'multiple') {
+        <th></th>
+        } @if (config()?.sortableRows) {
+        <th></th>
+        } @for (col of config()?.columns; track col.field) {
+        <th>
+          @if (col.filter) {
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filter($event.target.value, col.field, 'contains')"
+            [placeholder]="'Search ' + col.header"
+            class="w-full"
+          />
+          }
+        </th>
+        } @if (config()?.enableStaticActions || config()?.dynamicActions?.length > 0) {
+        <th></th>
+        }
+      </tr>
+      }
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+      <tr [pSelectableRow]="rowData" [pReorderableRow]="rowIndex">
+        @if (config()?.rowSelection !== 'none' && config()?.rowSelection === 'multiple') {
+        <td>
+          <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+        </td>
+        } @if (config()?.sortableRows) {
+        <td>
+          <i class="pi pi-bars" pReorderableRowHandle></i>
+        </td>
+        } @for (col of config()?.columns; track col.field) {
+        <td>
+          <ng-container [ngSwitch]="col.type">
+            @case ('date') {
+            {{ rowData[col.field] | date : 'shortDate' }}
+            } @case ('number') {
+            {{ rowData[col.field] | number }}
+            } @case ('long-string') {
+            <span [pTooltip]="rowData[col.field]" tooltipPosition="bottom">
+              {{
+                (rowData[col.field] | slice : 0 : 50) +
+                  (rowData[col.field].length > 50 ? '...' : '')
+              }}
+            </span>
+            } @default {
+            {{ rowData[col.field] }}
+            }
+          </ng-container>
+        </td>
+        } @if (config()?.enableStaticActions || config()?.dynamicActions?.length > 0) {
+        <td>
+          <div class="flex gap-2">
+            @if (config()?.enableStaticActions?.edit) {
+            <p-button
+              icon="pi pi-pencil"
+              styleClass="p-button-sm p-button-info"
+              (onClick)="onEdit.emit(rowData)"
+              pTooltip="Edit"
+              tooltipPosition="bottom"
+            ></p-button>
+            } @if (config()?.enableStaticActions?.view) {
+            <p-button
+              icon="pi pi-eye"
+              styleClass="p-button-sm p-button-secondary"
+              (onClick)="onView.emit(rowData)"
+              pTooltip="View"
+              tooltipPosition="bottom"
+            ></p-button>
+            } @if (config()?.enableStaticActions?.delete) {
+            <p-button
+              icon="pi pi-trash"
+              styleClass="p-button-sm p-button-danger"
+              (onClick)="onDelete.emit(rowData)"
+              pTooltip="Delete"
+              tooltipPosition="bottom"
+            ></p-button>
+            } @for (action of config()?.dynamicActions; track action.label) { @if (!action.visible
+            || action.visible(rowData)) {
+            <p-button
+              [icon]="action.icon"
+              [label]="action.label"
+              (onClick)="action.callback(rowData)"
+              [styleClass]="'p-button-sm ' + (action.styleClass || '')"
+              [pTooltip]="action.tooltip || action.label"
+              tooltipPosition="bottom"
+              [disabled]="action.disabled && action.disabled(rowData)"
+            ></p-button>
+            } }
+          </div>
+        </td>
+        }
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="getColspan()">No records found.</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      @if (config()?.rowSelection !== 'none' && selectedRows.length > 0) {
+      <div class="flex align-items-center justify-content-end">
+        In total there are {{ tableData().length }} records. Selected: {{ selectedRows.length }}
+      </div>
+      } @else {
+      <div class="flex align-items-center justify-content-end">
+        In total there are {{ tableData().length }} records.
+      </div>
+      }
+    </ng-template>
+  </p-table>
+</div>
