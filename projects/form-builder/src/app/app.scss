@@ -99,3 +99,12 @@
 .customization-pane {
   background-color: #fff;
 }
+/* This is the element Dragula uses while dragging */
+.gu-mirror {
+  position: fixed !important;
+  pointer-events: none; /* prevent interfering with cursor */
+  z-index: 9999;
+  opacity: 0.9;
+  transform: translate(-50%, -50%) scale(1.02); /* centers at cursor */
+  transition: transform 0.05s linear;
+}
