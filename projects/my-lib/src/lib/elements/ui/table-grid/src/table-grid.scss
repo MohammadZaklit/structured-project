@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+.card {
+  background: var(--surface-card);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-2);
+}
+.p-input-icon-left i {
+  top: 50%;
+  transform: translateY(-50%);
+}
+/* Add some spacing for actions */
+td > .flex.gap-2 > p-button {
+  margin-right: 0.5rem;
+}
+/* Ensure action buttons don't wrap too much */
+td {
+  white-space: nowrap;
+}
