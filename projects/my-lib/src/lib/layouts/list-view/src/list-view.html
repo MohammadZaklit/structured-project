@@ -1,1 +1,75 @@
-<p>list-view works!</p>
+<div class="container-fluid py-4">
+  @if (config()?.pageTitle) {
+  <div class="row mb-4">
+    <div class="col">
+      <h2 class="mb-0">{{ config()?.pageTitle }}</h2>
+    </div>
+  </div>
+  }
+
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="flex justify-content-between align-items-center mb-3">
+          <div class="flex gap-2">
+            @if (config()?.showQuickSearch) {
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input
+                pInputText
+                type="text"
+                [(ngModel)]="quickSearchValue"
+                (input)="dt.filterGlobal($event.target.value, 'contains')"
+                placeholder="Quick Search"
+              />
+            </span>
+            <p-button
+              icon="pi pi-sliders-h"
+              label="Advanced Search"
+              (onClick)="onAdvancedSearch.emit()"
+              styleClass="p-button-outlined"
+            ></p-button>
+            }
+          </div>
+          <div class="flex gap-2">
+            @for (button of config()?.dynamicHeaderButtons; track button.label) {
+            <p-button
+              [label]="button.label"
+              [icon]="button.icon"
+              (onClick)="button.callback()"
+              [styleClass]="button.styleClass"
+              [pTooltip]="button.tooltip"
+              tooltipPosition="bottom"
+              [disabled]="button.disabled && button.disabled(null)"
+              [style]="button.visible && !button.visible(null) ? { display: 'none' } : {}"
+            ></p-button>
+            } @if (config()?.showAddButton) {
+            <p-button
+              icon="pi pi-plus"
+              label="Add New"
+              (onClick)="onAddItem.emit()"
+              styleClass="p-button-success"
+            ></p-button>
+            } @if (config()?.exportToExcel) {
+            <p-button
+              icon="pi pi-file-excel"
+              label="Export"
+              (onClick)="exportExcel()"
+              styleClass="p-button-help"
+            ></p-button>
+            }
+          </div>
+        </div>
+
+        <lib-table-grid
+          [config]="config.table"
+          (onEdit)="editRowCallback($event)"
+          (onView)="viewRowCallback($event)"
+          (onDelete)="deleteRowCallback($event)"
+          (onRowReorder)="reorderRowCallback($event)"
+          (onColumnSort)="sortcolumnRowCallback($event)"
+        ></lib-table-grid>
+      </div>
+    </div>
+  </div>
+</div>

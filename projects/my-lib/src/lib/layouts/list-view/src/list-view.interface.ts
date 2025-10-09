@@ -1,22 +1,12 @@
-export interface ListView {
-  //   columns: TableColumn[];
-  //   data: Observable<any[]>;
-  //   paginator?: boolean;
-  //   rows?: number;
-  //   showCurrentPageReport?: boolean;
-  //   rowsPerPageOptions?: number[];
-  //   sortableRows?: boolean; // Enable/disable row reordering
-  //   rowSelection?: 'single' | 'multiple' | 'none'; // 'none' to disable selection
-  //   enableStaticActions?: {
-  //     edit?: boolean;
-  //     delete?: boolean;
-  //     view?: boolean;
-  //   };
-  //   dynamicActions?: TableAction[];
-  //   enableColumnSorting?: boolean; // Enable/disable sorting by column header
-  //   showQuickSearch?: boolean;
-  //   showAddButton?: boolean;
-  //   dynamicHeaderButtons?: TableAction[]; // Buttons to display in front of the add button
-  //   exportToExcel?: boolean;
-  //   exportFileName?: string;
+import { StandardButton } from '@zak-lib/ui-library/components/standardbutton';
+import { TableGrid } from '@zak-lib/ui-library/elements/ui/table-grid';
+import { ModuleConfig } from '@zak-lib/ui-library/shared';
+export interface ListView extends ModuleConfig {
+  pageTitle?: string;
+  table: TableGrid;
+  showQuickSearch?: boolean;
+  showAddButton?: boolean;
+  dynamicHeaderButtons?: StandardButton[]; // Buttons to display in front of the add button
+  exportToExcel?: boolean;
+  exportFileName?: string;
 }
