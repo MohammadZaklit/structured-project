@@ -1,28 +1,5 @@
-<div class="container-fluid py-4">
-  <div class="row mb-4">
-    <div class="col"><h2 class="mb-0">Projects Management</h2></div>
-    <div class="col-auto">
-      <button
-        pButton
-        type="button"
-        label="Add Project"
-        icon="pi pi-plus"
-        class="p-button-success"
-        (click)="showAddDialog()"
-      ></button>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col">
-      <div class="card">
-        <lib-table-grid [config]></lib-table-grid>
-      </div>
-    </div>
-  </div>
-</div>
-
-<p-dialog
+<lib-list-view [config]="ListViewConfig"></lib-list-view>
+<!-- <p-dialog
   [(visible)]="displayDialog"
   [header]="isEditMode ? 'Edit Project' : 'Add Project'"
   [modal]="true"
@@ -64,4 +41,4 @@
 </p-dialog>
 
 <p-toast></p-toast>
-<p-confirmDialog></p-confirmDialog>
+<p-confirmDialog></p-confirmDialog> -->
