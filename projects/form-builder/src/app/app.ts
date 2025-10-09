@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, signal } from '@angular/core';
 import { OnInit, OnDestroy } from '@angular/core';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
@@ -32,7 +32,7 @@ interface FormRow {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, FormsModule, CommonModule, DragulaWrapperModule],
+  imports: [FormsModule, CommonModule, DragulaWrapperModule],
   providers: [DragulaService],
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -47,6 +47,8 @@ export class App implements OnInit, OnDestroy {
 
   // Left palette of available fields
   availableFields: FormField[] = [
+    { id: 'row', type: 'row', label: 'Row' },
+    { id: 'column', type: 'column', label: 'Column' },
     { id: 'text-input', type: 'text', label: 'Text Input', placeholder: 'Enter text' },
     { id: 'number-input', type: 'number', label: 'Number Input', placeholder: 'Enter number' },
     { id: 'textarea-input', type: 'textarea', label: 'Textarea', placeholder: 'Enter long text' },
@@ -80,79 +82,82 @@ export class App implements OnInit, OnDestroy {
   selectedRowIndex: number | null = null;
   selectedColIndex: number | null = null;
 
-  constructor(private dragulaService: DragulaService) {
+  constructor(private dragulaService: DragulaService, private cd: ChangeDetectorRef) {
     const instanceId = uuidv4();
     this.bagFieldsName = `BAG_FIELDS_${instanceId}`;
     this.bagFormBuilderName = `BAG_FORM_BUILDER_${instanceId}`;
 
-    // Initialize Dragula bags
-    // BAG_FIELDS: For dragging fields from the palette
-    // BAG_FORM_BUILDER: For dragging fields within and between columns in the middle
-    dragulaService.createGroup(this.bagFieldsName, {
-      copy: (_el: HTMLElement, source: HTMLElement) => {
-        return source.classList.contains('form-field-palette');
-      },
-      copySortSource: true, // Allow sorting in the source if needed
-      accepts: (
-        _el: HTMLElement,
-        target: HTMLElement,
-        source: HTMLElement,
-        _sibling: HTMLElement
-      ) => {
-        // Only accept drops from BAG_FIELDS into BAG_FORM_BUILDER
+    // create one bag only
+    this.dragulaService.createGroup(this.bagFieldsName, {
+      copy: (_el?: Element, source?: Element) =>
+        source?.classList.contains('form-field-palette') ?? false,
+      copyItem: (item: any) => JSON.parse(JSON.stringify(item)),
+      accepts: (_el?: Element, target?: Element, _source?: Element) => {
         return (
-          target.classList.contains('form-column') &&
-          source.classList.contains('form-field-palette')
+          (target?.classList.contains('form-builder-area') ||
+            target?.classList.contains('form-row-container') ||
+            target?.classList.contains('form-column')) ??
+          false
         );
-      },
-    });
-
-    dragulaService.createGroup(this.bagFormBuilderName, {
-      // Allow moving fields anywhere within the form builder columns
-      // copy: false (default), so items are moved, not copied
-      accepts: (
-        _el: HTMLElement,
-        target: HTMLElement,
-        _source: HTMLElement,
-        _sibling: HTMLElement | null
-      ) => {
-        return target.classList.contains('form-column');
       },
     });
   }
 
   ngOnInit(): void {
-    // Subscribe to drop events for BAG_FIELDS
+    // dropModel for the same bag
     this.subs.add(
       this.dragulaService
         .dropModel(this.bagFieldsName)
-        .subscribe(({ el, target, source, sourceModel, targetModel, item }) => {
-          // When a field is dropped from the palette into a column
-          if (
-            source.classList.contains('form-field-palette') &&
-            target.classList.contains('form-column')
-          ) {
-            // 'item' here is a deep copy of the original field from availableFields
-            // Assign a unique ID if it doesn't have one (important for tracking)
-            if (!item.instance.id.startsWith('unique-')) {
-              item.instance.id =
-                'unique-' + Date.now() + '-' + Math.random().toFixed(4).replace('0.', '');
-            }
-            console.log('Field dropped from palette:', item.instance);
-            // The item is already added to targetModel by dragula,
-            // but we might want to do further processing or validation here.
-          }
-        })
-    );
+        .subscribe(({ target, source, item }: any) => {
+          // From palette to form builder
+          if (source.classList.contains('form-field-palette')) {
+            // 🟩 Case 1: Dropping a row
+            if (item.type === 'row' && target.classList.contains('form-builder-area')) {
+              const newRowId = 'row-' + Date.now();
+              this.droppedRows.push({
+                id: newRowId,
+                columns: [],
+                tempNumColumns: 1,
+              });
+              this.cd.detectChanges(); // Update UI
+            } // 🟩 Case 2: Dropping a column
+            else if (item.type === 'column' && target.classList.contains('form-row-container')) {
+              // Find which row this drop happened in
+              const rowIdx = Number(target.getAttribute('data-row'));
+              if (!Number.isNaN(rowIdx)) {
+                const row = this.droppedRows[rowIdx];
 
-    // Subscribe to drop events for BAG_FORM_BUILDER
-    this.subs.add(
-      this.dragulaService
-        .dropModel(this.bagFormBuilderName)
-        .subscribe(({ el, target, source, sourceModel, targetModel, item }) => {
-          // This handles reordering within a column or moving between columns
-          // 'item' is the actual field object being moved
-          console.log('Field moved within builder:', item.instance);
+                // Create a new column object
+                const newCol = {
+                  id: 'col-' + Date.now(),
+                  fields: [],
+                };
+
+                // Add it to the row
+                row.columns.push(newCol);
+
+                // Update UI
+                this.cd.detectChanges();
+              }
+            }
+            // 🟦 Case 3: Dropping other fields into a column
+            else if (target.classList.contains('form-column')) {
+              if (!item.id || !item.id.startsWith('unique-')) {
+                item.id = 'unique-' + Date.now() + '-' + Math.random().toFixed(4).replace('0.', '');
+              }
+
+              const rowIdx = Number(target.getAttribute('data-row'));
+              const colIdx = Number(target.getAttribute('data-col'));
+              if (!Number.isNaN(rowIdx) && !Number.isNaN(colIdx)) {
+                const col = this.droppedRows[rowIdx].columns[colIdx];
+                const exists = col.fields.some((f) => f.id === item.id);
+                if (!exists) {
+                  col.fields = [...col.fields, item]; // 🔥 immutable push
+                  this.cd.detectChanges();
+                }
+              }
+            }
+          }
         })
     );
   }
@@ -202,24 +207,25 @@ export class App implements OnInit, OnDestroy {
     });
   }
 
-  removeField(rowIndex: number, colIndex: number, fieldToRemove: FormField): void {
-    if (confirm(`Are you sure you want to remove "${fieldToRemove.label}"?`)) {
-      const col = this.droppedRows[rowIndex].columns[colIndex];
-      col.fields = col.fields.filter((f) => f !== fieldToRemove);
-
-      if (this.selectedField === fieldToRemove) {
-        this.selectedField = null;
-        this.selectedRowIndex = null;
-        this.selectedColIndex = null;
-      }
-    }
-  }
-
   deleteSelectedField(): void {
-    if (this.selectedField && this.selectedRowIndex !== null && this.selectedColIndex !== null) {
-      if (confirm(`Are you sure you want to delete "${this.selectedField.label}"?`)) {
-        this.removeField(this.selectedRowIndex, this.selectedColIndex, this.selectedField);
-      }
+    // Stop if nothing is selected or indices are missing
+    if (!this.selectedField || this.selectedRowIndex === null || this.selectedColIndex === null)
+      return;
+
+    if (confirm(`Are you sure you want to delete "${this.selectedField.label}"?`)) {
+      const rowIdx = this.selectedRowIndex;
+      const colIdx = this.selectedColIndex;
+      const field = this.selectedField;
+
+      // Remove the field
+      this.droppedRows[rowIdx].columns[colIdx].fields = this.droppedRows[rowIdx].columns[
+        colIdx
+      ].fields.filter((f) => f !== field);
+
+      // Clear selection
+      this.selectedField = null;
+      this.selectedRowIndex = null;
+      this.selectedColIndex = null;
     }
   }
 
