@@ -19,9 +19,9 @@
                 pInputText
                 type="text"
                 [(ngModel)]="quickSearchValue"
-                (input)="dt.filterGlobal($event.target.value, 'contains')"
                 placeholder="Quick Search"
               />
+              <!--(input)="dt.filterGlobal($event.target.value, 'contains')"-->
             </span>
             <p-button
               icon="pi pi-sliders-h"
@@ -35,8 +35,8 @@
             @for (button of config()?.dynamicHeaderButtons; track button.label) {
             <p-button
               [label]="button.label"
-              [icon]="button.icon"
-              (onClick)="button.callback()"
+              [icon]="'pi pi-plus'"
+              (onClick)="button.onclick()"
               [styleClass]="button.styleClass"
               [pTooltip]="button.tooltip"
               tooltipPosition="bottom"
@@ -62,7 +62,7 @@
         </div>
 
         <lib-table-grid
-          [config]="config.table"
+          [config]="tableConfig"
           (onEdit)="editRowCallback($event)"
           (onView)="viewRowCallback($event)"
           (onDelete)="deleteRowCallback($event)"

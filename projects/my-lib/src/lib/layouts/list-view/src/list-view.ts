@@ -8,26 +8,31 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import { TableGridComponent } from '@zak-lib/ui-library/elements/ui/table-grid';
+import { TableGrid, TableGridComponent } from '@zak-lib/ui-library/elements/ui/table-grid';
 import { ListView } from './list-view.interface';
 import { GenericRecord, HttpService } from '@zak-lib/ui-library/shared';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { firstValueFrom, of } from 'rxjs';
-
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'lib-list-view',
-  imports: [TableGridComponent],
+  imports: [TableGridComponent, ButtonModule, TooltipModule, FormsModule],
   templateUrl: './list-view.html',
   styleUrl: './list-view.css',
 })
 export class ListViewComponent implements OnInit {
   @Input() public config: WritableSignal<ListView | undefined> = signal(undefined);
+  public tableConfig: WritableSignal<TableGrid | undefined> = signal(undefined);
   tableData: WritableSignal<any[]> = signal([]);
   @Output() onAdvancedSearch = new EventEmitter<void>();
   @Output() onAddItem = new EventEmitter<void>();
   private isEditMode = false;
   private loading = false;
   private displayDialog = false;
+
+  public quickSearchValue: string = '';
   private messageService = inject(MessageService);
   private httpService = inject(HttpService);
   private confirmationService = inject(ConfirmationService);
@@ -37,7 +42,10 @@ export class ListViewComponent implements OnInit {
   ngOnInit(): void {
     this.config()?.table.data?.subscribe((data) => {
       this.tableData.set(data);
+      this.tableConfig.set(this.config()?.table);
     });
+
+    this.tableConfig.set(this.config()?.table);
   }
 
   exportExcel() {
