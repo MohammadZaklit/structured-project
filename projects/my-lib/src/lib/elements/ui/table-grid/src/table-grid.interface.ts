@@ -8,6 +8,7 @@ export interface TableColumn extends FieldConfig {
 }
 export interface TableGrid {
   columns: TableColumn[];
+  icon?: string;
   data?: Observable<any[]>;
   paginator?: boolean;
   rows?: number;

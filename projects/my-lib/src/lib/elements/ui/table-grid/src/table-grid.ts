@@ -47,7 +47,6 @@ export class TableGridComponent implements OnChanges {
 
   tableData: WritableSignal<any[]> = signal([]);
   selectedRows: any[] = [];
-  quickSearchValue: string = '';
 
   private dataSubscription: Subscription | undefined;
 
@@ -88,5 +87,9 @@ export class TableGridComponent implements OnChanges {
     if (this.config()?.enableStaticActions || (this.config()?.dynamicActions || [])?.length > 0)
       colspan++;
     return colspan;
+  }
+
+  public shouldApplyFilter(): boolean {
+    return this.config()?.columns.some((c) => c.filter) || false;
   }
 }
