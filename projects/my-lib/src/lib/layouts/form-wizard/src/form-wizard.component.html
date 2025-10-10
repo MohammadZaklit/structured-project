@@ -1,0 +1,296 @@
+<p-stepper *ngIf="steps.length > 1" [activeIndex]="activeStep" [linear]="true">
+  <ng-template pTemplate="item" let-step let-i="index">
+    <button pStepperNavLink>{{ step.label }}</button>
+  </ng-template>
+</p-stepper>
+
+<div *ngIf="steps.length > 1; else singleStep">
+  <div *ngFor="let step of steps; let stepIndex = index" [hidden]="activeStep !== stepIndex">
+    <form [formGroup]="form">
+      <div class="grid gap-3">
+        <ng-container *ngFor="let field of getFieldsForStep(stepIndex)">
+          <div class="col-12" *ngIf="field.visible !== false">
+            <label *ngIf="field.label">{{ field.label }}</label>
+
+            <ng-container [ngSwitch]="field.type">
+              <!-- AutoComplete -->
+              <p-autoComplete
+                *ngSwitchCase="'AutoComplete'"
+                [formControlName]="field.key"
+                [suggestions]="field.options || []"
+                [dropdown]="true"
+                [placeholder]="field.placeholder"
+              ></p-autoComplete>
+
+              <!-- CascadeSelect -->
+              <p-cascadeSelect
+                *ngSwitchCase="'CascadeSelect'"
+                [options]="field.options"
+                [formControlName]="field.key"
+                optionLabel="label"
+                [placeholder]="field.placeholder"
+              ></p-cascadeSelect>
+
+              <!-- Checkbox -->
+
+              <div class="flex items-center" *ngSwitchCase="'Checkbox'">
+                <p-checkbox [binary]="true" [formControlName]="field.key"></p-checkbox>
+                <label for="{{ field.key + field.value }}" class="ml-2">{{ field.label }}</label>
+              </div>
+
+              <!-- ColorPicker -->
+              <p-colorPicker
+                *ngSwitchCase="'ColorPicker'"
+                [formControlName]="field.key"
+              ></p-colorPicker>
+
+              <!-- DatePicker -->
+              <p-datepicker
+                *ngSwitchCase="'DatePicker'"
+                [showIcon]="true"
+                [formControlName]="field.key"
+              ></p-datepicker>
+
+              <!-- Editor -->
+              <p-editor *ngSwitchCase="'Editor'" [formControlName]="field.key"></p-editor>
+
+              <!-- FloatLabel -->
+              <span *ngSwitchCase="'FloatLabel'" class="p-float-label">
+                <input pInputText [id]="field.key" [formControlName]="field.key" />
+                <label [for]="field.key">{{ field.label }}</label>
+              </span>
+
+              <!-- IconField -->
+              <p-iconField *ngSwitchCase="'IconField'" icon="pi pi-user">
+                <input pInputText [formControlName]="field.key" />
+              </p-iconField>
+
+              <!-- InputGroup -->
+              <p-inputGroup *ngSwitchCase="'InputGroup'">
+                <span class="p-inputgroup-addon">@</span>
+                <input pInputText [formControlName]="field.key" />
+              </p-inputGroup>
+
+              <!-- InputMask -->
+              <p-inputMask
+                *ngSwitchCase="'InputMask'"
+                [mask]="field.extraProps?.mask"
+                [formControlName]="field.key"
+                [placeholder]="field.placeholder"
+              ></p-inputMask>
+
+              <!-- InputNumber -->
+              <p-inputNumber
+                *ngSwitchCase="'InputNumber'"
+                [formControlName]="field.key"
+              ></p-inputNumber>
+
+              <!-- InputOtp -->
+              <p-inputOtp *ngSwitchCase="'InputOtp'" [formControlName]="field.key"></p-inputOtp>
+
+              <!-- InputText -->
+              <input
+                *ngSwitchCase="'InputText'"
+                pInputText
+                [formControlName]="field.key"
+                [placeholder]="field.placeholder"
+              />
+
+              <!-- KeyFilter -->
+              <input
+                *ngSwitchCase="'KeyFilter'"
+                pInputText
+                pKeyFilter="int"
+                [formControlName]="field.key"
+              />
+
+              <!-- Knob -->
+              <p-knob *ngSwitchCase="'Knob'" [formControlName]="field.key"></p-knob>
+
+              <!-- Listbox -->
+              <p-listbox
+                *ngSwitchCase="'Listbox'"
+                [options]="field.options || []"
+                [formControlName]="field.key"
+              ></p-listbox>
+
+              <!-- MultiSelect -->
+              <p-multiSelect
+                *ngSwitchCase="'MultiSelect'"
+                [options]="field.options"
+                [formControlName]="field.key"
+                optionLabel="label"
+                [placeholder]="field.placeholder"
+              ></p-multiSelect>
+
+              <!-- Password -->
+              <p-password *ngSwitchCase="'Password'" [formControlName]="field.key"></p-password>
+
+              <!-- RadioButton -->
+              <div class="flex flex-wrap gap-4" *ngSwitchCase="'RadioButton'">
+                <div class="flex items-center" *ngFor="let opt of field.options">
+                  <p-radioButton
+                    [inputId]="field.key + opt.value"
+                    [value]="opt.value"
+                    [formControlName]="field.key"
+                  ></p-radioButton>
+                  <label for="{{ field.key + opt.value }}" class="ml-2">{{ opt.label }}</label>
+                </div>
+              </div>
+
+              <!-- Rating -->
+              <p-rating *ngSwitchCase="'Rating'" [formControlName]="field.key"></p-rating>
+
+              <!-- Select -->
+              <!-- <p-dropdown
+                *ngSwitchCase="'Select'"
+                [options]="field.options"
+                [formControlName]="field.key"
+                optionLabel="label"
+                optionValue="value"
+                [placeholder]="field.placeholder"
+              ></p-dropdown> -->
+
+              <!-- SelectButton -->
+              <p-selectButton
+                *ngSwitchCase="'SelectButton'"
+                [options]="field.options"
+                [formControlName]="field.key"
+              ></p-selectButton>
+
+              <!-- Slider -->
+              <p-slider *ngSwitchCase="'Slider'" [formControlName]="field.key"></p-slider>
+
+              <!-- Textarea -->
+              <textarea
+                *ngSwitchCase="'Textarea'"
+                pInputTextarea
+                [formControlName]="field.key"
+                [placeholder]="field.placeholder"
+              ></textarea>
+
+              <!-- ToggleButton -->
+              <p-toggleButton
+                *ngSwitchCase="'ToggleButton'"
+                [formControlName]="field.key"
+                onLabel="Yes"
+                offLabel="No"
+              ></p-toggleButton>
+
+              <!-- ToggleSwitch -->
+              <p-inputSwitch
+                *ngSwitchCase="'ToggleSwitch'"
+                [formControlName]="field.key"
+              ></p-inputSwitch>
+
+              <!-- TreeSelect -->
+              <p-treeSelect
+                *ngSwitchCase="'TreeSelect'"
+                [options]="field.options"
+                [formControlName]="field.key"
+              ></p-treeSelect>
+
+              <!-- Button -->
+              <button
+                *ngSwitchCase="'Button'"
+                pButton
+                type="button"
+                [label]="field.label"
+                (click)="field.extraProps?.onClick?.(form.value)"
+              ></button>
+
+              <!-- SpeedDial -->
+              <p-speedDial
+                *ngSwitchCase="'SpeedDial'"
+                [model]="field.options || null"
+                direction="up"
+              ></p-speedDial>
+
+              <!-- SplitButton -->
+              <p-splitButton
+                *ngSwitchCase="'SplitButton'"
+                [label]="field.label"
+                [model]="field.options"
+              ></p-splitButton>
+
+              <!-- PickList -->
+              <p-pickList
+                *ngSwitchCase="'PickList'"
+                [source]="field.extraProps?.source"
+                [target]="field.extraProps?.target"
+                sourceHeader="Available"
+                targetHeader="Selected"
+                [dragdrop]="true"
+                [formControlName]="field.key"
+              ></p-pickList>
+
+              <!-- FileUpload (drag drop) -->
+              <p-fileUpload
+                *ngSwitchCase="'FileUpload (drag drop)'"
+                mode="advanced"
+                [auto]="true"
+                chooseLabel="Browse"
+                [formControlName]="field.key"
+              ></p-fileUpload>
+
+              <!-- FileUpload (browse button) -->
+              <p-fileUpload
+                *ngSwitchCase="'FileUpload (browse button)'"
+                mode="basic"
+                chooseLabel="Browse"
+                [formControlName]="field.key"
+              ></p-fileUpload>
+
+              <!-- Unsupported -->
+              <span *ngSwitchDefault class="p-error">Unsupported: {{ field.type }}</span>
+            </ng-container>
+
+            <small
+              class="p-error"
+              *ngIf="form.get(field.key)?.invalid && form.get(field.key)?.touched"
+            >
+              Invalid {{ field.label }}
+            </small>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Navigation -->
+      <div class="flex justify-content-between mt-3">
+        <button
+          pButton
+          label="Previous"
+          icon="pi pi-arrow-left"
+          (click)="activeStep = activeStep - 1"
+          *ngIf="activeStep > 0"
+        ></button>
+        <button
+          pButton
+          label="Next"
+          icon="pi pi-arrow-right"
+          (click)="activeStep = activeStep + 1"
+          *ngIf="activeStep < steps.length - 1"
+        ></button>
+        <button
+          pButton
+          label="Submit"
+          icon="pi pi-check"
+          (click)="onSubmit()"
+          *ngIf="activeStep === steps.length - 1"
+        ></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<ng-template #singleStep>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <ng-container *ngFor="let field of getFieldsForStep(0)">
+      <div *ngIf="field.visible !== false">
+        <label>{{ field.label }}</label>
+        <!-- reuse logic -->
+      </div>
+    </ng-container>
+    <button pButton type="submit" label="Submit"></button>
+  </form>
+</ng-template>
