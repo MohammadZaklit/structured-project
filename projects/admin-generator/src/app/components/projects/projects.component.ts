@@ -14,6 +14,11 @@ import { TableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
 
 import { ListView, ListViewComponent } from '@zak-lib/ui-library/layouts/list-view';
 import { SettingsService } from '../../services/settings.service';
+import {
+  FormFieldConfig,
+  FormWizardComponent,
+  StepperConfig,
+} from '@zak-lib/ui-library/layouts/form-wizard';
 
 @Component({
   selector: 'app-projects',
@@ -29,6 +34,7 @@ import { SettingsService } from '../../services/settings.service';
     ConfirmDialogModule,
     TooltipModule,
     ListViewComponent,
+    FormWizardComponent,
   ],
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss'],
@@ -39,6 +45,28 @@ export class ProjectsComponent implements OnInit {
   private moduleID = 1;
   ListViewConfig = signal<ListView | undefined>(undefined);
   private settingsService = inject(SettingsService);
+
+  public stepConfig: StepperConfig = {
+    steps: [
+      { label: 'Personal Info', icon: 'pi pi-user' },
+      { label: 'Preferences', icon: 'pi pi-cog' },
+    ],
+  };
+
+  public dbFields: FormFieldConfig[] = [
+    { key: 'name', label: 'Full Name', type: 'InputText', step: 0, required: true },
+    { key: 'dob', label: 'Date of Birth', type: 'DatePicker', step: 0 },
+    {
+      key: 'gender',
+      label: 'Gender',
+      type: 'RadioButton',
+      step: 1,
+      options: [
+        { label: 'Male', value: 'M' },
+        { label: 'Female', value: 'F' },
+      ],
+    },
+  ];
 
   constructor() {}
 
@@ -89,5 +117,9 @@ export class ProjectsComponent implements OnInit {
         };
       }) || []
     );
+  }
+
+  public onFormSubmit(data: any): void {
+    console.warn('data; ', data);
   }
 }
