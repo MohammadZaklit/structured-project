@@ -127,15 +127,27 @@
               <p-password *ngSwitchCase="'Password'" [formControlName]="field.key"></p-password>
 
               <!-- RadioButton -->
-              <div class="flex flex-wrap gap-4" *ngSwitchCase="'RadioButton'">
-                <div class="flex items-center" *ngFor="let opt of field.options">
-                  <p-radioButton
-                    [inputId]="field.key + opt.value"
-                    [value]="opt.value"
-                    [formControlName]="field.key"
-                  ></p-radioButton>
-                  <label for="{{ field.key + opt.value }}" class="ml-2">{{ opt.label }}</label>
+              <ng-template #sharedRadioButtonContent let-field="field">
+                <div class="flex flex-wrap gap-4">
+                  <div class="flex items-center" *ngFor="let opt of field.options">
+                    <p-radioButton
+                      [inputId]="field.key + opt.value"
+                      [value]="opt.value"
+                      [formControlName]="field.key"
+                    ></p-radioButton>
+                    <label for="{{ field.key + opt.value }}" class="ml-2">{{ opt.label }}</label>
+                  </div>
                 </div>
+              </ng-template>
+              <div *ngSwitchCase="'RadioButtonDB'">
+                <ng-container
+                  *ngTemplateOutlet="sharedRadioButtonContent; context: { field: field }"
+                ></ng-container>
+              </div>
+              <div *ngSwitchCase="'RadioButtonOptions'">
+                <ng-container
+                  *ngTemplateOutlet="sharedRadioButtonContent; context: { field: field }"
+                ></ng-container>
               </div>
 
               <!-- Rating -->
@@ -184,11 +196,22 @@
               ></p-inputSwitch>
 
               <!-- TreeSelect -->
-              <p-treeSelect
-                *ngSwitchCase="'TreeSelect'"
-                [options]="field.options"
-                [formControlName]="field.key"
-              ></p-treeSelect>
+              <ng-template #sharedTreeSelectContent let-field="field">
+                <p-treeSelect
+                  [options]="field.options"
+                  [formControlName]="field.key"
+                ></p-treeSelect>
+              </ng-template>
+              <div *ngSwitchCase="'TreeSelectDB'">
+                <ng-container
+                  *ngTemplateOutlet="sharedTreeSelectContent; context: { field: field }"
+                ></ng-container>
+              </div>
+              <div *ngSwitchCase="'TreeSelectOptions'">
+                <ng-container
+                  *ngTemplateOutlet="sharedTreeSelectContent; context: { field: field }"
+                ></ng-container>
+              </div>
 
               <!-- Button -->
               <button
@@ -214,19 +237,32 @@
               ></p-splitButton>
 
               <!-- PickList -->
-              <p-pickList
-                *ngSwitchCase="'PickList'"
-                [source]="field.extraProps?.source"
-                [target]="field.extraProps?.target"
-                sourceHeader="Available"
-                targetHeader="Selected"
-                [dragdrop]="true"
-                [formControlName]="field.key"
-              ></p-pickList>
+
+              <!-- RadioButton -->
+              <ng-template #sharedPickListContent let-field="field">
+                <p-pickList
+                  [source]="field.extraProps?.source"
+                  [target]="field.extraProps?.target"
+                  sourceHeader="Available"
+                  targetHeader="Selected"
+                  [dragdrop]="true"
+                  [formControlName]="field.key"
+                ></p-pickList>
+              </ng-template>
+              <div *ngSwitchCase="'PickListDB'">
+                <ng-container
+                  *ngTemplateOutlet="sharedPickListContent; context: { field: field }"
+                ></ng-container>
+              </div>
+              <div *ngSwitchCase="'PickListOptions'">
+                <ng-container
+                  *ngTemplateOutlet="sharedPickListContent; context: { field: field }"
+                ></ng-container>
+              </div>
 
               <!-- FileUpload (drag drop) -->
               <p-fileUpload
-                *ngSwitchCase="'FileUpload (drag drop)'"
+                *ngSwitchCase="'FileUploadDragDrop'"
                 mode="advanced"
                 [auto]="true"
                 chooseLabel="Browse"
@@ -235,7 +271,7 @@
 
               <!-- FileUpload (browse button) -->
               <p-fileUpload
-                *ngSwitchCase="'FileUpload (browse button)'"
+                *ngSwitchCase="'FileUploadBrowse'"
                 mode="basic"
                 chooseLabel="Browse"
                 [formControlName]="field.key"
