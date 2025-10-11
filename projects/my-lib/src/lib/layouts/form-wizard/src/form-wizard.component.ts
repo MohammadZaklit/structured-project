@@ -8,7 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { EditorModule } from 'primeng/editor';
+//import { EditorModule } from 'primeng/editor';
 import { PasswordModule } from 'primeng/password';
 import { SliderModule } from 'primeng/slider';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -46,7 +46,7 @@ import { DatePickerModule } from 'primeng/datepicker';
     CheckboxModule,
     RadioButtonModule,
     AutoCompleteModule,
-    EditorModule,
+    //EditorModule,
     PasswordModule,
     SliderModule,
     MultiSelectModule,

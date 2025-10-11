@@ -1,4 +1,4 @@
-<p-stepper *ngIf="steps.length > 1" [activeIndex]="activeStep" [linear]="true">
+<p-stepper *ngIf="steps.length > 1" [(value)]="activeStep" [linear]="true">
   <ng-template pTemplate="item" let-step let-i="index">
     <button pStepperNavLink>{{ step.label }}</button>
   </ng-template>
@@ -52,7 +52,7 @@
               ></p-datepicker>
 
               <!-- Editor -->
-              <p-editor *ngSwitchCase="'Editor'" [formControlName]="field.key"></p-editor>
+              <!-- <p-editor *ngSwitchCase="'Editor'" [formControlName]="field.key"></p-editor> -->
 
               <!-- FloatLabel -->
               <span *ngSwitchCase="'FloatLabel'" class="p-float-label">
