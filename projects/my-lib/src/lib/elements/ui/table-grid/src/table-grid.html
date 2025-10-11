@@ -5,47 +5,39 @@
   [rows]="config()?.rows ?? 10"
   [showCurrentPageReport]="config()?.showCurrentPageReport ?? true"
   [rowsPerPageOptions]="config()?.rowsPerPageOptions ?? [10, 25, 50]"
-  [reorderableRows]="true"
   (onRowReorder)="onRowReorder.emit($event)"
-  [selectionMode]="
-    (config()?.rowSelection ?? '') === 'none' ? undefined : config()?.rowSelection ?? ''
-  "
+  [selectionMode]="selectionMode"
   [(selection)]="selectedRows"
   dataKey="id"
   [lazy]="true"
   (onLazyLoad)="onLazyLoad($event)"
-  [globalFilterFields]="config()!.columns.map(c => c.name) || []"
+  [globalFilterFields]="globalFilterFields"
   (onSort)="onColumnSort.emit($event)"
 >
   <ng-template pTemplate="header">
     <tr>
-      @if (config()?.rowSelection !== 'none' && config()?.rowSelection === 'multiple') {
+      @if (selectionMode === 'multiple') {
       <th style="width: 3rem">
         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
       </th>
-      } @if (config()?.sortableRows) {
+      } @if (sortableRows) {
       <th style="width: 3rem"></th>
       } @for (col of config()?.columns; track col.name) {
-      <th
-        [pSortableColumn]="
-          (config()?.enableColumnSorting || false) && col.sortable !== false ? col.name : null
-        "
-      >
+      <th [pSortableColumn]="enableColumnSorting && col?.sortable ? col.name : undefined">
         {{ col.label }}
         @if (config()?.enableColumnSorting && col.sortable !== false) {
         <p-sortIcon [field]="col.name"></p-sortIcon>
         }
       </th>
-      } @if ((config()?.enableStaticActions || false) || (config()?.dynamicActions || [])?.length >
-      0) {
+      } @if (enableStaticActions || hasDynamicActions) {
       <th>Actions</th>
       }
     </tr>
     @if (shouldApplyFilter()) {
     <tr>
-      @if (config()?.rowSelection !== 'none' && config()?.rowSelection === 'multiple') {
+      @if (selectionMode === 'multiple') {
       <th></th>
-      } @if (config()?.sortableRows) {
+      } @if (sortableRows) {
       <th></th>
       } @for (col of config()?.columns; track col.name) {
       <th>
@@ -59,8 +51,7 @@
         />
         }
       </th>
-      } @if ((config()?.enableStaticActions || false) || (config()?.dynamicActions || [])?.length >
-      0) {
+      } @if (enableStaticActions || hasDynamicActions) {
       <th></th>
       }
     </tr>
@@ -68,11 +59,11 @@
   </ng-template>
   <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
     <tr [pSelectableRow]="rowData" [pReorderableRow]="rowIndex">
-      @if (config()?.rowSelection !== 'none' && config()?.rowSelection === 'multiple') {
+      @if (selectionMode === 'multiple') {
       <td>
         <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
       </td>
-      } @if (config()?.sortableRows) {
+      } @if (sortableRows) {
       <td>
         <i class="pi pi-bars" pReorderableRowHandle></i>
       </td>
@@ -90,11 +81,10 @@
         {{ rowData[col.name] }}
         } }
       </td>
-      } @if ((config()?.enableStaticActions || false) || (config()?.dynamicActions || [])?.length >
-      0) {
+      } @if (enableStaticActions || hasDynamicActions) {
       <td>
         <div class="flex gap-2">
-          @if (config()?.enableStaticActions?.edit) {
+          @if (staticActions().edit) {
           <p-button
             icon="pi pi-pencil"
             styleClass="p-button-sm p-button-info"
@@ -102,7 +92,7 @@
             pTooltip="Edit"
             tooltipPosition="bottom"
           ></p-button>
-          } @if (config()?.enableStaticActions?.view) {
+          } @if (staticActions().view) {
           <p-button
             icon="pi pi-eye"
             styleClass="p-button-sm p-button-secondary"
@@ -110,7 +100,7 @@
             pTooltip="View"
             tooltipPosition="bottom"
           ></p-button>
-          } @if (config()?.enableStaticActions?.delete) {
+          } @if (staticActions().delete) {
           <p-button
             icon="pi pi-trash"
             styleClass="p-button-sm p-button-danger"
@@ -118,7 +108,7 @@
             pTooltip="Delete"
             tooltipPosition="bottom"
           ></p-button>
-          } @for (action of config()?.dynamicActions; track action.label) { @if (!action.visible ||
+          } @for (action of dynamicActions(); track action.label) { @if (!action.visible ||
           action.visible(rowData)) {
           <p-button
             [icon]="action.icon || ''"
@@ -141,7 +131,7 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="summary">
-    @if (config()?.rowSelection !== 'none' && selectedRows.length > 0) {
+    @if (selectionMode && selectedRows.length > 0) {
     <div class="flex align-items-center justify-content-end">
       In total there are {{ tableData().length }} records. Selected: {{ selectedRows.length }}
     </div>

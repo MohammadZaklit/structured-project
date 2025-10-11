@@ -15,12 +15,16 @@ export interface TableGrid {
   showCurrentPageReport?: boolean;
   rowsPerPageOptions?: number[];
   sortableRows?: boolean; // Enable/disable row reordering
-  rowSelection?: 'single' | 'multiple' | 'none'; // 'none' to disable selection
-  enableStaticActions?: {
-    edit?: boolean;
-    delete?: boolean;
-    view?: boolean;
-  };
+  rowSelection?: RowSelectionMode;
+  enableStaticActions?: columnStaticActions;
   dynamicActions?: StandardButton[];
   enableColumnSorting?: boolean; // Enable/disable sorting by column header
 }
+
+export interface columnStaticActions {
+  edit?: boolean;
+  delete?: boolean;
+  view?: boolean;
+}
+
+export type RowSelectionMode = 'single' | 'multiple' | null;

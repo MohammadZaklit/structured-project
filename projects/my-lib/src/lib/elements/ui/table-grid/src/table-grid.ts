@@ -17,7 +17,8 @@ import { PaginatorModule } from 'primeng/paginator';
 import { RippleModule } from 'primeng/ripple';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms'; // For ngModel
-import { TableGrid } from './table-grid.interface';
+import { columnStaticActions, RowSelectionMode, TableGrid } from './table-grid.interface';
+import { StandardButton } from '@zak-lib/ui-library/components/standardbutton';
 
 @Component({
   selector: 'lib-table-grid',
@@ -82,14 +83,52 @@ export class TableGridComponent implements OnChanges {
 
   getColspan(): number {
     let colspan = this.config()?.columns.length || 0;
-    if (this.config()?.rowSelection !== 'none') colspan++;
+    if (this.selectionMode !== null) colspan++;
     if (this.config()?.sortableRows) colspan++;
-    if (this.config()?.enableStaticActions || (this.config()?.dynamicActions || [])?.length > 0)
-      colspan++;
+    if (this.enableStaticActions || this.hasDynamicActions) colspan++;
     return colspan;
   }
 
   public shouldApplyFilter(): boolean {
     return this.config()?.columns.some((c) => c.filter) || false;
+  }
+
+  public get enableStaticActions(): boolean {
+    const actions = this.config()?.enableStaticActions;
+    return !!(actions && (actions.edit || actions.delete || actions.view));
+  }
+
+  public staticActions(): columnStaticActions {
+    return (
+      this.config()?.enableStaticActions || {
+        edit: false,
+        delete: false,
+        view: false,
+      }
+    );
+  }
+
+  public get hasDynamicActions(): boolean {
+    return (this.config()?.dynamicActions || [])?.length > 0;
+  }
+
+  public dynamicActions(): StandardButton[] {
+    return this.config()?.dynamicActions || [];
+  }
+
+  public get enableColumnSorting(): boolean {
+    return this.config()?.enableColumnSorting || false;
+  }
+
+  public get globalFilterFields(): string[] {
+    return this.config()?.columns.map((c) => c.name) ?? [];
+  }
+
+  public get selectionMode(): RowSelectionMode {
+    return this.config()?.rowSelection ?? null;
+  }
+
+  public get sortableRows(): boolean {
+    return this.config()?.sortableRows || false;
   }
 }
