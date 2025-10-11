@@ -1,13 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { TooltipModule } from 'primeng/tooltip';
 import { GenericRecord } from '@zak-lib/ui-library/shared';
 import { of } from 'rxjs';
 import { TableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
@@ -23,19 +15,7 @@ import {
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TableModule,
-    ButtonModule,
-    DialogModule,
-    InputTextModule,
-    ToastModule,
-    ConfirmDialogModule,
-    TooltipModule,
-    ListViewComponent,
-    FormWizardComponent,
-  ],
+  imports: [CommonModule, ListViewComponent, FormWizardComponent],
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss'],
 })
