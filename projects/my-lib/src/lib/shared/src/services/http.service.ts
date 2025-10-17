@@ -78,16 +78,9 @@ export class HttpService {
     // If your backend specifically has /api/:moduleName/:id route, change this:
     // return this.http.get<T>(`${this.apiUrl}/${moduleName}/${id}`, this.getHttpOptions());
 
-    return this.http
-      .get<T[]>(`${this.apiUrl}/${moduleName}`, {
-        params: new HttpParams().set('id', id.toString()),
-        headers: this.getHttpOptions().headers,
-      })
-      .pipe(
-        // Assuming the backend returns an array and we want the first item
-        // You might want to add error handling if no item is found
-        map((records) => records[0])
-      );
+    return this.http.get<T>(`${this.apiUrl}/${moduleName}/${id}`, {
+      headers: this.getHttpOptions().headers,
+    });
   }
 
   // --- PUT (Update) ---

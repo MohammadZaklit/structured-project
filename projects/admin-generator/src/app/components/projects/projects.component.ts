@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GenericRecord } from '@zak-lib/ui-library/shared';
+import { GenericRecord, ModuleConfig } from '@zak-lib/ui-library/shared';
 import { of } from 'rxjs';
 import { TableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
 
@@ -20,20 +20,16 @@ import {
   styleUrls: ['./projects.component.scss'],
 })
 export class ProjectsComponent implements OnInit {
-  private moduleName = 'projects';
-  private moduleLabel = 'projects';
-  private moduleID = 1;
+  private moduleID = 2;
   ListViewConfig = signal<ListView | undefined>(undefined);
   private settingsService = inject(SettingsService);
 
   public stepConfig: StepperConfig = {
-    steps: [
-      { label: 'Personal Info', icon: 'pi pi-user' },
-      { label: 'Preferences', icon: 'pi pi-cog' },
-    ],
+    steps: [{ id: 1, label: 'Form', name: 'singleForm', icon: 'pi pi-user' }],
   };
 
   public dbFields: FormFieldConfig[] = [];
+  public module!: ModuleConfig;
 
   constructor() {}
 
@@ -42,11 +38,12 @@ export class ProjectsComponent implements OnInit {
   }
 
   private async getModuleConfig(): Promise<void> {
+    this.module = (await this.settingsService.getModuleConfig(this.moduleID)) as ModuleConfig;
     const fields = await this.settingsService.getModuleFields(this.moduleID);
 
     this.ListViewConfig.set({
-      pageTitle: this.moduleLabel,
-      moduleName: this.moduleName,
+      pageTitle: this.module.label,
+      module: this.module,
       table: {
         columns: this.mapFieldsToColumns(fields),
         data: of([]),

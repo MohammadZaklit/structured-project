@@ -1,5 +1,8 @@
 export interface ModuleConfig {
-  moduleName: string;
+  id: number;
+  name: string;
+  label: string;
+  url?: string;
 }
 
 export interface FieldConfig {

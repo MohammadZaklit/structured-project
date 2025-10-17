@@ -1,7 +1,14 @@
-<lib-list-view [config]="ListViewConfig"></lib-list-view>
+<!-- <lib-list-view [config]="ListViewConfig"></lib-list-view> -->
 
-<lib-form-wizard [fields]="dbFields" [stepperConfig]="stepConfig" (submit)="onFormSubmit($event)">
+@if (dbFields.length > 0) {
+<lib-form-wizard
+  [fields]="dbFields"
+  [module]="module"
+  [stepperConfig]="stepConfig"
+  (submit)="onFormSubmit($event)"
+>
 </lib-form-wizard>
+}
 
 <!-- <p-dialog
   [(visible)]="displayDialog"

@@ -1,7 +1,15 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectorRef, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, take } from 'rxjs/operators';
 
 import { StepperModule } from 'primeng/stepper';
 import { InputTextModule } from 'primeng/inputtext';
@@ -34,6 +42,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { FormFieldConfig, StepperConfig } from './form-wizard.interface';
 import { DatePickerModule } from 'primeng/datepicker';
+import { HttpService, ModuleConfig } from '@zak-lib/ui-library/shared';
 
 @Component({
   selector: 'lib-form-wizard',
@@ -78,8 +87,9 @@ import { DatePickerModule } from 'primeng/datepicker';
 export class FormWizardComponent implements OnInit {
   @Input() fields: FormFieldConfig[] = [];
   @Input() stepperConfig!: StepperConfig;
+  @Input() module!: ModuleConfig;
   @Output() submit = new EventEmitter<any>();
-
+  private httpService = inject(HttpService);
   form!: FormGroup;
   steps: any[] = [];
   activeStep = 0;
@@ -134,13 +144,20 @@ export class FormWizardComponent implements OnInit {
     }
   }
 
-  getFieldsForStep(step: number) {
-    return this.fields.filter((f) => f.step === step && f.visible !== false);
+  getFieldsForStep(stepIndex: number) {
+    //return this.fields.filter((f) => f.step === stepIndex && f.visible !== false);
+    return this.fields;
   }
 
   onSubmit() {
     if (this.form.valid) {
       this.submit.emit(this.form.value);
+      this.httpService
+        .create(this.module.name, this.form.getRawValue())
+        .pipe(take(1))
+        .subscribe((response) => {
+          console.warn('response: ', response);
+        });
     }
   }
 }

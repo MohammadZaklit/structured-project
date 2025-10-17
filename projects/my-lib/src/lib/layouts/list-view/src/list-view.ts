@@ -19,6 +19,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'lib-list-view',
   imports: [TableGridComponent, ButtonModule, TooltipModule, FormsModule],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './list-view.html',
   styleUrl: './list-view.css',
 })
@@ -79,20 +80,24 @@ export class ListViewComponent implements OnInit {
     });
   }
 
+  private get moduleName(): string {
+    return this.config()!.module.name;
+  }
+
   public async deleteProject(id: number): Promise<void> {
     try {
-      await this.httpService.delete(this.config()!.moduleName, id);
+      await this.httpService.delete(this.moduleName, id);
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
-        detail: this.config()!.moduleName + ' deleted successfully',
+        detail: this.moduleName + ' deleted successfully',
       });
       await this.loadData();
     } catch (error) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Failed to delete ' + this.config()!.moduleName,
+        detail: 'Failed to delete ' + this.moduleName,
       });
     } finally {
       //this.loading = false;
@@ -102,13 +107,13 @@ export class ListViewComponent implements OnInit {
   async loadData(): Promise<void> {
     try {
       // this.loading = true;
-      const response = await firstValueFrom(this.httpService.getAll(this.config()!.moduleName));
+      const response = await firstValueFrom(this.httpService.getAll(this.moduleName));
       this.config()!.table.data = of(response);
     } catch (error) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Failed to load ' + this.config()!.moduleName + ' data',
+        detail: 'Failed to load ' + this.moduleName + ' data',
       });
     } finally {
       //this.loading = false;

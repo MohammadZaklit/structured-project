@@ -12,14 +12,13 @@ export class SettingsService {
   constructor() {}
 
   public async getModuleConfig(id: number): Promise<GenericRecord> {
-    const response = await firstValueFrom(this.httpService.getById(this.modulesTable, id));
-    return response || [];
+    return await firstValueFrom(this.httpService.getById(this.modulesTable, id));
   }
 
   public async getModuleFields(moduleId: number): Promise<GenericRecord[] | []> {
     const response = await firstValueFrom(
       this.httpService.getAll(this.fieldsTable, {
-        module_id: moduleId,
+        moduleId: moduleId,
       })
     );
 

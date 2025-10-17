@@ -1,5 +1,12 @@
 export interface StepperConfig {
-  steps: { label: string; icon?: string }[];
+  steps: StepConfig[];
+}
+
+export interface StepConfig {
+  id: number;
+  label: string;
+  name: string;
+  icon?: string;
 }
 
 export interface FormFieldConfig {
