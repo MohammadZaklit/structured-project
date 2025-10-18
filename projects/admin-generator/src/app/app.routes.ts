@@ -1,8 +1,22 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'projects', pathMatch: 'full' },
-  { path: 'projects', loadComponent: () => import('./components/projects/projects.component').then(m => m.ProjectsComponent) },
-  { path: 'modules', loadComponent: () => import('./components/modules/modules.component').then(m => m.ModulesComponent) },
-  { path: 'fields', loadComponent: () => import('./components/fields/fields.component').then(m => m.FieldsComponent) }
+  { path: '', redirectTo: 'admin-page', pathMatch: 'full' },
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./modules/admin-page/shell/admin-page-shell.routing').then(
+        (m) => m.ADMIN_PAGE_ROUTES
+      ),
+  },
+  {
+    path: '404',
+    loadComponent: () =>
+      import('./components/page-not-found/page-not-found').then((m) => m.PageNotFound),
+  },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./components/page-not-found/page-not-found').then((m) => m.PageNotFound),
+  },
 ];
