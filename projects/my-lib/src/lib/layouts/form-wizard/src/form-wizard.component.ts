@@ -105,9 +105,9 @@ export class FormWizardComponent implements OnInit {
   buildForm() {
     const group: any = {};
     this.fields.forEach((f) => {
-      group[f.key] = [{ value: f.value ?? '', disabled: false }, []];
-      if (typeof f.required === 'boolean' && f.required) group[f.key][1].push(Validators.required);
-      if (f.pattern) group[f.key][1].push(Validators.pattern(f.pattern));
+      group[f.name] = [{ value: f.value ?? '', disabled: false }, []];
+      if (typeof f.required === 'boolean' && f.required) group[f.name][1].push(Validators.required);
+      if (f.pattern) group[f.name][1].push(Validators.pattern(f.pattern));
     });
     this.form = this.fb.group(group);
   }
@@ -115,7 +115,7 @@ export class FormWizardComponent implements OnInit {
   handleDynamicLogic() {
     this.form.valueChanges.pipe(debounceTime(300)).subscribe((value) => {
       this.fields.forEach((f) => {
-        const control = this.form.get(f.key);
+        const control = this.form.get(f.name);
 
         if (typeof f.disabled === 'function') {
           const disabled = f.disabled(value);
@@ -139,8 +139,8 @@ export class FormWizardComponent implements OnInit {
 
   async validateAPI(field: FormFieldConfig) {
     if (field.apiValidate) {
-      const isValid = await field.apiValidate(this.form.get(field.key)?.value);
-      if (!isValid) this.form.get(field.key)?.setErrors({ api: true });
+      const isValid = await field.apiValidate(this.form.get(field.name)?.value);
+      if (!isValid) this.form.get(field.name)?.setErrors({ api: true });
     }
   }
 
@@ -151,12 +151,12 @@ export class FormWizardComponent implements OnInit {
 
   onSubmit() {
     if (this.form.valid) {
-      this.submit.emit(this.form.value);
       this.httpService
         .create(this.module.name, this.form.getRawValue())
         .pipe(take(1))
         .subscribe((response) => {
           console.warn('response: ', response);
+          this.submit.emit(this.form.value);
         });
     }
   }

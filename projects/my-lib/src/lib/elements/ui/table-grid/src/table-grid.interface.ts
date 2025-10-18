@@ -3,8 +3,9 @@ import { FieldConfig } from '@zak-lib/ui-library/shared';
 import { Observable } from 'rxjs';
 
 export interface TableColumn extends FieldConfig {
-  sortable?: boolean;
-  filter?: boolean; // For inline filtering
+  type: string;
+  isSortable?: boolean;
+  enableFilter?: boolean; // For inline filtering
 }
 export interface TableGrid {
   columns: TableColumn[];

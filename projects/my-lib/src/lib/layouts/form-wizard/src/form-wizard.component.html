@@ -15,7 +15,7 @@
             <!-- AutoComplete -->
             <p-autoComplete
               *ngSwitchCase="'AutoComplete'"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
               [suggestions]="field.options || []"
               [dropdown]="true"
               [placeholder]="field.placeholder || ''"
@@ -25,7 +25,7 @@
             <p-cascadeSelect
               *ngSwitchCase="'CascadeSelect'"
               [options]="field.options"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
               optionLabel="label"
               [placeholder]="field.placeholder || ''"
             ></p-cascadeSelect>
@@ -33,65 +33,65 @@
             <!-- Checkbox -->
 
             <div class="flex items-center" *ngSwitchCase="'Checkbox'">
-              <p-checkbox [binary]="true" [formControlName]="field.key"></p-checkbox>
-              <label for="{{ field.key + field.value }}" class="ml-2">{{ field.label }}</label>
+              <p-checkbox [binary]="true" [formControlName]="field.name"></p-checkbox>
+              <label for="{{ field.name + field.value }}" class="ml-2">{{ field.label }}</label>
             </div>
 
             <!-- ColorPicker -->
             <p-colorPicker
               *ngSwitchCase="'ColorPicker'"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
             ></p-colorPicker>
 
             <!-- DatePicker -->
             <p-datepicker
               *ngSwitchCase="'DatePicker'"
               [showIcon]="true"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
             ></p-datepicker>
 
             <!-- Editor -->
-            <!-- <p-editor *ngSwitchCase="'Editor'" [formControlName]="field.key"></p-editor> -->
+            <!-- <p-editor *ngSwitchCase="'Editor'" [formControlName]="field.name"></p-editor> -->
 
             <!-- FloatLabel -->
             <span *ngSwitchCase="'FloatLabel'" class="p-float-label">
-              <input pInputText [id]="field.key" [formControlName]="field.key" />
-              <label [for]="field.key">{{ field.label }}</label>
+              <input pInputText [id]="field.name" [formControlName]="field.name" />
+              <label [for]="field.name">{{ field.label }}</label>
             </span>
 
             <!-- IconField -->
             <p-iconField *ngSwitchCase="'IconField'" icon="pi pi-user">
-              <input pInputText [formControlName]="field.key" />
+              <input pInputText [formControlName]="field.name" />
             </p-iconField>
 
             <!-- InputGroup -->
             <p-inputGroup *ngSwitchCase="'InputGroup'">
               <span class="p-inputgroup-addon">@</span>
-              <input pInputText [formControlName]="field.key" />
+              <input pInputText [formControlName]="field.name" />
             </p-inputGroup>
 
             <!-- InputMask -->
             <p-inputMask
               *ngSwitchCase="'InputMask'"
               [mask]="field.extraProps?.mask"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
               [placeholder]="field.placeholder || ''"
             ></p-inputMask>
 
             <!-- InputNumber -->
             <p-inputNumber
               *ngSwitchCase="'InputNumber'"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
             ></p-inputNumber>
 
             <!-- InputOtp -->
-            <p-inputOtp *ngSwitchCase="'InputOtp'" [formControlName]="field.key"></p-inputOtp>
+            <p-inputOtp *ngSwitchCase="'InputOtp'" [formControlName]="field.name"></p-inputOtp>
 
             <!-- InputText -->
             <input
               *ngSwitchCase="'InputText'"
               pInputText
-              [formControlName]="field.key"
+              [formControlName]="field.name"
               [placeholder]="field.placeholder || ''"
             />
 
@@ -100,41 +100,41 @@
               *ngSwitchCase="'KeyFilter'"
               pInputText
               pKeyFilter="int"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
             />
 
             <!-- Knob -->
-            <p-knob *ngSwitchCase="'Knob'" [formControlName]="field.key"></p-knob>
+            <p-knob *ngSwitchCase="'Knob'" [formControlName]="field.name"></p-knob>
 
             <!-- Listbox -->
             <p-listbox
               *ngSwitchCase="'Listbox'"
               [options]="field.options || []"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
             ></p-listbox>
 
             <!-- MultiSelect -->
             <p-multiSelect
               *ngSwitchCase="'MultiSelect'"
               [options]="field.options"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
               optionLabel="label"
               [placeholder]="field.placeholder || ''"
             ></p-multiSelect>
 
             <!-- Password -->
-            <p-password *ngSwitchCase="'Password'" [formControlName]="field.key"></p-password>
+            <p-password *ngSwitchCase="'Password'" [formControlName]="field.name"></p-password>
 
             <!-- RadioButton -->
             <ng-template #sharedRadioButtonContent let-field="field">
               <div class="flex flex-wrap gap-4">
                 <div class="flex items-center" *ngFor="let opt of field.options">
                   <p-radioButton
-                    [inputId]="field.key + opt.value"
+                    [inputId]="field.name + opt.value"
                     [value]="opt.value"
-                    [formControlName]="field.key"
+                    [formControlName]="field.name"
                   ></p-radioButton>
-                  <label for="{{ field.key + opt.value }}" class="ml-2">{{ opt.label }}</label>
+                  <label for="{{ field.name + opt.value }}" class="ml-2">{{ opt.label }}</label>
                 </div>
               </div>
             </ng-template>
@@ -150,13 +150,13 @@
             </div>
 
             <!-- Rating -->
-            <p-rating *ngSwitchCase="'Rating'" [formControlName]="field.key"></p-rating>
+            <p-rating *ngSwitchCase="'Rating'" [formControlName]="field.name"></p-rating>
 
             <!-- Select -->
             <!-- <p-dropdown
                 *ngSwitchCase="'Select'"
                 [options]="field.options"
-                [formControlName]="field.key"
+                [formControlName]="field.name"
                 optionLabel="label"
                 optionValue="value"
                 [placeholder]="field.placeholder"
@@ -166,24 +166,24 @@
             <p-selectButton
               *ngSwitchCase="'SelectButton'"
               [options]="field.options"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
             ></p-selectButton>
 
             <!-- Slider -->
-            <p-slider *ngSwitchCase="'Slider'" [formControlName]="field.key"></p-slider>
+            <p-slider *ngSwitchCase="'Slider'" [formControlName]="field.name"></p-slider>
 
             <!-- Textarea -->
             <textarea
               *ngSwitchCase="'Textarea'"
               pInputTextarea
-              [formControlName]="field.key"
+              [formControlName]="field.name"
               [placeholder]="field.placeholder || ''"
             ></textarea>
 
             <!-- ToggleButton -->
             <p-toggleButton
               *ngSwitchCase="'ToggleButton'"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
               onLabel="Yes"
               offLabel="No"
             ></p-toggleButton>
@@ -191,12 +191,12 @@
             <!-- ToggleSwitch -->
             <p-inputSwitch
               *ngSwitchCase="'ToggleSwitch'"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
             ></p-inputSwitch>
 
             <!-- TreeSelect -->
             <ng-template #sharedTreeSelectContent let-field="field">
-              <p-treeSelect [options]="field.options" [formControlName]="field.key"></p-treeSelect>
+              <p-treeSelect [options]="field.options" [formControlName]="field.name"></p-treeSelect>
             </ng-template>
             <div *ngSwitchCase="'TreeSelectDB'">
               <ng-container
@@ -242,7 +242,7 @@
                 sourceHeader="Available"
                 targetHeader="Selected"
                 [dragdrop]="true"
-                [formControlName]="field.key"
+                [formControlName]="field.name"
               ></p-pickList>
             </ng-template>
             <div *ngSwitchCase="'PickListDB'">
@@ -262,7 +262,7 @@
               mode="advanced"
               [auto]="true"
               chooseLabel="Browse"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
             ></p-fileUpload>
 
             <!-- FileUpload (browse button) -->
@@ -270,7 +270,7 @@
               *ngSwitchCase="'FileUploadBrowse'"
               mode="basic"
               chooseLabel="Browse"
-              [formControlName]="field.key"
+              [formControlName]="field.name"
             ></p-fileUpload>
 
             <!-- Unsupported -->
@@ -279,7 +279,7 @@
 
           <small
             class="p-error"
-            *ngIf="form.get(field.key)?.invalid && form.get(field.key)?.touched"
+            *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched"
           >
             Invalid {{ field.label }}
           </small>

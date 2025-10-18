@@ -90,7 +90,7 @@ export class TableGridComponent implements OnChanges {
   }
 
   public shouldApplyFilter(): boolean {
-    return this.config()?.columns.some((c) => c.filter) || false;
+    return this.config()?.columns.some((c) => c.enableFilter) || false;
   }
 
   public get enableStaticActions(): boolean {

@@ -23,9 +23,9 @@
       } @if (sortableRows) {
       <th style="width: 3rem"></th>
       } @for (col of config()?.columns; track col.name) {
-      <th [pSortableColumn]="enableColumnSorting && col?.sortable ? col.name : undefined">
+      <th [pSortableColumn]="enableColumnSorting && col?.isSortable ? col.name : undefined">
         {{ col.label }}
-        @if (config()?.enableColumnSorting && col.sortable !== false) {
+        @if (config()?.enableColumnSorting && col?.isSortable !== false) {
         <p-sortIcon [field]="col.name"></p-sortIcon>
         }
       </th>
@@ -41,7 +41,7 @@
       <th></th>
       } @for (col of config()?.columns; track col.name) {
       <th>
-        @if (col.filter) {
+        @if (col.enableFilter) {
         <input
           pInputText
           type="text"

@@ -28,7 +28,7 @@ export class ListViewComponent implements OnInit {
   public tableConfig: WritableSignal<TableGrid | undefined> = signal(undefined);
   tableData: WritableSignal<any[]> = signal([]);
   @Output() onAdvancedSearch = new EventEmitter<void>();
-  @Output() onAddItem = new EventEmitter<void>();
+  @Output() addbtnClick = new EventEmitter<void>();
   private isEditMode = false;
   private loading = false;
   private displayDialog = false;

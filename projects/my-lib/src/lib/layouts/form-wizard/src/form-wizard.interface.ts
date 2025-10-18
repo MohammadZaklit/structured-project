@@ -1,3 +1,5 @@
+import { FieldConfig } from '@zak-lib/ui-library/shared';
+
 export interface StepperConfig {
   steps: StepConfig[];
 }
@@ -9,9 +11,7 @@ export interface StepConfig {
   icon?: string;
 }
 
-export interface FormFieldConfig {
-  key: string;
-  label: string;
+export interface FormFieldConfig extends FieldConfig {
   type: string;
   step: number;
   placeholder?: string;
