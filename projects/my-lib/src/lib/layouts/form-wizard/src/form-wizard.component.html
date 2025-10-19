@@ -307,8 +307,15 @@
         pButton
         label="Submit"
         icon="pi pi-check"
-        (click)="onSubmit()"
-        *ngIf="activeStep === steps.length - 1"
+        (click)="onCreate($event)"
+        *ngIf="activeStep === steps.length - 1 && !isEdit"
+      ></button>
+      <button
+        pButton
+        label="Update"
+        icon="pi pi-check"
+        (click)="onUpdate($event)"
+        *ngIf="activeStep === steps.length - 1 && !!isEdit"
       ></button>
     </div>
   </form>
@@ -350,3 +357,4 @@
   }"
 ></ng-container>
 }
+<lib-confirm-dialog [config]="SubmitConfirmDialogConfig"></lib-confirm-dialog>

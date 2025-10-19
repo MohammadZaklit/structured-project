@@ -12,22 +12,27 @@ import {
 import { TableGrid, TableGridComponent } from '@zak-lib/ui-library/elements/ui/table-grid';
 import { ListView, SearchParameters } from './list-view.interface';
 import { GenericRecord, HttpService } from '@zak-lib/ui-library/shared';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import {
   BehaviorSubject,
+  combineLatest,
   debounceTime,
   distinctUntilChanged,
   firstValueFrom,
   of,
+  startWith,
+  Subject,
   switchMap,
 } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { FormsModule } from '@angular/forms';
+import {
+  ConfirmPopupComponent,
+  ConfirmPopupConfig,
+} from '@zak-lib/ui-library/elements/ui/confirm-popup';
 @Component({
   selector: 'lib-list-view',
-  imports: [TableGridComponent, ButtonModule, TooltipModule, FormsModule],
-  providers: [MessageService, ConfirmationService],
+  imports: [TableGridComponent, ButtonModule, TooltipModule, FormsModule, ConfirmPopupComponent],
   templateUrl: './list-view.html',
   styleUrl: './list-view.css',
 })
@@ -38,26 +43,32 @@ export class ListViewComponent implements OnInit, OnDestroy {
   @Output() onAdvancedSearch = new EventEmitter<void>();
   @Output() addBtnClick = new EventEmitter<void>();
   @Output() editBtnClick = new EventEmitter<any>();
+  @Output() deleteBtnClick = new EventEmitter<any>();
   private isEditMode = false;
   private loading = false;
   private displayDialog = false;
 
   public quickSearchValue: string = '';
-  private messageService = inject(MessageService);
   private httpService = inject(HttpService);
-  private confirmationService = inject(ConfirmationService);
   private searchParameters$ = new BehaviorSubject<SearchParameters>({});
+  private reload$ = new Subject<void>();
+
+  public DeleteConfirmPopupConfig!: ConfirmPopupConfig;
 
   constructor() {}
 
   ngOnInit(): void {
-    this.config()!.table.data = this.searchParameters$.pipe(
-      debounceTime(100),
-      distinctUntilChanged(),
-      switchMap((terms) => this.httpService.getAll(this.moduleName, terms))
-    );
+    this.config()!.table.data = combineLatest([
+      this.searchParameters$.pipe(debounceTime(100), distinctUntilChanged()),
+      this.reload$.pipe(startWith(null)),
+    ]).pipe(switchMap(([terms, _isTriggered]) => this.httpService.getAll(this.moduleName, terms)));
 
     this.tableConfig.set(this.config()?.table);
+
+    this.DeleteConfirmPopupConfig = {
+      title: 'Delete Confirmation',
+      message: 'Are you sure you want to delete this row?',
+    };
   }
 
   exportExcel() {
@@ -80,53 +91,20 @@ export class ListViewComponent implements OnInit, OnDestroy {
     // });
   }
 
-  public confirmDelete(row: GenericRecord): void {
-    this.confirmationService.confirm({
-      message: `Are you sure you want to delete the selected row ?`,
-      header: 'Confirm Delete',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.deleteProject(row.id!);
-      },
-    });
-  }
-
   private get moduleName(): string {
     return this.config()!.module.name;
   }
 
-  public async deleteProject(id: number): Promise<void> {
-    try {
-      await this.httpService.delete(this.moduleName, id);
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: this.moduleName + ' deleted successfully',
-      });
-      await this.loadData();
-    } catch (error) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to delete ' + this.moduleName,
-      });
-    } finally {
-      //this.loading = false;
-    }
-  }
-
   async loadData(): Promise<void> {
     try {
-      // this.loading = true;
       const response = await firstValueFrom(this.httpService.getAll(this.moduleName));
-      console.warn('response: ', response);
-      this.config()!.table.data;
+      this.reload$.next();
     } catch (error) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to load ' + this.moduleName + ' data',
-      });
+      // this.messageService.add({
+      //   severity: 'error',
+      //   summary: 'Error',
+      //   detail: 'Failed to load ' + this.moduleName + ' data',
+      // });
     } finally {
       //this.loading = false;
     }
@@ -137,7 +115,6 @@ export class ListViewComponent implements OnInit, OnDestroy {
   }
 
   editRowCallback(rowData: GenericRecord) {
-    console.warn('rowData: ', rowData);
     this.editBtnClick.emit(rowData);
   }
 
@@ -146,12 +123,25 @@ export class ListViewComponent implements OnInit, OnDestroy {
     // Implement your view logic here
   }
 
-  deleteRowCallback(rowData: any) {
-    console.log('Delete clicked for:', rowData);
-    // Implement your delete logic here
-    // this.data = this.data.filter((p) => p.id !== rowData.id);
-    // this.tableData$ = of(this.data);
-    // this.tableConfig.update((cfg) => ({ ...cfg!, data: this.tableData$ })); // Update observable
+  public deleteRowCallback(event: { event: Event; rowData: GenericRecord }): void {
+    this.DeleteConfirmPopupConfig.accept = () => {
+      this.deleteRow(event.rowData);
+    };
+    this.DeleteConfirmPopupConfig.cancel = () => {
+      // do nothing
+      return;
+    };
+    this.DeleteConfirmPopupConfig.confirm?.(event.event);
+  }
+
+  private async deleteRow(rowData: GenericRecord): Promise<void> {
+    const response = await firstValueFrom(
+      this.httpService.delete(this.moduleName, rowData.id || 0)
+    );
+    if (response) {
+      this.loadData();
+      this.deleteBtnClick.emit(rowData);
+    }
   }
 
   reorderRowCallback(event: any) {

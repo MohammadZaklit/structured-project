@@ -55,11 +55,9 @@ export class TableGridComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['config'] && this.config()) {
-      // Unsubscribe from previous data observable if it exists
       if (this.dataSubscription) {
         this.dataSubscription.unsubscribe();
       }
-      // Subscribe to the new data observable
       this.dataSubscription = this.config()?.data?.subscribe((data) => {
         this.tableData.set(data);
       });

@@ -91,11 +91,7 @@ export class HttpService {
    * @param payload The updated data for the record.
    * @returns An Observable of the updated record.
    */
-  update<T extends GenericRecord>(
-    moduleName: string,
-    id: string | number,
-    payload: T
-  ): Observable<T> {
+  update<T extends GenericRecord>(moduleName: string, id: number, payload: T): Observable<T> {
     return this.http.put<T>(`${this.apiUrl}/${moduleName}/${id}`, payload, this.getHttpOptions());
   }
 
@@ -106,7 +102,7 @@ export class HttpService {
    * @param id The ID of the record to delete.
    * @returns An Observable of the deletion result (often an empty object or a message).
    */
-  delete(moduleName: string, id: string | number): Observable<any> {
+  delete(moduleName: string, id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${moduleName}/${id}`, this.getHttpOptions());
   }
 }

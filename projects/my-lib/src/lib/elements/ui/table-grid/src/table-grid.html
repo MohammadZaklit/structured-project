@@ -104,7 +104,7 @@
           <p-button
             icon="pi pi-trash"
             styleClass="p-button-sm p-button-danger"
-            (onClick)="onDelete.emit(rowData)"
+            (onClick)="onDelete.emit({ event: $event, rowData: rowData })"
             pTooltip="Delete"
             tooltipPosition="bottom"
           ></p-button>

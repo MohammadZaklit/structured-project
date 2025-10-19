@@ -45,6 +45,10 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { FormFieldConfig, StepperConfig } from './form-wizard.interface';
 import { DatePickerModule } from 'primeng/datepicker';
 import { GenericRecord, HttpService, ModuleConfig } from '@zak-lib/ui-library/shared';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogConfig,
+} from '@zak-lib/ui-library/elements/ui/confirm-dialog';
 
 @Component({
   selector: 'lib-form-wizard',
@@ -82,6 +86,7 @@ import { GenericRecord, HttpService, ModuleConfig } from '@zak-lib/ui-library/sh
     IconFieldModule,
     InputGroupModule,
     DatePickerModule,
+    ConfirmDialogComponent,
   ],
   templateUrl: './form-wizard.component.html',
   styleUrls: ['./form-wizard.component.scss'],
@@ -91,17 +96,25 @@ export class FormWizardComponent implements OnInit, OnChanges {
   @Input() stepperConfig!: StepperConfig;
   @Input() module!: ModuleConfig;
   @Input() public data?: GenericRecord;
-  @Output() submit = new EventEmitter<any>();
+  @Output() successSubmit = new EventEmitter<any>();
   private httpService = inject(HttpService);
   form!: FormGroup;
   steps: any[] = [];
   activeStep = 0;
+  public isEdit = false;
+
+  public SubmitConfirmDialogConfig!: ConfirmDialogConfig;
 
   constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ('data' in changes && changes['data'] && changes['data'].currentValue) {
-      this.fillForm(changes['data'].currentValue);
+    if ('data' in changes && changes['data']) {
+      if (changes['data'].currentValue) {
+        this.fillForm(changes['data'].currentValue);
+        this.isEdit = true;
+      } else {
+        this.isEdit = false;
+      }
     }
   }
 
@@ -109,6 +122,11 @@ export class FormWizardComponent implements OnInit, OnChanges {
     this.steps = this.stepperConfig?.steps || [{ label: 'Form' }];
     this.buildForm();
     this.handleDynamicLogic();
+
+    this.SubmitConfirmDialogConfig = {
+      title: 'Submit Confirmation',
+      message: 'Are you sure you want to submit your information?',
+    };
   }
 
   private fillForm(data: GenericRecord): void {
@@ -162,15 +180,40 @@ export class FormWizardComponent implements OnInit, OnChanges {
     return this.fields;
   }
 
-  onSubmit() {
+  onCreate(event: Event): void {
     if (this.form.valid) {
-      this.httpService
-        .create(this.module.name, this.form.getRawValue())
-        .pipe(take(1))
-        .subscribe((response) => {
-          console.warn('response: ', response);
-          this.submit.emit(this.form.value);
-        });
+      this.SubmitConfirmDialogConfig.accept = () => {
+        this.httpService
+          .create(this.module.name, this.form.getRawValue())
+          .pipe(take(1))
+          .subscribe((response) => {
+            this.successSubmit.emit(this.form.value);
+          });
+      };
+      this.SubmitConfirmDialogConfig.cancel = () => {
+        return;
+      };
+      this.SubmitConfirmDialogConfig.confirm?.(event);
+    }
+  }
+
+  onUpdate(event: Event): void {
+    if (this.form.valid) {
+      this.SubmitConfirmDialogConfig.accept = () => {
+        if (this.data && this.data.id) {
+          this.httpService
+            .update(this.module.name, this.data.id, this.form.getRawValue())
+            .pipe(take(1))
+            .subscribe((_response) => {
+              this.successSubmit.emit(this.form.value);
+            });
+        }
+      };
+      this.SubmitConfirmDialogConfig.cancel = () => {
+        return;
+      };
+
+      this.SubmitConfirmDialogConfig.confirm?.(event);
     }
   }
 }
