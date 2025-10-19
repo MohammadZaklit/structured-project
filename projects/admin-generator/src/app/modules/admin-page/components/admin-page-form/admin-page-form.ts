@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import {
   FormFieldConfig,
@@ -9,6 +18,7 @@ import {
 import { GenericRecord, HttpService, ModuleConfig } from '@zak-lib/ui-library/shared';
 import { components } from 'projects/admin-generator/src/app/shared/constants/components';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-admin-page-form',
@@ -27,17 +37,9 @@ export class AdminPageForm implements OnInit {
     steps: [{ id: 1, label: 'Form', name: 'singleForm', icon: 'pi pi-user' }],
   };
 
+  @Input() public id?: number;
   @Output() public cancelForm = new EventEmitter<void>();
   @Output() public successForm = new EventEmitter<any>();
-
-  /**
-   * @deprecated
-   */
-  private routerSnapshot = inject(ActivatedRouteSnapshot);
-  /**
-   * @deprecated
-   */
-  private router = inject(Router);
 
   constructor() {}
 
@@ -52,18 +54,16 @@ export class AdminPageForm implements OnInit {
       });
     });
 
-    const idParam = this.routerSnapshot.paramMap.get('id');
-    if (idParam) {
-      this.getData(parseInt(idParam));
+    if (this.id) {
+      this.getData(this.id);
     }
   }
 
   private async getData(id: number): Promise<void> {
-    const data = await this.httpService.getById(this.module.name, id);
+    this.data = await firstValueFrom(this.httpService.getById(this.module.name, id));
   }
 
   public onFormSubmit(data: any): void {
     this.successForm.emit(data);
-    this.router.navigate(['/list']);
   }
 }

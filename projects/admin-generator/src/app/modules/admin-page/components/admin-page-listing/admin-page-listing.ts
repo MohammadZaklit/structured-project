@@ -4,10 +4,11 @@ import { Router } from '@angular/router';
 import { TableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
 import { FormFieldConfig } from '@zak-lib/ui-library/layouts/form-wizard';
 import { ListView, ListViewComponent } from '@zak-lib/ui-library/layouts/list-view';
-import { FieldConfig, ModuleConfig } from '@zak-lib/ui-library/shared';
+import { FieldConfig, GenericRecord, HttpService, ModuleConfig } from '@zak-lib/ui-library/shared';
 import { components } from 'projects/admin-generator/src/app/shared/constants/components';
+import { EventsService } from 'projects/admin-generator/src/app/shared/services/events.service';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-admin-page-listing',
@@ -20,12 +21,8 @@ export class AdminPageListing implements OnInit {
   ListViewConfig = signal<ListView | undefined>(undefined);
   private moduleSettings = inject(ModuleSettingsService);
   @Output() public addRow = new EventEmitter<void>();
-  @Output() public editRow = new EventEmitter<number>();
+  @Output() public editRow = new EventEmitter<any>();
 
-  /**
-   * @deprecated
-   */
-  private router = inject(Router);
   constructor() {}
 
   ngOnInit(): void {
@@ -34,7 +31,6 @@ export class AdminPageListing implements OnInit {
       module: this.moduleSettings.module() as ModuleConfig,
       table: {
         columns: this.mapFieldsToColumns(this.moduleSettings.fields()),
-        data: of([]),
         paginator: true,
         rows: 5,
         showCurrentPageReport: true,
@@ -71,10 +67,7 @@ export class AdminPageListing implements OnInit {
     );
   }
 
-  public editRowCallback(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const id = parseInt(input.value);
-    this.editRow.emit(id);
-    this.router.navigate(['edit/' + id]);
+  public editRowCallback(data: GenericRecord): void {
+    this.editRow.emit(data);
   }
 }
