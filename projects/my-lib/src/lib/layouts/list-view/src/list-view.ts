@@ -3,16 +3,24 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   signal,
   WritableSignal,
 } from '@angular/core';
 import { TableGrid, TableGridComponent } from '@zak-lib/ui-library/elements/ui/table-grid';
-import { ListView } from './list-view.interface';
+import { ListView, SearchParameters } from './list-view.interface';
 import { GenericRecord, HttpService } from '@zak-lib/ui-library/shared';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { firstValueFrom, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  debounceTime,
+  distinctUntilChanged,
+  firstValueFrom,
+  of,
+  switchMap,
+} from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { FormsModule } from '@angular/forms';
@@ -23,12 +31,13 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './list-view.html',
   styleUrl: './list-view.css',
 })
-export class ListViewComponent implements OnInit {
+export class ListViewComponent implements OnInit, OnDestroy {
   @Input() public config: WritableSignal<ListView | undefined> = signal(undefined);
   public tableConfig: WritableSignal<TableGrid | undefined> = signal(undefined);
   tableData: WritableSignal<any[]> = signal([]);
   @Output() onAdvancedSearch = new EventEmitter<void>();
-  @Output() addbtnClick = new EventEmitter<void>();
+  @Output() addBtnClick = new EventEmitter<void>();
+  @Output() editBtnClick = new EventEmitter<any>();
   private isEditMode = false;
   private loading = false;
   private displayDialog = false;
@@ -37,14 +46,16 @@ export class ListViewComponent implements OnInit {
   private messageService = inject(MessageService);
   private httpService = inject(HttpService);
   private confirmationService = inject(ConfirmationService);
+  private searchParameters$ = new BehaviorSubject<SearchParameters>({});
 
   constructor() {}
 
   ngOnInit(): void {
-    this.config()?.table.data?.subscribe((data) => {
-      this.tableData.set(data);
-      this.tableConfig.set(this.config()?.table);
-    });
+    this.config()!.table.data = this.searchParameters$.pipe(
+      debounceTime(100),
+      distinctUntilChanged(),
+      switchMap((terms) => this.httpService.getAll(this.moduleName, terms))
+    );
 
     this.tableConfig.set(this.config()?.table);
   }
@@ -108,7 +119,8 @@ export class ListViewComponent implements OnInit {
     try {
       // this.loading = true;
       const response = await firstValueFrom(this.httpService.getAll(this.moduleName));
-      this.config()!.table.data = of(response);
+      console.warn('response: ', response);
+      this.config()!.table.data;
     } catch (error) {
       this.messageService.add({
         severity: 'error',
@@ -124,9 +136,9 @@ export class ListViewComponent implements OnInit {
     // this.displayDialog = false;
   }
 
-  editRowCallback(rowData: any) {
-    console.log('Edit clicked for:', rowData);
-    // Implement your edit logic here, e.g., open a dialog
+  editRowCallback(rowData: GenericRecord) {
+    console.warn('rowData: ', rowData);
+    this.editBtnClick.emit(rowData);
   }
 
   viewRowCallback(rowData: any) {
@@ -244,4 +256,6 @@ export class ListViewComponent implements OnInit {
   //     //this.loading = false;
   //   }
   // }
+
+  ngOnDestroy(): void {}
 }

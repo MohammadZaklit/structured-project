@@ -6,6 +6,8 @@ import {
   ChangeDetectorRef,
   OnInit,
   inject,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -42,7 +44,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { FormFieldConfig, StepperConfig } from './form-wizard.interface';
 import { DatePickerModule } from 'primeng/datepicker';
-import { HttpService, ModuleConfig } from '@zak-lib/ui-library/shared';
+import { GenericRecord, HttpService, ModuleConfig } from '@zak-lib/ui-library/shared';
 
 @Component({
   selector: 'lib-form-wizard',
@@ -84,10 +86,11 @@ import { HttpService, ModuleConfig } from '@zak-lib/ui-library/shared';
   templateUrl: './form-wizard.component.html',
   styleUrls: ['./form-wizard.component.scss'],
 })
-export class FormWizardComponent implements OnInit {
+export class FormWizardComponent implements OnInit, OnChanges {
   @Input() fields: FormFieldConfig[] = [];
   @Input() stepperConfig!: StepperConfig;
   @Input() module!: ModuleConfig;
+  @Input() public data?: GenericRecord;
   @Output() submit = new EventEmitter<any>();
   private httpService = inject(HttpService);
   form!: FormGroup;
@@ -96,10 +99,20 @@ export class FormWizardComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if ('data' in changes && changes['data'] && changes['data'].currentValue) {
+      this.fillForm(changes['data'].currentValue);
+    }
+  }
+
   ngOnInit() {
     this.steps = this.stepperConfig?.steps || [{ label: 'Form' }];
     this.buildForm();
     this.handleDynamicLogic();
+  }
+
+  private fillForm(data: GenericRecord): void {
+    this.form.patchValue(data);
   }
 
   buildForm() {

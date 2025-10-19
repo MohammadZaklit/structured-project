@@ -11,3 +11,7 @@ export interface ListView {
   exportToExcel?: boolean;
   exportFileName?: string;
 }
+
+export interface SearchParameters {
+  [key: string]: any;
+}
