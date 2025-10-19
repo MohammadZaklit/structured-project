@@ -1,5 +1,5 @@
 import { StandardButton } from '@zak-lib/ui-library/components/standardbutton';
-import { FieldConfig } from '@zak-lib/ui-library/shared';
+import { FieldConfig, GenericRecord } from '@zak-lib/ui-library/shared';
 import { Observable } from 'rxjs';
 
 export interface TableColumn extends FieldConfig {
@@ -10,7 +10,7 @@ export interface TableColumn extends FieldConfig {
 export interface TableGrid {
   columns: TableColumn[];
   icon?: string;
-  data?: Observable<any[]>;
+  data?: Observable<GenericRecord[]>;
   paginator?: boolean;
   rows?: number;
   showCurrentPageReport?: boolean;

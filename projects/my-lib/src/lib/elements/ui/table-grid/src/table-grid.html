@@ -133,11 +133,11 @@
   <ng-template pTemplate="summary">
     @if (selectionMode && selectedRows.length > 0) {
     <div class="flex align-items-center justify-content-end">
-      In total there are {{ tableData().length }} records. Selected: {{ selectedRows.length }}
+      Total rows: {{ tableData().length }} records. Selected: {{ selectedRows.length }}
     </div>
     } @else {
     <div class="flex align-items-center justify-content-end">
-      In total there are {{ tableData().length }} records.
+      Total rows: {{ tableData().length }} records.
     </div>
     }
   </ng-template>
