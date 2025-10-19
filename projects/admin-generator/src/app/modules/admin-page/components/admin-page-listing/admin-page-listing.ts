@@ -1,14 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, OnInit, Output, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { TableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
-import { FormFieldConfig } from '@zak-lib/ui-library/layouts/form-wizard';
 import { ListView, ListViewComponent } from '@zak-lib/ui-library/layouts/list-view';
-import { FieldConfig, GenericRecord, HttpService, ModuleConfig } from '@zak-lib/ui-library/shared';
+import { FieldConfig, GenericRecord, ModuleConfig } from '@zak-lib/ui-library/shared';
 import { components } from 'projects/admin-generator/src/app/shared/constants/components';
-import { EventsService } from 'projects/admin-generator/src/app/shared/services/events.service';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
-import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-admin-page-listing',
@@ -22,6 +18,7 @@ export class AdminPageListing implements OnInit {
   private moduleSettings = inject(ModuleSettingsService);
   @Output() public addRow = new EventEmitter<void>();
   @Output() public editRow = new EventEmitter<any>();
+  @Output() public deleteRow = new EventEmitter<any>();
 
   constructor() {}
 
@@ -32,7 +29,7 @@ export class AdminPageListing implements OnInit {
       table: {
         columns: this.mapFieldsToColumns(this.moduleSettings.fields()),
         paginator: true,
-        rows: 5,
+        rows: 50,
         showCurrentPageReport: true,
         rowsPerPageOptions: [5, 10, 20],
         sortableRows: true,
@@ -40,7 +37,7 @@ export class AdminPageListing implements OnInit {
         enableStaticActions: {
           edit: true,
           delete: true,
-          view: true,
+          view: false,
         },
         dynamicActions: [],
         enableColumnSorting: true,
