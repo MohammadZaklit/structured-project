@@ -30,7 +30,7 @@ export class HttpService {
    * @param payload The data for the new record.
    * @returns An Observable of the created record.
    */
-  create<T extends GenericRecord>(moduleName: string, payload: T): Observable<T> {
+  post<T extends GenericRecord>(moduleName: string, payload: T): Observable<T> {
     return this.http.post<T>(`${this.apiUrl}/${moduleName}`, payload, this.getHttpOptions());
   }
 
@@ -91,7 +91,7 @@ export class HttpService {
    * @param payload The updated data for the record.
    * @returns An Observable of the updated record.
    */
-  update<T extends GenericRecord>(moduleName: string, id: number, payload: T): Observable<T> {
+  put<T extends GenericRecord>(moduleName: string, id: number, payload: T): Observable<T> {
     return this.http.put<T>(`${this.apiUrl}/${moduleName}/${id}`, payload, this.getHttpOptions());
   }
 

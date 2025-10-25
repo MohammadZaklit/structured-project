@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common'; // Import DatePipe
-import { TableModule } from 'primeng/table';
+import { TableModule, TablePageEvent, TableRowReorderEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
@@ -17,7 +17,12 @@ import { PaginatorModule } from 'primeng/paginator';
 import { RippleModule } from 'primeng/ripple';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms'; // For ngModel
-import { columnStaticActions, RowSelectionMode, TableGrid } from './table-grid.interface';
+import {
+  columnStaticActions,
+  RowSelectionMode,
+  TableGrid,
+  TableSorting,
+} from './table-grid.interface';
 import { StandardButton } from '@zak-lib/ui-library/components/standardbutton';
 
 @Component({
@@ -43,13 +48,14 @@ export class TableGridComponent implements OnChanges {
   @Output() onEdit = new EventEmitter<any>();
   @Output() onView = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
-  @Output() onRowReorder = new EventEmitter<any>();
+  @Output() onRowReorder = new EventEmitter<TableSorting>();
   @Output() onColumnSort = new EventEmitter<any>();
 
   tableData: WritableSignal<any[]> = signal([]);
   selectedRows: any[] = [];
 
   private dataSubscription: Subscription | undefined;
+  private currentPage = 1;
 
   constructor() {}
 
@@ -104,6 +110,23 @@ export class TableGridComponent implements OnChanges {
         view: false,
       }
     );
+  }
+
+  public pageChangeCallback(page: TablePageEvent): void {
+    console.warn('page: ', page);
+  }
+
+  public rowsReOrderCallback(data: TableRowReorderEvent): void {
+    const tableData = this.tableData().map((row, index) => {
+      return {
+        id: (row?.id as number) || index + 1,
+        sortOrder: index,
+      };
+    });
+    this.onRowReorder.emit({
+      page: this.currentPage,
+      rows: tableData,
+    });
   }
 
   public get hasDynamicActions(): boolean {

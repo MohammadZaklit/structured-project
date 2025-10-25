@@ -184,7 +184,7 @@ export class FormWizardComponent implements OnInit, OnChanges {
     if (this.form.valid) {
       this.SubmitConfirmDialogConfig.accept = () => {
         this.httpService
-          .create(this.module.name, this.form.getRawValue())
+          .post(this.module.name, this.form.getRawValue())
           .pipe(take(1))
           .subscribe((response) => {
             this.successSubmit.emit(this.form.value);
@@ -202,7 +202,7 @@ export class FormWizardComponent implements OnInit, OnChanges {
       this.SubmitConfirmDialogConfig.accept = () => {
         if (this.data && this.data.id) {
           this.httpService
-            .update(this.module.name, this.data.id, this.form.getRawValue())
+            .put(this.module.name, this.data.id, this.form.getRawValue())
             .pipe(take(1))
             .subscribe((_response) => {
               this.successSubmit.emit(this.form.value);

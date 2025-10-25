@@ -29,3 +29,11 @@ export interface columnStaticActions {
 }
 
 export type RowSelectionMode = 'single' | 'multiple' | null;
+
+export interface TableSorting {
+  page: number;
+  rows: {
+    id: number;
+    sortOrder: number;
+  }[];
+}

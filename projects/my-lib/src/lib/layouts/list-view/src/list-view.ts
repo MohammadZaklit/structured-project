@@ -9,7 +9,11 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import { TableGrid, TableGridComponent } from '@zak-lib/ui-library/elements/ui/table-grid';
+import {
+  TableGrid,
+  TableGridComponent,
+  TableSorting,
+} from '@zak-lib/ui-library/elements/ui/table-grid';
 import { ListView, SearchParameters } from './list-view.interface';
 import { GenericRecord, HttpService } from '@zak-lib/ui-library/shared';
 import {
@@ -144,14 +148,8 @@ export class ListViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  reorderRowCallback(event: any) {
-    console.log('Row reordered:', event);
-    // Update your underlying data array to reflect the new order
-    //const draggedItem = this.data[event.dragIndex];
-    //this.data.splice(event.dragIndex, 1);
-    //this.data.splice(event.dropIndex, 0, draggedItem);
-    //this.tableData$ = of([...this.data]); // Create new observable to trigger change detection
-    //this.tableConfig.update((cfg) => ({ ...cfg!, data: this.tableData$ }));
+  public async reorderRowCallback(data: TableSorting) {
+    await firstValueFrom(this.httpService.post('sort/' + this.moduleName, data));
   }
 
   handleAdvancedSearch() {
