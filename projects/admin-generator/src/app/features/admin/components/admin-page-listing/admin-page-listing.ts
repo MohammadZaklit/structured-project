@@ -3,7 +3,7 @@ import { Component, EventEmitter, inject, OnInit, Output, signal } from '@angula
 import { TableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
 import { ListView, ListViewComponent } from '@zak-lib/ui-library/layouts/list-view';
 import { FieldConfig, GenericRecord, ModuleConfig } from '@zak-lib/ui-library/shared';
-import { components } from 'projects/admin-generator/src/app/shared/constants/components';
+import { COMPONENTS } from '../../../../shared/constants/components';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
 
 @Component({
@@ -55,7 +55,7 @@ export class AdminPageListing implements OnInit {
       fields.map((field) => {
         return Object.assign(field, {
           type:
-            components.find((component) => component.id === field['componentId'])?.componentName ??
+            COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
             'InputText',
           isSortable: true,
           enableFilter: true,

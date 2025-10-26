@@ -1,22 +1,12 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import {
   FormFieldConfig,
   FormWizardComponent,
   StepperConfig,
 } from '@zak-lib/ui-library/layouts/form-wizard';
 import { GenericRecord, HttpService, ModuleConfig } from '@zak-lib/ui-library/shared';
-import { components } from 'projects/admin-generator/src/app/shared/constants/components';
+import { COMPONENTS } from '../../../../shared/constants/components';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
 import { firstValueFrom } from 'rxjs';
 
@@ -48,7 +38,7 @@ export class AdminPageForm implements OnInit {
     this.dbFields = this.moduleSettings.fields().map((field) => {
       return Object.assign(field, {
         type:
-          components.find((component) => component.id === field['componentId'])?.componentName ??
+          COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
           'InputText',
         step: 1,
       });

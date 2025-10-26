@@ -1,4 +1,4 @@
-export const components = [
+export const COMPONENTS = [
   {
     id: 1,
     componentName: 'AutoComplete',

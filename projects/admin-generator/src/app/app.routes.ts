@@ -2,7 +2,7 @@
 import { Routes } from '@angular/router';
 import { inject } from '@angular/core';
 import { ThemeService } from './shared/services/theme.service';
-import { themes } from './shared/constants/themes';
+import { THEMES } from './shared/constants/themes';
 
 export const routes: Routes = [
   {
@@ -12,8 +12,7 @@ export const routes: Routes = [
       const themeService = inject(ThemeService);
       const theme = themeService.getCurrentTheme(); // e.g. 'default' | 'dark'
 
-      const themeRoutesModule = await (themes[theme] || themes['default']);
-      console.warn('themeRoutesModule: ', themeRoutesModule);
+      const themeRoutesModule = await (THEMES[theme] || THEMES['default']);
       return themeRoutesModule.routes;
     },
   },
