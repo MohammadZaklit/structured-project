@@ -311,8 +311,6 @@
               }
             ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/primeicons/primeicons.css",
               "projects/admin-generator/src/styles.scss"
             ]
           },

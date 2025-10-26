@@ -1,9 +1,0 @@
-{
-  "name": "admin-generator-api",
-  "version": "1.0.0",
-  "description": "Node.js API scripts for Admin Generator",
-  "dependencies": {
-    "@supabase/supabase-js": "^2.57.4",
-    "dotenv": "^16.4.7"
-  }
-}
