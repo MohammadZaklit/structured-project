@@ -1,17 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { InputElement, inputInterface } from '@zak-lib/ui-library/elements/input';
-import { nameInterface } from './name.interface';
+import { NzInput, NzInputComponent } from '@zak-lib/ui-library/elements/input';
+import { NzInputName } from './name.interface';
 
 @Component({
-  selector: 'lib-name',
-  imports: [InputElement],
+  selector: 'nz-name',
+  imports: [NzInputComponent],
   templateUrl: './name.html',
   styleUrl: './name.scss',
 })
 export class Name implements OnInit {
-  @Input() public config!: nameInterface;
-  public nameconfig!: inputInterface;
+  @Input() public config!: NzInputName;
+  public nameconfig!: NzInput;
   ngOnInit(): void {
-    this.nameconfig = this.config as inputInterface;
+    this.nameconfig = this.config as NzInput;
   }
 }

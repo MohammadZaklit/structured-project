@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { UploadFile } from '@zak-lib/ui-library/elements/upload-file';
 @Component({
-  selector: 'lib-standarduploadfile',
+  selector: 'nz-standarduploadfile',
   imports: [UploadFile],
   templateUrl: './standarduploadfile.html',
   styleUrl: './standarduploadfile.css',

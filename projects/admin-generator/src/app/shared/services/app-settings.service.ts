@@ -1,14 +1,14 @@
 import { inject, Injectable } from '@angular/core';
-import { GenericRecord, HttpService } from '@zak-lib/ui-library/shared';
+import { NzGenericRecord, NzHttpService } from '@zak-lib/ui-library/shared';
 import { Observable } from 'rxjs';
 import { CONSTANTS } from '../constants/constants';
 
 @Injectable()
 export class AppSettingsService {
-  private httpService = inject(HttpService);
+  private httpService = inject(NzHttpService);
   constructor() {}
 
-  getMenuItems(): Observable<GenericRecord[]> {
+  getMenuItems(): Observable<NzGenericRecord[]> {
     return this.httpService.getAll(CONSTANTS.MAIN_MODULE.NAME);
   }
 }

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { DatePicker } from '@zak-lib/ui-library/elements/date-picker/date-picker';
+import { NzDatePicker } from '@zak-lib/ui-library/elements/date-picker/date-picker';
 
 @Component({
-  selector: 'lib-standardatepicker',
-  imports: [DatePicker],
+  selector: 'nz-standardatepicker',
+  imports: [NzDatePicker],
   templateUrl: './standardatepicker.html',
   styleUrl: './standardatepicker.css',
 })

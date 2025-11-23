@@ -1,16 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { inputInterface } from './input.interface';
+import { NzInput } from './input.interface';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputGroupModule } from 'primeng/inputgroup';
 @Component({
-  selector: 'lib-input',
+  selector: 'nz-input',
   imports: [FormsModule, InputTextModule, InputGroupModule],
   templateUrl: './input.html',
   styleUrl: './input.scss',
 })
-export class InputElement implements OnInit {
-  @Input() public config!: inputInterface;
+export class NzInputComponent implements OnInit {
+  @Input() public config!: NzInput;
 
   public textstyle: string = '';
 

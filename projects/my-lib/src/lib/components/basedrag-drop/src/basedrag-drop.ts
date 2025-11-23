@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { DragDrop } from '@zak-lib/ui-library/elements/drag-drop';
+import { NzDragDrop } from '@zak-lib/ui-library/elements/drag-drop';
 @Component({
-  selector: 'lib-basedrag-drop',
-  imports: [DragDrop],
+  selector: 'nz-basedrag-drop',
+  imports: [NzDragDrop],
   templateUrl: './basedrag-drop.html',
   styleUrl: './basedrag-drop.css',
 })

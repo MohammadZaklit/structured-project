@@ -4,13 +4,13 @@ import { FileUpload } from 'primeng/fileupload';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 @Component({
-  selector: 'lib-upload-file',
+  selector: 'nz-upload-file',
   imports: [FileUpload, HttpClientModule, CommonModule],
   templateUrl: './upload-file.html',
   styleUrls: ['./upload-file.css'],
   providers: [MessageService],
 })
-export class UploadFile {
+export class NzUploadFileComponent {
   @Output() onSelect = new EventEmitter<any>();
   currentImage!: string | ArrayBuffer | null;
   @Output() imageSelected = new EventEmitter<string | ArrayBuffer | null>();

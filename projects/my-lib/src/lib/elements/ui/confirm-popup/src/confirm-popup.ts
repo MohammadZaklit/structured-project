@@ -2,17 +2,17 @@ import { Component, Input } from '@angular/core';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { ConfirmPopupConfig } from './confirm-popup.interface';
+import { NzConfirmPopup } from './confirm-popup.interface';
 @Component({
-  selector: 'lib-confirm-popup',
+  selector: 'nz-confirm-popup',
   imports: [ButtonModule, ConfirmPopupModule],
   providers: [ConfirmationService],
   templateUrl: './confirm-popup.html',
   styleUrl: './confirm-popup.css',
   standalone: true,
 })
-export class ConfirmPopupComponent {
-  @Input() public config!: ConfirmPopupConfig;
+export class NzConfirmPopupComponent {
+  @Input() public config!: NzConfirmPopup;
 
   constructor(private confirmationService: ConfirmationService) {}
 

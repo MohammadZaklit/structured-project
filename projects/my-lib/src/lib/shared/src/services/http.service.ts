@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../../../../admin-generator/src/app/environments/environment';
-import { GenericRecord } from '@zak-lib/ui-library/shared';
+import { NzGenericRecord } from '@zak-lib/ui-library/shared';
 
 @Injectable({
   providedIn: 'root',
 })
-export class HttpService {
+export class NzHttpService {
   private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
@@ -30,7 +30,7 @@ export class HttpService {
    * @param payload The data for the new record.
    * @returns An Observable of the created record.
    */
-  post<T extends GenericRecord>(moduleName: string, payload: T): Observable<T> {
+  post<T extends NzGenericRecord>(moduleName: string, payload: T): Observable<T> {
     return this.http.post<T>(`${this.apiUrl}/${moduleName}`, payload, this.getHttpOptions());
   }
 
@@ -41,9 +41,9 @@ export class HttpService {
    * @param searchParams Optional object for query parameters (e.g., { firstName: 'John', age: 30 }).
    * @returns An Observable of an array of records.
    */
-  getAll<T extends GenericRecord>(
+  getAll<T extends NzGenericRecord>(
     moduleName: string,
-    searchParams?: { [key: string]: any }
+    searchParams?: { [key: string]: any },
   ): Observable<T[]> {
     let params = new HttpParams();
     if (searchParams) {
@@ -71,7 +71,7 @@ export class HttpService {
    * @param id The ID of the record to retrieve.
    * @returns An Observable of the single record.
    */
-  getById<T extends GenericRecord>(moduleName: string, id: string | number): Observable<T> {
+  getById<T extends NzGenericRecord>(moduleName: string, id: string | number): Observable<T> {
     // Assuming your Node.js GET /api/:moduleName endpoint handles `id` as a search parameter
     // Or you can directly call /api/:moduleName/:id if your backend supports it.
     // For now, let's use the search parameter approach as per `getRecords` in Node.js.
@@ -91,7 +91,7 @@ export class HttpService {
    * @param payload The updated data for the record.
    * @returns An Observable of the updated record.
    */
-  put<T extends GenericRecord>(moduleName: string, id: number, payload: T): Observable<T> {
+  put<T extends NzGenericRecord>(moduleName: string, id: number, payload: T): Observable<T> {
     return this.http.put<T>(`${this.apiUrl}/${moduleName}/${id}`, payload, this.getHttpOptions());
   }
 

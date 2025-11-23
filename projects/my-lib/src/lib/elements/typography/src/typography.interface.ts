@@ -1,4 +1,4 @@
-export interface typography {
+export interface NzTypography {
   id: string;
   label: string;
   textstyle?:

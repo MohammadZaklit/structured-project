@@ -8,7 +8,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from './environment';
 import { CardModule } from 'primeng/card';
 @Component({
-  selector: 'lib-account-page',
+  selector: 'nz-account-page',
   imports: [Buttons, Paragraph, CardModule],
   templateUrl: './account-page.html',
   styleUrl: './account-page.css',

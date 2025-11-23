@@ -19,7 +19,7 @@ import { InputElement } from '@zak-lib/ui-library/elements/input';
   providedIn: 'root',
 })
 @Component({
-  selector: 'lib-register-card',
+  selector: 'nz-register-card',
   imports: [Buttons, Heading, PhoneNumber, Email, Password, InputElement],
   templateUrl: './register-card.html',
   styleUrl: './register-card.scss',
@@ -37,7 +37,10 @@ export class RegisterCard {
   password: string = '';
   name: string = '';
   form!: FormGroup;
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+  ) {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
   }
   ngOnInit(): void {
@@ -151,7 +154,7 @@ export class RegisterCard {
       await this.insertUser(
         this.emailconfig.value!,
         this.passwordconfig.value!,
-        this.nameconfig.value!
+        this.nameconfig.value!,
       );
 
       this.message = 'Account created successfully!';

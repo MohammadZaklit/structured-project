@@ -10,12 +10,12 @@ import {
   WritableSignal,
 } from '@angular/core';
 import {
-  TableGrid,
-  TableGridComponent,
-  TableSorting,
+  NzTableGrid,
+  NzTableGridComponent,
+  NzTableSorting,
 } from '@zak-lib/ui-library/elements/ui/table-grid';
-import { ListView, SearchParameters } from './list-view.interface';
-import { GenericRecord, HttpService } from '@zak-lib/ui-library/shared';
+import { NzListView, NzSearchParameters } from './list-view.interface';
+import { NzGenericRecord, NzHttpService } from '@zak-lib/ui-library/shared';
 import {
   BehaviorSubject,
   combineLatest,
@@ -26,24 +26,32 @@ import {
   startWith,
   Subject,
   switchMap,
+  take,
 } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { FormsModule } from '@angular/forms';
 import {
-  ConfirmPopupComponent,
-  ConfirmPopupConfig,
+  NzConfirmPopupComponent,
+  NzConfirmPopup,
 } from '@zak-lib/ui-library/elements/ui/confirm-popup';
+import { ToolbarModule } from 'primeng/toolbar';
 @Component({
-  selector: 'lib-list-view',
-  imports: [TableGridComponent, ButtonModule, TooltipModule, FormsModule, ConfirmPopupComponent],
+  selector: 'nz-list-view',
+  imports: [
+    NzTableGridComponent,
+    ButtonModule,
+    TooltipModule,
+    FormsModule,
+    ToolbarModule,
+    NzConfirmPopupComponent,
+  ],
   templateUrl: './list-view.html',
   styleUrl: './list-view.css',
 })
-export class ListViewComponent implements OnInit, OnDestroy {
-  @Input() public config: WritableSignal<ListView | undefined> = signal(undefined);
-  public tableConfig: WritableSignal<TableGrid | undefined> = signal(undefined);
-  tableData: WritableSignal<any[]> = signal([]);
+export class NzListViewComponent implements OnInit, OnDestroy {
+  @Input() public config: WritableSignal<NzListView | undefined> = signal(undefined);
+  public tableConfig: WritableSignal<NzTableGrid | undefined> = signal(undefined);
   @Output() onAdvancedSearch = new EventEmitter<void>();
   @Output() addBtnClick = new EventEmitter<void>();
   @Output() editBtnClick = new EventEmitter<any>();
@@ -53,11 +61,11 @@ export class ListViewComponent implements OnInit, OnDestroy {
   private displayDialog = false;
 
   public quickSearchValue: string = '';
-  private httpService = inject(HttpService);
-  private searchParameters$ = new BehaviorSubject<SearchParameters>({});
+  private httpService = inject(NzHttpService);
+  private searchParameters$ = new BehaviorSubject<NzSearchParameters>({});
   private reload$ = new Subject<void>();
 
-  public DeleteConfirmPopupConfig!: ConfirmPopupConfig;
+  public DeleteConfirmPopupConfig!: NzConfirmPopup;
 
   constructor() {}
 
@@ -77,10 +85,14 @@ export class ListViewComponent implements OnInit, OnDestroy {
 
   exportExcel() {
     import('xlsx').then((xlsx) => {
-      const worksheet = xlsx.utils.json_to_sheet(this.tableData());
-      const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-      this.saveAsExcelFile(excelBuffer, this.config()?.exportFileName || 'table_data');
+      this.config()
+        ?.table.data?.pipe(take(1))
+        .subscribe((data) => {
+          const worksheet = xlsx.utils.json_to_sheet(data);
+          const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+          const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+          this.saveAsExcelFile(excelBuffer, this.config()?.exportFileName || 'table_data');
+        });
     });
   }
 
@@ -118,7 +130,7 @@ export class ListViewComponent implements OnInit, OnDestroy {
     // this.displayDialog = false;
   }
 
-  editRowCallback(rowData: GenericRecord) {
+  editRowCallback(rowData: NzGenericRecord) {
     this.editBtnClick.emit(rowData);
   }
 
@@ -127,7 +139,7 @@ export class ListViewComponent implements OnInit, OnDestroy {
     // Implement your view logic here
   }
 
-  public deleteRowCallback(event: { event: Event; rowData: GenericRecord }): void {
+  public deleteRowCallback(event: { event: Event; rowData: NzGenericRecord }): void {
     this.DeleteConfirmPopupConfig.accept = () => {
       this.deleteRow(event.rowData);
     };
@@ -138,9 +150,9 @@ export class ListViewComponent implements OnInit, OnDestroy {
     this.DeleteConfirmPopupConfig.confirm?.(event.event);
   }
 
-  private async deleteRow(rowData: GenericRecord): Promise<void> {
+  private async deleteRow(rowData: NzGenericRecord): Promise<void> {
     const response = await firstValueFrom(
-      this.httpService.delete(this.moduleName, rowData.id || 0)
+      this.httpService.delete(this.moduleName, rowData.id || 0),
     );
     if (response) {
       this.loadData();
@@ -148,7 +160,7 @@ export class ListViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  public async reorderRowCallback(data: TableSorting) {
+  public async reorderRowCallback(data: NzTableSorting) {
     await firstValueFrom(this.httpService.post('sort/' + this.moduleName, data));
   }
 
@@ -200,10 +212,12 @@ export class ListViewComponent implements OnInit, OnDestroy {
     this.displayDialog = true;
   }
 
-  public showEditDialog(row: GenericRecord): void {
+  public showEditDialog(row: NzGenericRecord): void {
     this.isEditMode = true;
     this.displayDialog = true;
   }
+
+  public bulkDelete(): void {}
 
   // public async saveProject(): Promise<void> {
   //   if (!this.row['project_name'].trim()) {

@@ -1,1 +1,1 @@
-export interface dragdropInterface {}
+export interface NzDragdropInterface {}

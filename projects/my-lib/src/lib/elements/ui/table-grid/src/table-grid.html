@@ -1,128 +1,172 @@
 <p-table
   #dt
   [value]="tableData()"
-  [paginator]="config()?.paginator ?? false"
+  [paginator]="tableData().length > (config()?.rows ?? 10) && (config()?.paginator ?? false)"
   [rows]="config()?.rows ?? 10"
   [showCurrentPageReport]="config()?.showCurrentPageReport ?? true"
   [rowsPerPageOptions]="config()?.rowsPerPageOptions ?? [10, 25, 50]"
   (onRowReorder)="rowsReOrderCallback($event)"
   (onPage)="pageChangeCallback($event)"
   [selectionMode]="selectionMode"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
   [(selection)]="selectedRows"
   dataKey="id"
-  [lazy]="true"
-  (onLazyLoad)="onLazyLoad($event)"
   [globalFilterFields]="globalFilterFields"
   (onSort)="onColumnSort.emit($event)"
 >
+  @if (config()?.title || config()?.showQuickSearch) {
+    <ng-template #caption>
+      <div class="flex items-center justify-between">
+        @if (config()?.title) {
+          <h5 class="m-0">{{ config()?.title }}</h5>
+        }
+        @if (config()?.showQuickSearch) {
+          <p-iconfield>
+            <p-inputicon styleClass="pi pi-search" />
+            <input
+              pInputText
+              type="text"
+              (input)="onGlobalFilter(dt, $event)"
+              placeholder="Search..."
+            />
+          </p-iconfield>
+        }
+      </div>
+    </ng-template>
+  }
   <ng-template pTemplate="header">
     <tr>
       @if (selectionMode === 'multiple') {
-      <th style="width: 3rem">
-        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-      </th>
-      } @if (sortableRows) {
-      <th style="width: 3rem"></th>
-      } @for (col of config()?.columns; track col.name) {
-      <th [pSortableColumn]="enableColumnSorting && col?.isSortable ? col.name : undefined">
-        {{ col.label }}
-        @if (config()?.enableColumnSorting && col?.isSortable !== false) {
-        <p-sortIcon [field]="col.name"></p-sortIcon>
-        }
-      </th>
-      } @if (enableStaticActions || hasDynamicActions) {
-      <th>Actions</th>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+      }
+      @if (sortableRows) {
+        <th style="width: 3rem"></th>
+      }
+      @for (col of config()?.columns; track col.name) {
+        <th [pSortableColumn]="enableColumnSorting && col?.isSortable ? col.name : undefined">
+          {{ col.label }}
+          @if (config()?.enableColumnSorting && col?.isSortable !== false) {
+            <p-sortIcon [field]="col.name"></p-sortIcon>
+          }
+        </th>
+      }
+      @if (enableStaticActions || hasDynamicActions) {
+        <th>Actions</th>
       }
     </tr>
     @if (shouldApplyFilter()) {
-    <tr>
-      @if (selectionMode === 'multiple') {
-      <th></th>
-      } @if (sortableRows) {
-      <th></th>
-      } @for (col of config()?.columns; track col.name) {
-      <th>
-        @if (col.enableFilter) {
-        <input
-          pInputText
-          type="text"
-          (input)="dt.filter($event.target.value, col.name, 'contains')"
-          [placeholder]="'Search ' + col.label"
-          class="w-full"
-        />
+      <tr>
+        @if (selectionMode === 'multiple') {
+          <th></th>
         }
-      </th>
-      } @if (enableStaticActions || hasDynamicActions) {
-      <th></th>
-      }
-    </tr>
+        @if (sortableRows) {
+          <th></th>
+        }
+        @for (col of config()?.columns; track col.name) {
+          <th>
+            @if (col.enableFilter) {
+              <input
+                pInputText
+                type="text"
+                (input)="dt.filter($event.target.value, col.name, 'contains')"
+                [placeholder]="'Search ' + col.label"
+                class="w-full"
+              />
+            }
+          </th>
+        }
+        @if (enableStaticActions || hasDynamicActions) {
+          <th></th>
+        }
+      </tr>
     }
   </ng-template>
   <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
     <tr [pSelectableRow]="rowData" [pReorderableRow]="rowIndex">
       @if (selectionMode === 'multiple') {
-      <td>
-        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
-      </td>
-      } @if (sortableRows) {
-      <td>
-        <i class="pi pi-bars" pReorderableRowHandle></i>
-      </td>
-      } @for (col of config()?.columns; track col.name) {
-      <td>
-        @switch (col.type) { @case ('date') {
-        {{ rowData[col.name] | date : 'shortDate' }}
-        } @case ('number') {
-        {{ rowData[col.name] | number }}
-        } @case ('long-string') {
-        <span [pTooltip]="rowData[col.name]" tooltipPosition="bottom">
-          {{ (rowData[col.name] | slice : 0 : 50) + (rowData[col.name].length > 50 ? '...' : '') }}
-        </span>
-        } @default {
-        {{ rowData[col.name] }}
-        } }
-      </td>
-      } @if (enableStaticActions || hasDynamicActions) {
-      <td>
-        <div class="flex gap-2">
-          @if (staticActions().edit) {
-          <p-button
-            icon="pi pi-pencil"
-            styleClass="p-button-sm p-button-info"
-            (onClick)="onEdit.emit(rowData)"
-            pTooltip="Edit"
-            tooltipPosition="bottom"
-          ></p-button>
-          } @if (staticActions().view) {
-          <p-button
-            icon="pi pi-eye"
-            styleClass="p-button-sm p-button-secondary"
-            (onClick)="onView.emit(rowData)"
-            pTooltip="View"
-            tooltipPosition="bottom"
-          ></p-button>
-          } @if (staticActions().delete) {
-          <p-button
-            icon="pi pi-trash"
-            styleClass="p-button-sm p-button-danger"
-            (onClick)="onDelete.emit({ event: $event, rowData: rowData })"
-            pTooltip="Delete"
-            tooltipPosition="bottom"
-          ></p-button>
-          } @for (action of dynamicActions(); track action.label) { @if (!action.visible ||
-          action.visible(rowData)) {
-          <p-button
-            [icon]="action.icon || ''"
-            [label]="action.label"
-            (onClick)="action.onclick(rowData)"
-            [styleClass]="'p-button-sm ' + (action.styleClass || '')"
-            [pTooltip]="action.tooltip || action.label"
-            tooltipPosition="bottom"
-            [disabled]="action.disabled && action.disabled(rowData)"
-          ></p-button>
-          } }
-        </div>
-      </td>
+        <td>
+          <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+        </td>
+      }
+      @if (sortableRows) {
+        <td>
+          <i class="pi pi-bars" pReorderableRowHandle></i>
+        </td>
+      }
+      @for (col of config()?.columns; track col.name) {
+        <td>
+          @switch (col.type) {
+            @case ('date') {
+              {{ rowData[col.name] | date: 'shortDate' }}
+            }
+            @case ('number') {
+              {{ rowData[col.name] | number }}
+            }
+            @case ('long-string') {
+              <span [pTooltip]="rowData[col.name]" tooltipPosition="bottom">
+                {{
+                  (rowData[col.name] | slice: 0 : 50) + (rowData[col.name].length > 50 ? '...' : '')
+                }}
+              </span>
+            }
+            @default {
+              {{ rowData[col.name] }}
+            }
+          }
+        </td>
+      }
+      @if (enableStaticActions || hasDynamicActions) {
+        <td>
+          <div class="flex gap-2">
+            @if (staticActions().edit) {
+              <p-button
+                icon="pi pi-pencil"
+                [rounded]="true"
+                [outlined]="true"
+                (onClick)="onEdit.emit(rowData)"
+                pTooltip="Edit"
+                tooltipPosition="bottom"
+              ></p-button>
+            }
+
+            @if (staticActions().view) {
+              <p-button
+                icon="pi pi-eye"
+                [rounded]="true"
+                [outlined]="true"
+                (onClick)="onView.emit(rowData)"
+                pTooltip="View"
+                tooltipPosition="bottom"
+              ></p-button>
+            }
+            @if (staticActions().delete) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [rounded]="true"
+                [outlined]="true"
+                (onClick)="onDelete.emit({ event: $event, rowData: rowData })"
+                pTooltip="Delete"
+                tooltipPosition="bottom"
+              ></p-button>
+            }
+            @for (action of dynamicActions(); track action.label) {
+              @if (!action.visible || action.visible(rowData)) {
+                <p-button
+                  [icon]="action.icon || ''"
+                  [label]="action.label"
+                  (onClick)="action.onclick(rowData)"
+                  [styleClass]="'p-button-sm ' + (action.styleClass || '')"
+                  [pTooltip]="action.tooltip || action.label"
+                  tooltipPosition="bottom"
+                  [disabled]="action.disabled && action.disabled(rowData)"
+                ></p-button>
+              }
+            }
+          </div>
+        </td>
       }
     </tr>
   </ng-template>
@@ -130,16 +174,5 @@
     <tr>
       <td [attr.colspan]="getColspan()">No records found.</td>
     </tr>
-  </ng-template>
-  <ng-template pTemplate="summary">
-    @if (selectionMode && selectedRows.length > 0) {
-    <div class="flex align-items-center justify-content-end">
-      Total rows: {{ tableData().length }} records. Selected: {{ selectedRows.length }}
-    </div>
-    } @else {
-    <div class="flex align-items-center justify-content-end">
-      Total rows: {{ tableData().length }} records.
-    </div>
-    }
   </ng-template>
 </p-table>

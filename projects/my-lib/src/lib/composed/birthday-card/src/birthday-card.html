@@ -1,18 +1,18 @@
 <div class="flex justify-content-center align-items-center min-h-screen flex-column gap-4">
   <!-- Form to create card -->
-  <lib-standard-card class="w-11 md:w-6 lg:w-4 p-4 shadow-3 border-round">
-    <lib-paragraph [config]="messageconfig"></lib-paragraph>
+  <nz-standard-card class="w-11 md:w-6 lg:w-4 p-4 shadow-3 border-round">
+    <nz-paragraph [config]="messageconfig"></nz-paragraph>
 
-    <lib-standardtextarea (input)="onTextAreaInput($event)"></lib-standardtextarea>
-    <lib-standarduploadfile (imageSelected)="onImageSelected($event)"></lib-standarduploadfile>
+    <nz-standardtextarea (input)="onTextAreaInput($event)"></nz-standardtextarea>
+    <nz-standarduploadfile (imageSelected)="onImageSelected($event)"></nz-standarduploadfile>
 
     <!-- Button -->
-    <lib-buttons [config]="createcard" class="flex justify-content-end pt-2"></lib-buttons>
-  </lib-standard-card>
+    <nz-buttons [config]="createcard" class="flex justify-content-end pt-2"></nz-buttons>
+  </nz-standard-card>
 
   <!-- Display created birthday cards -->
   <div class="birthday-cards-container">
-    <lib-standard-card *ngFor="let card of birthdayCards" class="birthday-card">
+    <nz-standard-card *ngFor="let card of birthdayCards" class="birthday-card">
       <div class="card-image-container" *ngIf="card.image">
         <img [src]="card.image" alt="Birthday Image" class="card-image" />
       </div>
@@ -22,6 +22,6 @@
       <div class="card-footer">
         <button class="btn btn-primary">Send Wishes</button>
       </div>
-    </lib-standard-card>
+    </nz-standard-card>
   </div>
 </div>

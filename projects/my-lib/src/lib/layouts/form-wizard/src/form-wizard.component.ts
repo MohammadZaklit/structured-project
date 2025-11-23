@@ -42,25 +42,28 @@ import { TreeSelectModule } from 'primeng/treeselect';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputGroupModule } from 'primeng/inputgroup';
-import { FormFieldConfig, StepperConfig } from './form-wizard.interface';
+import { NzFormFieldConfig, NzStepperConfig } from './form-wizard.interface';
 import { DatePickerModule } from 'primeng/datepicker';
-import { GenericRecord, HttpService, ModuleConfig } from '@zak-lib/ui-library/shared';
+import { NzGenericRecord, NzHttpService, NzModuleConfig } from '@zak-lib/ui-library/shared';
 import {
-  ConfirmDialogComponent,
-  ConfirmDialogConfig,
+  NzConfirmDialogComponent,
+  NzConfirmDialog,
 } from '@zak-lib/ui-library/elements/ui/confirm-dialog';
+import { FluidModule } from 'primeng/fluid';
+import { CdkDragPlaceholder } from '@angular/cdk/drag-drop';
+import { NzAutocomplete } from '@zak-lib/ui-library/elements/form-fields/autocomplete';
 
 @Component({
-  selector: 'lib-form-wizard',
+  selector: 'nz-form-wizard',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     StepperModule,
+
+    ReactiveFormsModule,
     InputTextModule,
     CheckboxModule,
     RadioButtonModule,
-    AutoCompleteModule,
     //EditorModule,
     PasswordModule,
     SliderModule,
@@ -86,26 +89,32 @@ import {
     IconFieldModule,
     InputGroupModule,
     DatePickerModule,
-    ConfirmDialogComponent,
+    NzConfirmDialogComponent,
+    FluidModule,
+    CdkDragPlaceholder,
+    NzAutocomplete,
   ],
   templateUrl: './form-wizard.component.html',
   styleUrls: ['./form-wizard.component.scss'],
 })
-export class FormWizardComponent implements OnInit, OnChanges {
-  @Input() fields: FormFieldConfig[] = [];
-  @Input() stepperConfig!: StepperConfig;
-  @Input() module!: ModuleConfig;
-  @Input() public data?: GenericRecord;
+export class NzFormWizardComponent implements OnInit, OnChanges {
+  @Input() fields: NzFormFieldConfig[] = [];
+  @Input() stepperConfig!: NzStepperConfig;
+  @Input() module!: NzModuleConfig;
+  @Input() public data?: NzGenericRecord;
   @Output() successSubmit = new EventEmitter<any>();
-  private httpService = inject(HttpService);
+  private httpService = inject(NzHttpService);
   form!: FormGroup;
   steps: any[] = [];
   activeStep = 0;
   public isEdit = false;
 
-  public SubmitConfirmDialogConfig!: ConfirmDialogConfig;
+  public SubmitConfirmDialogConfig!: NzConfirmDialog;
 
-  constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('data' in changes && changes['data']) {
@@ -121,7 +130,7 @@ export class FormWizardComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.steps = this.stepperConfig?.steps || [{ label: 'Form' }];
     this.buildForm();
-    this.handleDynamicLogic();
+    //this.handleDynamicLogic();
 
     this.SubmitConfirmDialogConfig = {
       title: 'Submit Confirmation',
@@ -129,51 +138,51 @@ export class FormWizardComponent implements OnInit, OnChanges {
     };
   }
 
-  private fillForm(data: GenericRecord): void {
+  private fillForm(data: NzGenericRecord): void {
     this.form.patchValue(data);
   }
 
   buildForm() {
     const group: any = {};
-    this.fields.forEach((f) => {
-      group[f.name] = [{ value: f.value ?? '', disabled: false }, []];
-      if (typeof f.required === 'boolean' && f.required) group[f.name][1].push(Validators.required);
-      if (f.pattern) group[f.name][1].push(Validators.pattern(f.pattern));
-    });
+    // this.fields.forEach((f) => {
+    //   group[f.name] = [{ value: f.value ?? '', disabled: false }, []];
+    //   if (typeof f.required === 'boolean' && f.required) group[f.name][1].push(Validators.required);
+    //   if (f.pattern) group[f.name][1].push(Validators.pattern(f.pattern));
+    // });
     this.form = this.fb.group(group);
   }
 
-  handleDynamicLogic() {
-    this.form.valueChanges.pipe(debounceTime(300)).subscribe((value) => {
-      this.fields.forEach((f) => {
-        const control = this.form.get(f.name);
+  // handleDynamicLogic() {
+  //   this.form.valueChanges.pipe(debounceTime(300)).subscribe((value) => {
+  //     this.fields.forEach((f) => {
+  //       const control = this.form.get(f.name);
 
-        if (typeof f.disabled === 'function') {
-          const disabled = f.disabled(value);
-          disabled ? control?.disable({ emitEvent: false }) : control?.enable({ emitEvent: false });
-        }
+  //       if (typeof f.disabled === 'function') {
+  //         const disabled = f.disabled(value);
+  //         disabled ? control?.disable({ emitEvent: false }) : control?.enable({ emitEvent: false });
+  //       }
 
-        f.visible = typeof f.visible === 'function' ? f.visible(value) : true;
+  //       f.visible = typeof f.visible === 'function' ? f.visible(value) : true;
 
-        if (typeof f.required === 'function') {
-          const required = f.required(value);
-          if (required && !control?.hasValidator(Validators.required))
-            control?.addValidators(Validators.required);
-          else if (!required && control?.hasValidator(Validators.required))
-            control?.removeValidators(Validators.required);
-          control?.updateValueAndValidity({ emitEvent: false });
-        }
-      });
-      this.cdr.detectChanges();
-    });
-  }
+  //       if (typeof f.required === 'function') {
+  //         const required = f.required(value);
+  //         if (required && !control?.hasValidator(Validators.required))
+  //           control?.addValidators(Validators.required);
+  //         else if (!required && control?.hasValidator(Validators.required))
+  //           control?.removeValidators(Validators.required);
+  //         control?.updateValueAndValidity({ emitEvent: false });
+  //       }
+  //     });
+  //     this.cdr.detectChanges();
+  //   });
+  // }
 
-  async validateAPI(field: FormFieldConfig) {
-    if (field.apiValidate) {
-      const isValid = await field.apiValidate(this.form.get(field.name)?.value);
-      if (!isValid) this.form.get(field.name)?.setErrors({ api: true });
-    }
-  }
+  // async validateAPI(field: NzFormFieldConfig) {
+  //   if (field.apiValidate) {
+  //     const isValid = await field.apiValidate(this.form.get(field.name)?.value);
+  //     if (!isValid) this.form.get(field.name)?.setErrors({ api: true });
+  //   }
+  // }
 
   getFieldsForStep(stepIndex: number) {
     //return this.fields.filter((f) => f.step === stepIndex && f.visible !== false);

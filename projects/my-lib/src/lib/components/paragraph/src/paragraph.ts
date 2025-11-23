@@ -1,17 +1,17 @@
 import { Component, Input } from '@angular/core';
-import { typography, Typography } from '@zak-lib/ui-library/elements/typography';
-import { paragraph } from './paragraph.interface';
+import { NzTypographyComponent, NzTypography } from '@zak-lib/ui-library/elements/typography';
+import { NzParagraph } from './paragraph.interface';
 
 @Component({
-  selector: 'lib-paragraph',
-  imports: [Typography],
+  selector: 'nz-paragraph',
+  imports: [NzTypographyComponent],
   templateUrl: './paragraph.html',
   styleUrl: './paragraph.css',
 })
 export class Paragraph {
-  @Input() public config!: typography;
-  public paragraphconfig!: paragraph;
+  @Input() public config!: NzTypography;
+  public paragraphconfig!: NzParagraph;
   ngOnInit() {
-    this.paragraphconfig = this.config as typography;
+    this.paragraphconfig = this.config as NzTypography;
   }
 }

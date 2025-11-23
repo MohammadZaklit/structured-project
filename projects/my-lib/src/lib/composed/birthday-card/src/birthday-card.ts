@@ -13,7 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { StandardCard } from '@zak-lib/ui-library/components/standard-card';
 
 @Component({
-  selector: 'lib-birthday-card',
+  selector: 'nz-birthday-card',
   imports: [
     Buttons,
     Paragraph,

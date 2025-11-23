@@ -1,3 +1,3 @@
-import { inputInterface } from '@zak-lib/ui-library/elements/input';
+import { NzInput } from '@zak-lib/ui-library/elements/input';
 
-export interface nameInterface extends inputInterface {}
+export interface NzInputName extends NzInput {}

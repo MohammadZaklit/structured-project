@@ -2,22 +2,22 @@
   <!-- Card -->
   <div class="surface-card shadow-2 border-round p-6 w-full md:w-6 lg:w-4 flex flex-column gap-4">
     <!-- Heading -->
-    <lib-heading class="sign-title" [config]="headingconfig"></lib-heading>
+    <nz-heading class="sign-title" [config]="headingconfig"></nz-heading>
 
     <!-- Paragraph / Subtitle -->
-    <lib-paragraph class="sign-subtitle" [config]="paragraphconfig"></lib-paragraph>
+    <nz-paragraph class="sign-subtitle" [config]="paragraphconfig"></nz-paragraph>
 
     <!-- Inputs -->
     <div class="flex flex-column gap-3">
-      <lib-input [config]="emailconfig"></lib-input>
-      <lib-input [config]="passwordconfig"></lib-input>
+      <nz-input [config]="emailconfig"></nz-input>
+      <nz-input [config]="passwordconfig"></nz-input>
     </div>
 
     <!-- Buttons -->
     <div class="flex flex-column sm:flex-row gap-2 justify-content-between">
-      <lib-buttons [config]="loginconfig"></lib-buttons>
-      <lib-buttons (click)="goToRegister()" [config]="gotoregisterconfig"></lib-buttons>
-      <lib-buttons (click)="goTohome()" [config]="gotohomeconfig"></lib-buttons>
+      <nz-buttons [config]="loginconfig"></nz-buttons>
+      <nz-buttons (click)="goToRegister()" [config]="gotoregisterconfig"></nz-buttons>
+      <nz-buttons (click)="goTohome()" [config]="gotohomeconfig"></nz-buttons>
     </div>
   </div>
 </div>

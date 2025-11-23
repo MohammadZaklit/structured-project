@@ -1,4 +1,4 @@
-export interface inputInterface {
+export interface NzInput {
   id: string;
   type?: 'email' | 'password' | 'text';
   label: string;

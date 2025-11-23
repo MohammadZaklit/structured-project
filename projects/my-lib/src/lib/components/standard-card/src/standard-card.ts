@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { BaseCard } from '@zak-lib/ui-library/elements/base-card';
+import { NzBaseCard } from '@zak-lib/ui-library/elements/base-card';
 
 @Component({
-  selector: 'lib-standard-card',
-  imports: [BaseCard],
+  selector: 'nz-standard-card',
+  imports: [NzBaseCard],
   templateUrl: './standard-card.html',
   styleUrl: './standard-card.css',
 })

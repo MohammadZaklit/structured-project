@@ -13,7 +13,7 @@ import SupabaseClient from '@supabase/supabase-js/dist/module/SupabaseClient';
 import { createClient } from '@supabase/supabase-js';
 import { environment } from './environment';
 @Component({
-  selector: 'lib-login-card',
+  selector: 'nz-login-card',
   imports: [Buttons, InputElement, Heading, Paragraph],
   templateUrl: './login-card.html',
   styleUrl: './login-card.scss',

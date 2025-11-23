@@ -1,31 +1,36 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { FieldConfig, GenericRecord, HttpService, ModuleConfig } from '@zak-lib/ui-library/shared';
+import {
+  NzFieldConfig,
+  NzGenericRecord,
+  NzHttpService,
+  NzModuleConfig,
+} from '@zak-lib/ui-library/shared';
 import { firstValueFrom } from 'rxjs';
-import { FormFieldConfig } from '@zak-lib/ui-library/layouts/form-wizard';
+import { NzFormFieldConfig } from '@zak-lib/ui-library/layouts/form-wizard';
 import { CONSTANTS } from '../constants/constants';
 
 @Injectable()
 export class ModuleSettingsService {
-  private httpService = inject(HttpService);
+  private httpService = inject(NzHttpService);
   private modulesTable = CONSTANTS.MAIN_MODULE.NAME;
   private fieldsTable = CONSTANTS.MAIN_MODULE_FIELDS.NAME;
 
-  public module = signal<ModuleConfig | undefined>(undefined);
-  public fields = signal<FieldConfig[]>([]);
+  public module = signal<NzModuleConfig | undefined>(undefined);
+  public fields = signal<NzFieldConfig[]>([]);
   constructor() {}
 
-  public async getModuleConfig(id: number): Promise<GenericRecord> {
+  public async getModuleConfig(id: number): Promise<NzGenericRecord> {
     const config = (await firstValueFrom(
       this.httpService.getById(this.modulesTable, id),
-    )) as ModuleConfig;
+    )) as NzModuleConfig;
     this.module.set(config);
     return config;
   }
 
-  public async getModuleByName(moduleName: string): Promise<ModuleConfig | null> {
+  public async getModuleByName(moduleName: string): Promise<NzModuleConfig | null> {
     const config = (await firstValueFrom(
       this.httpService.getAll(this.modulesTable, { name: moduleName }),
-    )) as ModuleConfig[];
+    )) as NzModuleConfig[];
 
     if (config.length > 0) {
       this.module.set(config[0]);
@@ -35,9 +40,9 @@ export class ModuleSettingsService {
     return null;
   }
 
-  public async getModuleFields(moduleId: number): Promise<FieldConfig[]> {
+  public async getModuleFields(moduleId: number): Promise<NzFieldConfig[]> {
     const response = await firstValueFrom(
-      this.httpService.getAll<FieldConfig>(this.fieldsTable, {
+      this.httpService.getAll<NzFieldConfig>(this.fieldsTable, {
         moduleId: moduleId,
       }),
     );
@@ -45,11 +50,11 @@ export class ModuleSettingsService {
     return response;
   }
 
-  public getPrimaryField(fields: GenericRecord[]): string {
+  public getPrimaryField(fields: NzGenericRecord[]): string {
     return fields[0]['field_name'];
   }
 
-  public getLabelField(fields: GenericRecord[]): string {
+  public getLabelField(fields: NzGenericRecord[]): string {
     return fields[0]['field_name'];
   }
 }

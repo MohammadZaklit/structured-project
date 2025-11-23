@@ -1,77 +1,76 @@
-<div class="container-fluid py-4">
+<div class="container-fluid">
   @if (config()?.pageTitle) {
-  <div class="row mb-4">
-    <div class="col">
-      <h2 class="mb-0">{{ config()?.pageTitle }}</h2>
-    </div>
-  </div>
-  }
-
-  <div class="row">
-    <div class="col">
-      <div class="card">
-        <div class="flex justify-content-between align-items-center mb-3">
-          <div class="flex gap-2">
-            @if (config()?.showQuickSearch) {
-            <span class="p-input-icon-left">
-              <i class="pi pi-search"></i>
-              <input
-                pInputText
-                type="text"
-                [(ngModel)]="quickSearchValue"
-                placeholder="Quick Search"
-              />
-              <!--(input)="dt.filterGlobal($event.target.value, 'contains')"-->
-            </span>
-            <p-button
-              icon="pi pi-sliders-h"
-              label="Advanced Search"
-              (onClick)="onAdvancedSearch.emit()"
-              styleClass="p-button-outlined"
-            ></p-button>
-            }
-          </div>
-          <div class="flex gap-2">
-            @for (button of config()?.dynamicHeaderButtons; track button.label) {
-            <p-button
-              [label]="button.label"
-              [icon]="'pi pi-plus'"
-              (onClick)="button.onclick()"
-              [styleClass]="button.styleClass"
-              [pTooltip]="button.tooltip"
-              tooltipPosition="bottom"
-              [disabled]="button.disabled && button.disabled(null)"
-              [style]="button.visible && !button.visible(null) ? { display: 'none' } : {}"
-            ></p-button>
-            } @if (config()?.showAddButton) {
-            <p-button
-              icon="pi pi-plus"
-              label="Add New"
-              (onClick)="addBtnClick.emit()"
-              styleClass="p-button-success"
-            ></p-button>
-            } @if (config()?.exportToExcel) {
-            <p-button
-              icon="pi pi-file-excel"
-              label="Export"
-              (onClick)="exportExcel()"
-              styleClass="p-button-help"
-            ></p-button>
-            }
-          </div>
-        </div>
-
-        <lib-table-grid
-          [config]="tableConfig"
-          (onEdit)="editRowCallback($event)"
-          (onView)="viewRowCallback($event)"
-          (onDelete)="deleteRowCallback($event)"
-          (onRowReorder)="reorderRowCallback($event)"
-          (onColumnSort)="sortcolumnRowCallback($event)"
-        ></lib-table-grid>
+    <div class="grid mb-4">
+      <div class="col">
+        <h2 class="mb-0">{{ config()?.pageTitle }}</h2>
       </div>
     </div>
-  </div>
+  }
+
+  <p-toolbar class="mb-6">
+    <ng-template #start>
+      <div class="flex gap-2">
+        @if (config()?.showAddButton) {
+          <p-button
+            label="New"
+            icon="pi pi-plus"
+            severity="secondary"
+            class="mr-2"
+            (onClick)="addBtnClick.emit()"
+          />
+        }
+
+        <p-button
+          severity="secondary"
+          label="Delete"
+          icon="pi pi-trash"
+          outlined
+          (onClick)="bulkDelete()"
+        />
+
+        <p-button
+          icon="pi pi-sliders-h"
+          label="Advanced Search"
+          (onClick)="onAdvancedSearch.emit()"
+          styleClass="p-button-outlined"
+        ></p-button>
+      </div>
+    </ng-template>
+
+    <ng-template #end>
+      <div class="flex gap-2">
+        @for (button of config()?.dynamicHeaderButtons; track button.label) {
+          <p-button
+            [label]="button.label"
+            [icon]="'pi pi-plus'"
+            (onClick)="button.onclick()"
+            [styleClass]="button.styleClass"
+            [pTooltip]="button.tooltip"
+            tooltipPosition="bottom"
+            [disabled]="button.disabled && button.disabled(null)"
+            [style]="button.visible && !button.visible(null) ? { display: 'none' } : {}"
+          ></p-button>
+        }
+        @if (config()?.exportToExcel) {
+          <p-button
+            label="Export"
+            icon="pi pi-upload"
+            severity="secondary"
+            (onClick)="exportExcel()"
+          />
+        }
+      </div>
+    </ng-template>
+  </p-toolbar>
+
+  <nz-table-grid
+    [config]="tableConfig"
+    (onEdit)="editRowCallback($event)"
+    (onView)="viewRowCallback($event)"
+    (onDelete)="deleteRowCallback($event)"
+    (onRowReorder)="reorderRowCallback($event)"
+    (onColumnSort)="sortcolumnRowCallback($event)"
+  ></nz-table-grid>
 </div>
 
-<lib-confirm-popup [config]="DeleteConfirmPopupConfig"></lib-confirm-popup>
+<nz-confirm-popup [config]="DeleteConfirmPopupConfig"></nz-confirm-popup>
