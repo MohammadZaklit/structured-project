@@ -1,4 +1,4 @@
-export interface NzSelectConfig {
+export interface NzBaseSelect {
   options?: NzOption[];
   api?: string;
 }

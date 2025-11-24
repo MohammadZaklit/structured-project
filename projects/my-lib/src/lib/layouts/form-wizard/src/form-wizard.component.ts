@@ -42,7 +42,7 @@ import { TreeSelectModule } from 'primeng/treeselect';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputGroupModule } from 'primeng/inputgroup';
-import { NzFormFieldConfig, NzStepperConfig } from './form-wizard.interface';
+import { NzStepperConfig, NzWizardFormFieldConfig } from './form-wizard.interface';
 import { DatePickerModule } from 'primeng/datepicker';
 import { NzGenericRecord, NzHttpService, NzModuleConfig } from '@zak-lib/ui-library/shared';
 import {
@@ -52,6 +52,7 @@ import {
 import { FluidModule } from 'primeng/fluid';
 import { CdkDragPlaceholder } from '@angular/cdk/drag-drop';
 import { NzAutocomplete } from '@zak-lib/ui-library/elements/form-fields/autocomplete';
+import { NzFormFieldRendererComponent } from '@zak-lib/ui-library/elements/form-fields/form-field';
 
 @Component({
   selector: 'nz-form-wizard',
@@ -59,46 +60,44 @@ import { NzAutocomplete } from '@zak-lib/ui-library/elements/form-fields/autocom
   imports: [
     CommonModule,
     StepperModule,
-
     ReactiveFormsModule,
-    InputTextModule,
-    CheckboxModule,
-    RadioButtonModule,
+    // CheckboxModule,
+    // RadioButtonModule,
     //EditorModule,
-    PasswordModule,
-    SliderModule,
-    MultiSelectModule,
-    FileUploadModule,
-    ButtonModule,
-    ToggleButtonModule,
-    RatingModule,
-    ColorPickerModule,
-    CascadeSelectModule,
-    KnobModule,
-    ListboxModule,
-    SelectButtonModule,
-    PickListModule,
-    SpeedDialModule,
-    SplitButtonModule,
-    InputNumberModule,
-    InputMaskModule,
-    KeyFilterModule,
-    InputOtpModule,
-    TreeSelectModule,
-    FloatLabelModule,
-    IconFieldModule,
-    InputGroupModule,
-    DatePickerModule,
+    // PasswordModule,
+    // SliderModule,
+    // MultiSelectModule,
+    // FileUploadModule,
+    // ButtonModule,
+    // ToggleButtonModule,
+    // RatingModule,
+    // ColorPickerModule,
+    // CascadeSelectModule,
+    // KnobModule,
+    // ListboxModule,
+    // SelectButtonModule,
+    // PickListModule,
+    // SpeedDialModule,
+    // SplitButtonModule,
+    // InputNumberModule,
+    // InputMaskModule,
+    // KeyFilterModule,
+    // InputOtpModule,
+    // TreeSelectModule,
+    // FloatLabelModule,
+    // IconFieldModule,
+    // InputGroupModule,
+    // DatePickerModule,
     NzConfirmDialogComponent,
     FluidModule,
     CdkDragPlaceholder,
-    NzAutocomplete,
+    NzFormFieldRendererComponent,
   ],
   templateUrl: './form-wizard.component.html',
   styleUrls: ['./form-wizard.component.scss'],
 })
 export class NzFormWizardComponent implements OnInit, OnChanges {
-  @Input() fields: NzFormFieldConfig[] = [];
+  @Input() fields: NzWizardFormFieldConfig[] = [];
   @Input() stepperConfig!: NzStepperConfig;
   @Input() module!: NzModuleConfig;
   @Input() public data?: NzGenericRecord;

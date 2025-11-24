@@ -1,12 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import {
-  NzFieldConfig,
   NzGenericRecord,
   NzHttpService,
   NzModuleConfig,
+  NzModuleFieldConfig,
 } from '@zak-lib/ui-library/shared';
 import { firstValueFrom } from 'rxjs';
-import { NzFormFieldConfig } from '@zak-lib/ui-library/layouts/form-wizard';
 import { CONSTANTS } from '../constants/constants';
 
 @Injectable()
@@ -16,7 +15,7 @@ export class ModuleSettingsService {
   private fieldsTable = CONSTANTS.MAIN_MODULE_FIELDS.NAME;
 
   public module = signal<NzModuleConfig | undefined>(undefined);
-  public fields = signal<NzFieldConfig[]>([]);
+  public fields = signal<NzModuleFieldConfig[]>([]);
   constructor() {}
 
   public async getModuleConfig(id: number): Promise<NzGenericRecord> {
@@ -40,9 +39,9 @@ export class ModuleSettingsService {
     return null;
   }
 
-  public async getModuleFields(moduleId: number): Promise<NzFieldConfig[]> {
+  public async getModuleFields(moduleId: number): Promise<NzModuleFieldConfig[]> {
     const response = await firstValueFrom(
-      this.httpService.getAll<NzFieldConfig>(this.fieldsTable, {
+      this.httpService.getAll<NzModuleFieldConfig>(this.fieldsTable, {
         moduleId: moduleId,
       }),
     );

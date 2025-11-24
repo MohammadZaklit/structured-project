@@ -1,3 +1,5 @@
+import { NzFieldComponentType } from '@zak-lib/ui-library/elements/form-fields/form-field/field-component-type';
+
 export interface NzModuleConfig {
   id: number;
   name: string;
@@ -5,7 +7,7 @@ export interface NzModuleConfig {
   url?: string;
 }
 
-export interface NzFieldConfig extends NzFieldInfo {
+export interface NzModuleFieldConfig extends NzFormFieldInfo {
   id: number;
   sortOrder: number;
   moduleId: number;
@@ -13,9 +15,12 @@ export interface NzFieldConfig extends NzFieldInfo {
   referenceModuleId?: number;
   parentFieldId?: number;
   isDefault: number;
+  configuration: NzComponentConfiguration;
 }
 
-export interface NzFieldInfo {
+export type NzComponentConfiguration = NzFieldComponentType;
+
+export interface NzFormFieldInfo {
   name: string;
   label: string;
   hint?: string;

@@ -1,19 +1,19 @@
 import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { NzFormField, NzFormFieldComponent } from '../form-field/form-field';
-import { NzOption, NzSelectConfig } from '../interfaces/select.interface';
+import { NzOption, NzBaseSelect } from '../interfaces/base-select.interface';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { NzFormFieldModule } from '../form-field/form-field-module';
 import { NzHttpService } from '@zak-lib/ui-library/shared';
 import { firstValueFrom } from 'rxjs';
 
-export interface NzAutoComplete extends NzFormField, NzSelectConfig {}
+export interface NzAutoComplete extends NzFormField, NzBaseSelect {}
 
 @Component({
   selector: 'nz-autocomplete',
   imports: [AutoCompleteModule, NzFormFieldModule],
   template: `<nz-form-field
     ><p-autoComplete
-      [formControl]="config.control || newFormControl()"
+      [formControl]="config.control"
       [suggestions]="options()"
       [dropdown]="true"
       [placeholder]="config.placeholder || ''"

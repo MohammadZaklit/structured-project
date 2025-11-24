@@ -1,0 +1,40 @@
+import { NzAutoComplete } from '@zak-lib/ui-library/elements/form-fields/autocomplete';
+import { NzInput } from '@zak-lib/ui-library/elements/form-fields/input';
+
+export type NzFieldComponentType = NzAutoComplete | NzInput;
+
+export type NzFieldType =
+  | 'AutoComplete'
+  | 'CascadeSelect'
+  | 'Checkbox'
+  | 'ColorPicker'
+  | 'DatePicker'
+  | 'FloatLabel'
+  | 'IconField'
+  | 'InputGroup'
+  | 'InputText'
+  | 'InputMask'
+  | 'InputNumber'
+  | 'InputOtp'
+  | 'KeyFilter'
+  | 'Knob'
+  | 'Listbox'
+  | 'MultiSelect'
+  | 'Password'
+  | 'RadioButtonDB'
+  | 'RadioButtonOptions'
+  | 'Rating'
+  | 'SelectButton'
+  | 'Slider'
+  | 'Textarea'
+  | 'ToggleButton'
+  | 'ToggleSwitch'
+  | 'TreeSelectDB'
+  | 'TreeSelectOptions'
+  | 'Button'
+  | 'SpeedDial'
+  | 'SplitButton'
+  | 'PickListDB'
+  | 'PickListOptions'
+  | 'FileUploadDragDrop'
+  | 'FileUploadBrowse';

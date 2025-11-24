@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import {
-  NzFormFieldConfig,
   NzFormWizardComponent,
   NzStepperConfig,
+  NzWizardFormFieldConfig,
 } from '@zak-lib/ui-library/layouts/form-wizard';
 import { NzGenericRecord, NzHttpService, NzModuleConfig } from '@zak-lib/ui-library/shared';
 import { COMPONENTS } from '../../../../shared/constants/components';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
 import { firstValueFrom } from 'rxjs';
+import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field/field-component-type';
 
 @Component({
   selector: 'app-admin-page-form',
@@ -18,7 +19,7 @@ import { firstValueFrom } from 'rxjs';
   standalone: true,
 })
 export class AdminPageForm implements OnInit {
-  public dbFields: NzFormFieldConfig[] = [];
+  public dbFields: NzWizardFormFieldConfig[] = [];
   public module!: NzModuleConfig;
   public data?: NzGenericRecord;
   private moduleSettings = inject(ModuleSettingsService);
@@ -36,12 +37,16 @@ export class AdminPageForm implements OnInit {
 
   ngOnInit(): void {
     this.module = this.moduleSettings.module() as NzModuleConfig;
-    this.dbFields = this.moduleSettings.fields().map((field) => {
-      return Object.assign(field, {
-        type:
-          COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
-          'InputText',
+
+    this.moduleSettings.fields().forEach((field) => {
+      const fieldType =
+        COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
+        'InputText';
+
+      this.dbFields.push({
+        type: fieldType as NzFieldType,
         step: 1,
+        fieldConfig: field.configuration,
       });
     });
 

@@ -1,23 +1,26 @@
 import { Component, Inject, Input, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { FIELD_COMPONENTS } from './field-component-map';
-import { FIELD_REGISTRY } from './field-registry.token';
-import { NzFormField } from './form-field';
+import { NzFormFieldComponents } from './field-component-map';
+import { NzFieldRegistry } from './field-registry.token';
+import { NzFieldComponentType, NzFieldType } from './field-component-type';
+export interface NzFormFieldLoaderConfig {
+  type: NzFieldType;
+  fieldConfig: NzFieldComponentType;
+}
 
 @Component({
   selector: 'nz-form-field-renderer',
   template: `<ng-container #fieldContainer></ng-container>`,
   imports: [],
-  providers: [{ provide: FIELD_REGISTRY, useValue: FIELD_COMPONENTS }],
+  providers: [{ provide: NzFieldRegistry, useValue: NzFormFieldComponents }],
   standalone: true,
 })
 export class NzFormFieldRendererComponent implements OnInit {
-  @Input() type!: string;
-  @Input() config!: NzFormField;
+  @Input() config!: NzFormFieldLoaderConfig;
 
   @ViewChild('fieldContainer', { read: ViewContainerRef, static: true })
   container!: ViewContainerRef;
 
-  constructor(@Inject(FIELD_REGISTRY) private registry: Record<string, any>) {}
+  constructor(@Inject(NzFieldRegistry) private registry: Record<string, any>) {}
 
   ngOnInit() {
     this.renderField();
@@ -40,13 +43,14 @@ export class NzFormFieldRendererComponent implements OnInit {
   }
 
   renderField() {
-    const componentType = this.registry[this.type];
-    if (!componentType) throw new Error(`No component registered for type ${this.type}`);
+    const componentType = this.registry[this.config.type];
+    console.warn('componentType: ', componentType);
+    if (!componentType) throw new Error(`No component registered for type ${this.config.type}`);
 
     const componentRef = this.container.createComponent(componentType);
 
     // Set input dynamically
-    componentRef.setInput('config', this.config);
+    componentRef.setInput('config', this.config.fieldConfig);
 
     // Trigger change detection
     componentRef.changeDetectorRef.detectChanges();

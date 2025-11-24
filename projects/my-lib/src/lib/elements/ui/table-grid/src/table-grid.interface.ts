@@ -1,8 +1,8 @@
 import { NzStandardButton } from '@zak-lib/ui-library/components/standardbutton';
-import { NzFieldConfig, NzGenericRecord } from '@zak-lib/ui-library/shared';
+import { NzModuleFieldConfig, NzGenericRecord } from '@zak-lib/ui-library/shared';
 import { Observable } from 'rxjs';
 
-export interface NzTableColumn extends NzFieldConfig {
+export interface NzTableColumn extends NzModuleFieldConfig {
   type: string;
   isSortable?: boolean;
   enableFilter?: boolean; // For inline filtering

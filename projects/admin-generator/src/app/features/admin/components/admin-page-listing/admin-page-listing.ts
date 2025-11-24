@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, OnInit, Output, signal } from '@angular/core';
 import { NzTableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
 import { NzListView, NzListViewComponent } from '@zak-lib/ui-library/layouts/list-view';
-import { NzFieldConfig, NzGenericRecord, NzModuleConfig } from '@zak-lib/ui-library/shared';
+import { NzModuleFieldConfig, NzGenericRecord, NzModuleConfig } from '@zak-lib/ui-library/shared';
 import { COMPONENTS } from '../../../../shared/constants/components';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
 
@@ -51,7 +51,7 @@ export class AdminPageListing implements OnInit {
     });
   }
 
-  private mapFieldsToColumns(fields: NzFieldConfig[]): NzTableColumn[] {
+  private mapFieldsToColumns(fields: NzModuleFieldConfig[]): NzTableColumn[] {
     return (
       fields.map((field) => {
         return Object.assign(field, {

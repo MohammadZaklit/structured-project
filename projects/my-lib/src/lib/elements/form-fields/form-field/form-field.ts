@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, signal } from '@angular/core';
 import { NzFormControl } from '@zak-lib/ui-library/shared/src/classes/NzFormControl';
-import { NzFieldInfo } from '@zak-lib/ui-library/shared';
+import { NzFormFieldInfo, NzFormGroup } from '@zak-lib/ui-library/shared';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-export interface NzFormField extends NzFieldInfo, NzFormFieldSettings, NzFormFieldInputSettings {
-  control?: NzFormControl;
+export interface NzFormField extends NzFormFieldInfo, NzFormFieldSettings {
+  control: NzFormControl;
+  form: NzFormGroup;
 }
 
 export interface NzFormFieldSettings {
@@ -15,13 +16,9 @@ export interface NzFormFieldSettings {
   visible?: boolean | ((formValue: any) => boolean);
   apiValidate?: (value: any) => Promise<boolean>;
   extraProps?: any;
-}
-
-export interface NzFormFieldInputSettings {
   placeholder?: string;
   pattern?: string;
 }
-
 @Component({
   selector: 'nz-form-field',
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
@@ -36,8 +33,4 @@ export class NzFormFieldComponent {
   baseConfig = signal<NzFormField | null>(null);
 
   constructor() {}
-
-  newFormControl(): NzFormControl {
-    return new NzFormControl();
-  }
 }
