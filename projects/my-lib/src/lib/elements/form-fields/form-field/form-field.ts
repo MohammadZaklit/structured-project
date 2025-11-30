@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, signal } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { NzFormControl } from '@zak-lib/ui-library/shared/src/classes/NzFormControl';
 import { NzFormFieldInfo, NzFormGroup } from '@zak-lib/ui-library/shared';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -21,7 +21,7 @@ export interface NzFormFieldSettings {
 }
 @Component({
   selector: 'nz-form-field',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule],
   template: `<div>
     <label>{{ baseConfig()?.label }}</label
     ><ng-content></ng-content>
@@ -30,7 +30,7 @@ export interface NzFormFieldSettings {
   standalone: true,
 })
 export class NzFormFieldComponent {
-  baseConfig = signal<NzFormField | null>(null);
+  baseConfig = input<NzFormField | null>(null);
 
   constructor() {}
 }

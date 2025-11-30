@@ -10,16 +10,16 @@ export interface NzInput extends NzFormField, NzBaseInput {}
 @Component({
   selector: 'nz-input',
   imports: [NzFormFieldModule, InputTextModule, InputGroupModule],
-  template: `<input type="text" pInputText [formControl]="config.control" fluid />`,
+  template: `<nz-form-field [baseConfig]="config"
+    ><input type="text" pInputText [formControl]="config.control" fluid
+  /></nz-form-field>`,
   styles: ``,
   standalone: true,
 })
-export class NzInputComponent extends NzFormFieldComponent implements OnInit {
+export class NzInputComponent extends NzFormFieldComponent {
   @Input() public config!: NzInput;
 
   constructor() {
     super();
   }
-
-  ngOnInit(): void {}
 }

@@ -24,35 +24,27 @@ export class NzFormFieldRendererComponent implements OnInit {
 
   ngOnInit() {
     this.renderField();
-    // // load component dynamically
-    // const loader = FIELD_COMPONENTS[this.type];
-
-    // if (!loader) {
-    //   console.error(`Unknown field type: ${this.type}`);
-    //   return;
-    // }
-
-    // const componentType = await loader();
-
-    // // render it
-    // this.container.createComponent(componentType, {
-    //   inputs: {
-    //     config: this.config,
-    //   },
-    // });
   }
 
-  renderField() {
-    const componentType = this.registry[this.config.type];
-    console.warn('componentType: ', componentType);
-    if (!componentType) throw new Error(`No component registered for type ${this.config.type}`);
+  async renderField() {
+    const loader = this.registry[this.config.type];
+    if (!loader) {
+      console.error(`No component registered for type ${this.config.type}`);
+      return;
+    }
 
-    const componentRef = this.container.createComponent(componentType);
+    try {
+      const componentType = await loader();
+      this.container.clear();
+      const componentRef = this.container.createComponent(componentType);
 
-    // Set input dynamically
-    componentRef.setInput('config', this.config.fieldConfig);
+      // Set input dynamically
+      componentRef.setInput('config', this.config.fieldConfig);
 
-    // Trigger change detection
-    componentRef.changeDetectorRef.detectChanges();
+      // Trigger change detection
+      componentRef.changeDetectorRef.detectChanges();
+    } catch (error) {
+      console.error(`Failed to load component for type ${this.config.type}`, error);
+    }
   }
 }

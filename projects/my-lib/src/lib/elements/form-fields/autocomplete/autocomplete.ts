@@ -11,7 +11,7 @@ export interface NzAutoComplete extends NzFormField, NzBaseSelect {}
 @Component({
   selector: 'nz-autocomplete',
   imports: [AutoCompleteModule, NzFormFieldModule],
-  template: `<nz-form-field
+  template: `<nz-form-field [baseConfig]="config"
     ><p-autoComplete
       [formControl]="config.control"
       [suggestions]="options()"

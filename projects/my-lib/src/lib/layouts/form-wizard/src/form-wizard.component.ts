@@ -110,10 +110,7 @@ export class NzFormWizardComponent implements OnInit, OnChanges {
 
   public SubmitConfirmDialogConfig!: NzConfirmDialog;
 
-  constructor(
-    private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('data' in changes && changes['data']) {
