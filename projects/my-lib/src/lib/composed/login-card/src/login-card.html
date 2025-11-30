@@ -9,15 +9,18 @@
 
     <!-- Inputs -->
     <div class="flex flex-column gap-3">
-      <nz-input [config]="emailconfig"></nz-input>
-      <nz-input [config]="passwordconfig"></nz-input>
+      <nz-email [config]="emailconfig"></nz-email>
+      <nz-password [config]="passwordconfig"></nz-password>
     </div>
 
     <!-- Buttons -->
     <div class="flex flex-column sm:flex-row gap-2 justify-content-between">
-      <nz-buttons [config]="loginconfig"></nz-buttons>
-      <nz-buttons (click)="goToRegister()" [config]="gotoregisterconfig"></nz-buttons>
-      <nz-buttons (click)="goTohome()" [config]="gotohomeconfig"></nz-buttons>
+      <nz-standard-button [config]="loginconfig"></nz-standard-button>
+      <nz-standard-button
+        (click)="goToRegister()"
+        [config]="gotoregisterconfig"
+      ></nz-standard-button>
+      <nz-standard-button (click)="goTohome()" [config]="gotohomeconfig"></nz-standard-button>
     </div>
   </div>
 </div>

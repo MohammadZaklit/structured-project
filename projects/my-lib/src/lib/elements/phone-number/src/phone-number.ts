@@ -8,6 +8,6 @@ import { InputMaskModule } from 'primeng/inputmask';
   templateUrl: './phone-number.html',
   styleUrl: './phone-number.css',
 })
-export class NzPhoneNumber {
+export class NzPhoneNumberComponent {
   phone: string = '';
 }

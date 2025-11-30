@@ -2,7 +2,7 @@
   <div class="surface-card p-6 shadow-2 border-round w-full md:w-6">
     <nz-heading class="sign-title" [config]="headingconfig"></nz-heading>
     <div class="flex flex-column gap-1 pt-2">
-      <nz-input [config]="nameconfig"></nz-input>
+      <nz-name [config]="nameconfig"></nz-name>
       <nz-email [config]="emailconfig"></nz-email>
       <nz-password [config]="passwordconfig"></nz-password>
       <div>
@@ -10,8 +10,8 @@
       </div>
       <div id="strength" class="password-strength"></div>
       <div class="flex flex-column gap-1 pt-2">
-        <nz-buttons [config]="registerconfig"></nz-buttons>
-        <nz-buttons (click)="goToLogin()" [config]="backtologinconfig"></nz-buttons>
+        <nz-standard-button [config]="registerconfig"></nz-standard-button>
+        <nz-standard-button (click)="goToLogin()" [config]="backtologinconfig"></nz-standard-button>
       </div>
     </div>
   </div>

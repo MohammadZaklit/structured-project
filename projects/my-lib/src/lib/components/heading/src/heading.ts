@@ -6,8 +6,9 @@ import { NzTypographyComponent, NzTypography } from '@zak-lib/ui-library/element
   imports: [NzTypographyComponent],
   templateUrl: './heading.html',
   styleUrl: './heading.scss',
+  standalone: true,
 })
-export class Heading {
+export class NzHeadingComponent {
   @Input() public config!: NzTypography;
   public headingconfig!: NzTypography;
   ngOnInit() {

@@ -3,12 +3,13 @@ import { NzButton, NzButtonComponent } from '@zak-lib/ui-library/elements/button
 import { NzStandardButton } from './standardbutton.interface';
 
 @Component({
-  selector: 'nz-buttons',
+  selector: 'nz-standard-button',
   imports: [NzButtonComponent],
   templateUrl: './standardbutton.html',
   styleUrl: './standardbutton.scss',
+  standalone: true,
 })
-export class Buttons implements OnInit {
+export class NzStandardButtonComponent implements OnInit {
   @Input() public config!: NzStandardButton;
   public buttonconfig!: NzButton;
   ngOnInit(): void {

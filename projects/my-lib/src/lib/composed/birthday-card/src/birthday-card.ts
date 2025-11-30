@@ -1,24 +1,22 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { StandardButton } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton.interface';
-import { Buttons } from '@zak-lib/ui-library/components/standardbutton';
-import { Paragraph } from '@zak-lib/ui-library/components/paragraph';
+import {
+  NzStandardButtonComponent,
+  NzStandardButton,
+} from '@zak-lib/ui-library/components/standardbutton';
+import { NzParagraph, NzParagraphComponent } from '@zak-lib/ui-library/components/paragraph';
 import { Standardtextarea } from '@zak-lib/ui-library/components/standardtextarea';
 import { Standarduploadfile } from '@zak-lib/ui-library/components/standarduploadfile';
 import { CardModule } from 'primeng/card';
-import { paragraph } from '@zak-lib/ui-library/components/paragraph/src/paragraph.interface';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FileUpload } from 'primeng/fileupload';
-import { HttpClientModule } from '@angular/common/http';
 import { StandardCard } from '@zak-lib/ui-library/components/standard-card';
 
 @Component({
   selector: 'nz-birthday-card',
   imports: [
-    Buttons,
-    Paragraph,
+    NzStandardButtonComponent,
+    NzParagraphComponent,
     Standardtextarea,
-    HttpClientModule,
     CardModule,
     CommonModule,
     FormsModule,
@@ -30,8 +28,8 @@ import { StandardCard } from '@zak-lib/ui-library/components/standard-card';
 })
 export class BirthdayCard implements OnInit {
   // Configs
-  public messageconfig!: paragraph;
-  public createcard!: StandardButton;
+  public messageconfig!: NzParagraph;
+  public createcard!: NzStandardButton;
 
   // State
   currentMessage: string = '';

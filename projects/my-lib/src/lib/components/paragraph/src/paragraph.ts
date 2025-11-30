@@ -8,7 +8,7 @@ import { NzParagraph } from './paragraph.interface';
   templateUrl: './paragraph.html',
   styleUrl: './paragraph.css',
 })
-export class Paragraph {
+export class NzParagraphComponent {
   @Input() public config!: NzTypography;
   public paragraphconfig!: NzParagraph;
   ngOnInit() {

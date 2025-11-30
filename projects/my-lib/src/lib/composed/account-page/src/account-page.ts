@@ -1,23 +1,25 @@
 import { Component } from '@angular/core';
-import { StandardButton } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton.interface';
+import {
+  NzStandardButtonComponent,
+  NzStandardButton,
+} from '@zak-lib/ui-library/components/standardbutton';
 import { Router } from '@angular/router';
-import { Buttons } from '@zak-lib/ui-library/components/standardbutton';
-import { Paragraph } from '@zak-lib/ui-library/components/paragraph';
-import { paragraph } from '@zak-lib/ui-library/components/paragraph/src/paragraph.interface';
+import { NzParagraphComponent, NzParagraph } from '@zak-lib/ui-library/components/paragraph';
+
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from './environment';
 import { CardModule } from 'primeng/card';
 @Component({
   selector: 'nz-account-page',
-  imports: [Buttons, Paragraph, CardModule],
+  imports: [NzStandardButtonComponent, NzParagraphComponent, CardModule],
   templateUrl: './account-page.html',
   styleUrl: './account-page.css',
 })
 export class AccountPage {
   supabase: SupabaseClient;
-  public gotosigninconfig!: StandardButton;
-  public successedconfig!: paragraph;
-  public datepickerconfig!: paragraph;
+  public gotosigninconfig!: NzStandardButton;
+  public successedconfig!: NzParagraph;
+  public datepickerconfig!: NzParagraph;
 
   userName: string | undefined | null = null;
   isSignedin = false;
