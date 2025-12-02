@@ -45,17 +45,17 @@ export const DEFAULT_MENU_ITEMS = [
           {
             label: 'Login',
             icon: 'pi pi-fw pi-sign-in',
-            routerLink: ['/auth/login'],
+            routerLink: ['/auth-old/login'],
           },
           {
             label: 'Error',
             icon: 'pi pi-fw pi-times-circle',
-            routerLink: ['/auth/error'],
+            routerLink: ['/auth-old/error'],
           },
           {
             label: 'Access Denied',
             icon: 'pi pi-fw pi-lock',
-            routerLink: ['/auth/access'],
+            routerLink: ['/auth-old/access'],
           },
         ],
       },

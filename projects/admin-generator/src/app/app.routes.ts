@@ -15,16 +15,5 @@ export const routes: Routes = [
       return themeRoutesModule.routes;
     },
   },
-  {
-    path: 'auth-login',
-    loadComponent: () =>
-      import('./features/auth/components/auth-login/auth-login').then((m) => m.AuthLogin),
-  },
-  {
-    path: 'auth-register',
-    loadComponent: () =>
-      import('./features/auth/components/auth-register/auth-register').then((m) => m.Authregister),
-  },
-
-  { path: '**', redirectTo: 'auth-login' },
+  { path: '**', redirectTo: 'auth' },
 ];

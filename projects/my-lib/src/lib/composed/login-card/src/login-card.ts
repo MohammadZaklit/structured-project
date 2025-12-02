@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   NzStandardButton,
   NzStandardButtonComponent,
@@ -11,6 +11,8 @@ import { Router } from '@angular/router';
 import SupabaseClient from '@supabase/supabase-js/dist/module/SupabaseClient';
 import { createClient } from '@supabase/supabase-js';
 import { environment } from './environment';
+import { NzLoginCard } from './login-card.interface';
+import { NzFormControl } from '@zak-lib/ui-library/shared';
 @Component({
   selector: 'nz-login-card',
   imports: [
@@ -22,10 +24,11 @@ import { environment } from './environment';
     NzPasswordComponent,
   ],
   templateUrl: './login-card.html',
-  styleUrl: './login-card.scss',
+  styles: ``,
   standalone: true,
 })
-export class LoginCard implements OnInit {
+export class NzLoginCardComponent implements OnInit {
+  @Input() config!: NzLoginCard;
   private supabase: SupabaseClient;
   public headingconfig!: NzHeading;
   public emailconfig!: NzEmail;
@@ -34,8 +37,6 @@ export class LoginCard implements OnInit {
   public paragraphconfig!: NzParagraph;
   public gotoregisterconfig!: NzStandardButton;
   public gotohomeconfig!: NzStandardButton;
-  email: string = '';
-  password: string = '';
   constructor(private router: Router) {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
   }
@@ -46,47 +47,45 @@ export class LoginCard implements OnInit {
     this.router.navigate(['/account']);
   }
   async login(): Promise<void> {
-    const storedEmail = this.emailconfig.value!;
-    const storedPassword = this.passwordconfig.value!;
+    const data = this.config.form.getRawValue();
 
-    const { data, error } = await this.supabase.auth.signInWithPassword({
-      email: storedEmail,
-      password: storedPassword,
-    });
-
-    if (error) {
+    try {
+      const response = await this.supabase.auth.signInWithPassword(data);
+      alert('Signed in successfully');
+      this.router.navigate(['/account']);
+    } catch (error: any) {
       console.error('Supabase login error:', error.message);
       alert(error.message);
       return;
     }
-    if (data) {
-      alert('Signed in successfully');
-      this.router.navigate(['/account']);
-    }
   }
 
   ngOnInit(): void {
+    this.config.form.addControl('email', new NzFormControl(null));
+    this.config.form.addControl('password', new NzFormControl(null));
+
     this.headingconfig = {
       id: 'headingconfig',
       label: 'sign in',
-      textstyle: 'title',
+      style: 'h1',
     };
     this.paragraphconfig = {
       id: 'paragraphconfig',
+      style: 'p',
       label: 'Welcome back! Please log in to your account.',
-      textstyle: 'subtitle',
     };
     this.emailconfig = {
-      id: 'emailinput',
-      label: 'enter an email',
-      textstyle: 'email',
-      value: this.email,
+      name: 'email',
+      label: 'Email',
+      isRequired: true,
+      control: this.config.form.get('email') as NzFormControl,
+      form: this.config.form,
     };
     this.passwordconfig = {
-      id: 'passwordinput',
-      label: 'enter a Password',
-      textstyle: 'password',
-      value: this.password,
+      name: 'password',
+      label: 'Password',
+      control: this.config.form.get('passsword') as NzFormControl,
+      form: this.config.form,
     };
     this.loginconfig = {
       id: 'loginbutton',
@@ -113,19 +112,4 @@ export class LoginCard implements OnInit {
       },
     };
   }
-  /* ==============================
-         Backend service
-     ==============================*/
-  /* async checkUser(email: string, password: string) {
-    const { data, error } = await this.supabase
-      .from('users')
-      .select('*')
-      .eq('email', email)
-      .eq('password', password);
-    if (error) {
-      console.log('error fetching user: ', error.message);
-      return false;
-    }
-    return data;
-  }*/
 }

@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { NzInput, NzInputComponent } from '@zak-lib/ui-library/elements/form-fields/input';
 
 export interface NzEmail extends NzInput {}
@@ -16,5 +17,11 @@ export class NzEmailComponent implements OnInit {
     this.emailconfig = Object.assign(this.config, {
       type: 'email',
     });
+
+    const validators = [Validators.email];
+    if (this.config.isRequired) {
+      validators.push(Validators.required);
+    }
+    this.config.control.addValidators(validators);
   }
 }

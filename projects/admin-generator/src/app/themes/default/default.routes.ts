@@ -27,23 +27,16 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'auth-login',
-    loadComponent: () =>
-      import('../../features/auth/components/auth-login/auth-login').then((m) => m.AuthLogin),
-  },
-  {
-    path: 'auth-register',
-    loadComponent: () =>
-      import('../../features/auth/components/auth-register/auth-register').then(
-        (m) => m.Authregister,
-      ),
-  },
-  {
     path: 'edit-profile',
     loadComponent: () =>
       import('../../features/auth/components/edit-profile/edit-profile').then((m) => m.EditProfile),
   },
   { path: 'landing', component: Landing }, // for landing page
-  { path: 'auth', loadChildren: () => import('./pages/auth/auth.routes') }, //for all auth components
+  {
+    path: 'auth',
+    loadChildren: () =>
+      import('../../features/auth/shell/auth-shell-routing').then((m) => m.AUTH_PAGE_ROUTES),
+  },
+  { path: 'auth-old', loadChildren: () => import('./pages/auth/auth.routes') }, //for all auth components
   { path: '**', redirectTo: '/404' }, // else not found
 ];

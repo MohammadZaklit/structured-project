@@ -1,1 +1,32 @@
-<h1 [class]="textstyle">{{ config.label }}</h1>
+@switch (config.style) {
+  @case ('h1') {
+    <h1 class="{{ textstyle }}">{{ config.label }}</h1>
+  }
+  @case ('h2') {
+    <h2 class="{{ textstyle }}">{{ config.label }}</h2>
+  }
+  @case ('h3') {
+    <h3 class="{{ textstyle }}">{{ config.label }}</h3>
+  }
+  @case ('h4') {
+    <h4 class="{{ textstyle }}">{{ config.label }}</h4>
+  }
+  @case ('h5') {
+    <h5 class="{{ textstyle }}">{{ config.label }}</h5>
+  }
+  @case ('h6') {
+    <h6 class="{{ textstyle }}">{{ config.label }}</h6>
+  }
+  @case ('p') {
+    <p class="{{ textstyle }}">{{ config.label }}</p>
+  }
+  @case ('small') {
+    <small class="{{ textstyle }}">{{ config.label }}</small>
+  }
+  @case ('span') {
+    <span class="{{ textstyle }}">{{ config.label }}</span>
+  }
+  @default {
+    <div class="{{ textstyle }}">{{ config.label }}</div>
+  }
+}
