@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Inject } from '@angular/core';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
@@ -14,7 +14,7 @@ import { NzConfirmPopup } from './confirm-popup.interface';
 export class NzConfirmPopupComponent {
   @Input() public config!: NzConfirmPopup;
 
-  constructor(private confirmationService: ConfirmationService) {}
+  constructor(@Inject(ConfirmationService) private confirmationService: ConfirmationService) {}
 
   ngOnInit(): void {
     this.config.confirm = (event: Event) => {

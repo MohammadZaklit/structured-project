@@ -8,11 +8,8 @@ import { THEMES } from './shared/constants/themes';
   template: `<router-outlet></router-outlet>`,
 })
 export class App {
-  protected readonly title = signal('admin-generator');
   private themeService = inject(ThemeService);
   private router = inject(Router);
-  constructor() {}
-
   changeTheme(theme: string) {
     this.themeService.setCurrentTheme(theme);
 
