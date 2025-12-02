@@ -1,12 +1,22 @@
 import { Component, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TextareaModule } from 'primeng/textarea';
-import { NzTextarea } from './textarea.interface';
+import { NzFormFieldComponent } from '../form-field/form-field';
+import { NzFormFieldModule } from '../form-field/form-field-module';
+import { NzFormFieldInfo, NzFormControl, NzFormGroup } from '@zak-lib/ui-library/shared';
+import { NzFormFieldSettings } from '../form-field/form-field';
 @Component({
   selector: 'nz-textarea',
-  imports: [TextareaModule, FormsModule],
-  template: `<textarea rows="5" cols="30" pTextarea class="w-full"></textarea>`,
+  imports: [TextareaModule, NzFormFieldModule],
+  template: `<nz-form-field [baseConfig]="config">
+    <textarea rows="5" cols="30" pTextarea class="w-full"></textarea>
+  </nz-form-field>`,
 })
-export class NzTextareaComponent {
+export class NzTextareaComponent extends NzFormFieldComponent {
   @Input() public config!: NzTextarea;
+}
+
+export interface NzTextarea extends NzFormFieldInfo, NzFormFieldSettings {
+  value?: string;
+  control: NzFormControl;
+  form: NzFormGroup;
 }

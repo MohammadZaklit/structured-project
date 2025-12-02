@@ -18,7 +18,7 @@ const styles = {
   imports: [CommonModule],
   template: `@switch (config.style) {
     @case ('h1') {
-      <h1 class="{{ textstyle }}" style="color: red">{{ config.label }}</h1>
+      <h1 class="{{ textstyle }}">{{ config.label }}</h1>
     }
     @case ('h2') {
       <h2 class="{{ textstyle }}">{{ config.label }}</h2>

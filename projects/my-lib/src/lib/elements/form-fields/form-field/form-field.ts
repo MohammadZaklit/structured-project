@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, input, signal } from '@angular/core';
 import { NzFormControl } from '@zak-lib/ui-library/shared/src/classes/NzFormControl';
 import { NzFormFieldInfo, NzFormGroup } from '@zak-lib/ui-library/shared';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 export interface NzFormField extends NzFormFieldInfo, NzFormFieldSettings {
   control: NzFormControl;
@@ -31,6 +30,7 @@ export interface NzFormFieldSettings {
 })
 export class NzFormFieldComponent {
   baseConfig = input<NzFormField | null>(null);
+  _t2: any;
 
   constructor() {}
 }
