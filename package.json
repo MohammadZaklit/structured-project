@@ -9,6 +9,7 @@
     "start:admin-generator": "ng serve --project=admin-generator --ssl",
     "build": "ng build admin-generator",
     "watch": "ng build --watch --configuration development",
+    "migrate-prefix": "ts-node tools/scripts/update-prefix.ts",
     "build:lib": "ng build my-lib",
     "test": "ng test"
   },

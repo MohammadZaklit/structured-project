@@ -1,3 +1,3 @@
-import { textareaInterface } from '@zak-lib/ui-library/elements/textarea/src/textarea.interface';
+import { NzTextarea } from '@zak-lib/ui-library/elements/textarea/src/textarea.interface';
 
-export interface Standardtextareainterface extends textareaInterface {}
+export interface Standardtextareainterface extends NzTextarea {}

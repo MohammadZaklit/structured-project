@@ -1,43 +1,50 @@
 import { Component, Injectable } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { email } from '@zak-lib/ui-library/components/email/src/email.interface';
-import { password } from '@zak-lib/ui-library/components/password/src/password.interface';
-import { StandardButton } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton.interface';
-import { Buttons } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton';
-import { heading } from '@zak-lib/ui-library/components/heading/src/heading.interface';
-import { Heading } from '@zak-lib/ui-library/components/heading';
+import {
+  NzStandardButton,
+  NzStandardButtonComponent,
+} from '@zak-lib/ui-library/components/standardbutton';
+import { NzHeading, NzHeadingComponent } from '@zak-lib/ui-library/components/heading';
 import { Router } from '@angular/router';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from './environment';
-import { PhoneNumber } from '@zak-lib/ui-library/elements/phone-number';
-
-import { nameInterface } from '@zak-lib/ui-library/components/name/src/name.interface';
-import { Email } from '@zak-lib/ui-library/components/email';
-import { Password } from '@zak-lib/ui-library/components/password/src/password';
-import { InputElement } from '@zak-lib/ui-library/elements/input';
+import { NzPhoneNumberComponent } from '@zak-lib/ui-library/elements/phone-number';
+import { NzEmail, NzEmailComponent } from '@zak-lib/ui-library/components/email';
+import { NzPasswordComponent, NzPassword } from '@zak-lib/ui-library/components/password';
+import { NzNameComponent, NzName } from '@zak-lib/ui-library/components/name';
 @Injectable({
   providedIn: 'root',
 })
 @Component({
-  selector: 'lib-register-card',
-  imports: [Buttons, Heading, PhoneNumber, Email, Password, InputElement],
+  selector: 'nz-register-card',
+  imports: [
+    NzStandardButtonComponent,
+    NzHeadingComponent,
+    NzPhoneNumberComponent,
+    NzEmailComponent,
+    NzPasswordComponent,
+    NzNameComponent,
+  ],
   templateUrl: './register-card.html',
   styleUrl: './register-card.scss',
 })
 export class RegisterCard {
   message = '';
   private supabase: SupabaseClient;
-  public nameconfig!: nameInterface;
-  public emailconfig!: email;
-  public passwordconfig!: password;
-  public registerconfig!: StandardButton;
-  public headingconfig!: heading;
-  public backtologinconfig!: StandardButton;
+  public nameconfig!: NzName;
+  public emailconfig!: NzEmail;
+  public passwordconfig!: NzPassword;
+  public registerconfig!: NzStandardButton;
+  public headingconfig!: NzHeading;
+  public backtologinconfig!: NzStandardButton;
   email: string = '';
   password: string = '';
   name: string = '';
   form!: FormGroup;
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+  ) {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
   }
   ngOnInit(): void {
@@ -151,7 +158,7 @@ export class RegisterCard {
       await this.insertUser(
         this.emailconfig.value!,
         this.passwordconfig.value!,
-        this.nameconfig.value!
+        this.nameconfig.value!,
       );
 
       this.message = 'Account created successfully!';

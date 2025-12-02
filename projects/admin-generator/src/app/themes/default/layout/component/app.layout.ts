@@ -1,19 +1,23 @@
-import { Component, Renderer2, ViewChild } from '@angular/core';
+import { Component, inject, Renderer2, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { filter, Subscription } from 'rxjs';
+import { filter, firstValueFrom, Subscription } from 'rxjs';
 import { AppTopbar } from './app.topbar';
 import { AppSidebar } from './app.sidebar';
 import { AppFooter } from './app.footer';
 import { LayoutService } from '../service/layout.service';
+import { MenuItem } from 'primeng/api';
+import { AppSettingsService } from 'projects/admin-generator/src/app/shared/services/app-settings.service';
+import { DEFAULT_MENU_ITEMS } from 'projects/admin-generator/src/app/shared/constants/menuItems';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
   imports: [CommonModule, AppTopbar, AppSidebar, RouterModule, AppFooter],
+  providers: [AppSettingsService],
   template: `<div class="layout-wrapper" [ngClass]="containerClass">
     <app-topbar></app-topbar>
-    <app-sidebar></app-sidebar>
+    <app-sidebar [menuItems]="menuItems()"></app-sidebar>
     <div class="layout-main-container">
       <div class="layout-main">
         <router-outlet></router-outlet>
@@ -25,12 +29,14 @@ import { LayoutService } from '../service/layout.service';
 })
 export class AppLayout {
   overlayMenuOpenSubscription: Subscription;
-
+  menuItems = signal<MenuItem[]>([]);
   menuOutsideClickListener: any;
 
   @ViewChild(AppSidebar) appSidebar!: AppSidebar;
 
   @ViewChild(AppTopbar) appTopBar!: AppTopbar;
+
+  private appSettingsService = inject(AppSettingsService);
 
   constructor(
     public layoutService: LayoutService,
@@ -54,6 +60,30 @@ export class AppLayout {
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.hideMenu();
     });
+  }
+
+  ngOnInit(): void {
+    this.getMenuItems();
+  }
+
+  async getMenuItems(): Promise<void> {
+    const response = await firstValueFrom(this.appSettingsService.getMenuItems());
+
+    if (response) {
+      const menuItems = [...DEFAULT_MENU_ITEMS];
+      menuItems.splice(1, 0, {
+        label: 'Modules',
+        items: response.map((item) => {
+          return {
+            label: item['label'],
+            icon: 'pi pi-fw pi-check-square',
+            routerLink: ['/admin/' + item['name']],
+          };
+        }),
+      });
+
+      this.menuItems.set(menuItems);
+    }
   }
 
   isOutsideClicked(event: MouseEvent) {

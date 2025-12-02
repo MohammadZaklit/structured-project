@@ -1,17 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { inputInterface, InputElement } from '@zak-lib/ui-library/elements/input';
-import { password } from './password.interface';
+import { NzInput, NzInputComponent } from '@zak-lib/ui-library/elements/input';
+import { NzPassword } from './password.interface';
 
 @Component({
-  selector: 'lib-password',
-  imports: [InputElement],
+  selector: 'nz-password',
+  imports: [NzInputComponent],
   templateUrl: './password.html',
   styleUrl: './password.scss',
 })
-export class Password implements OnInit {
-  @Input() public config!: password;
-  public passwordconfig!: inputInterface;
+export class NzPasswordComponent implements OnInit {
+  @Input() public config!: NzPassword;
+  public passwordconfig!: NzInput;
   ngOnInit() {
-    this.passwordconfig = this.config as inputInterface;
+    this.passwordconfig = this.config as NzInput;
   }
 }

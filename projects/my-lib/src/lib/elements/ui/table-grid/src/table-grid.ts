@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common'; // Import DatePipe
-import { TableModule, TablePageEvent, TableRowReorderEvent } from 'primeng/table';
+import { Table, TableModule, TablePageEvent, TableRowReorderEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
@@ -18,15 +18,16 @@ import { RippleModule } from 'primeng/ripple';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms'; // For ngModel
 import {
-  columnStaticActions,
-  RowSelectionMode,
-  TableGrid,
-  TableSorting,
+  NzColumnStaticActions,
+  NzRowSelectionMode,
+  NzTableGrid,
+  NzTableSorting,
 } from './table-grid.interface';
-import { StandardButton } from '@zak-lib/ui-library/components/standardbutton';
-
+import { NzStandardButton } from '@zak-lib/ui-library/components/standardbutton';
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
 @Component({
-  selector: 'lib-table-grid',
+  selector: 'nz-table-grid',
   standalone: true,
   imports: [
     CommonModule,
@@ -36,19 +37,21 @@ import { StandardButton } from '@zak-lib/ui-library/components/standardbutton';
     InputTextModule,
     TooltipModule,
     PaginatorModule,
+    IconFieldModule,
+    InputIconModule,
     RippleModule, // For button effects
   ],
   providers: [DatePipe], // Provide DatePipe
   templateUrl: './table-grid.html',
   styleUrl: './table-grid.scss',
 })
-export class TableGridComponent implements OnChanges {
-  @Input() config: WritableSignal<TableGrid | undefined> = signal(undefined);
+export class NzTableGridComponent implements OnChanges {
+  @Input() config: WritableSignal<NzTableGrid | undefined> = signal(undefined);
 
   @Output() onEdit = new EventEmitter<any>();
   @Output() onView = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
-  @Output() onRowReorder = new EventEmitter<TableSorting>();
+  @Output() onRowReorder = new EventEmitter<NzTableSorting>();
   @Output() onColumnSort = new EventEmitter<any>();
 
   tableData: WritableSignal<any[]> = signal([]);
@@ -74,6 +77,10 @@ export class TableGridComponent implements OnChanges {
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
+  }
+
+  onGlobalFilter(table: Table, event: Event) {
+    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
   // PrimeNG lazy load event for filtering/sorting if backend processing is needed
@@ -102,7 +109,7 @@ export class TableGridComponent implements OnChanges {
     return !!(actions && (actions.edit || actions.delete || actions.view));
   }
 
-  public staticActions(): columnStaticActions {
+  public staticActions(): NzColumnStaticActions {
     return (
       this.config()?.enableStaticActions || {
         edit: false,
@@ -133,7 +140,7 @@ export class TableGridComponent implements OnChanges {
     return (this.config()?.dynamicActions || [])?.length > 0;
   }
 
-  public dynamicActions(): StandardButton[] {
+  public dynamicActions(): NzStandardButton[] {
     return this.config()?.dynamicActions || [];
   }
 
@@ -145,7 +152,7 @@ export class TableGridComponent implements OnChanges {
     return this.config()?.columns.map((c) => c.name) ?? [];
   }
 
-  public get selectionMode(): RowSelectionMode {
+  public get selectionMode(): NzRowSelectionMode {
     return this.config()?.rowSelection ?? null;
   }
 

@@ -1,17 +1,16 @@
-import { StandardButton } from '@zak-lib/ui-library/components/standardbutton';
-import { TableGrid } from '@zak-lib/ui-library/elements/ui/table-grid';
-import { ModuleConfig } from '@zak-lib/ui-library/shared';
-export interface ListView {
-  module: ModuleConfig;
+import { NzStandardButton } from '@zak-lib/ui-library/components/standardbutton';
+import { NzTableGrid } from '@zak-lib/ui-library/elements/ui/table-grid';
+import { NzModuleConfig } from '@zak-lib/ui-library/shared';
+export interface NzListView {
+  module: NzModuleConfig;
   pageTitle?: string;
-  table: TableGrid;
-  showQuickSearch?: boolean;
+  table: NzTableGrid;
   showAddButton?: boolean;
-  dynamicHeaderButtons?: StandardButton[]; // Buttons to display in front of the add button
+  dynamicHeaderButtons?: NzStandardButton[]; // Buttons to display in front of the add button
   exportToExcel?: boolean;
   exportFileName?: string;
 }
 
-export interface SearchParameters {
+export interface NzSearchParameters {
   [key: string]: any;
 }

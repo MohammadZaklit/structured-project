@@ -1,8 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { ThemeService } from './shared/services/theme.service';
-import { themes } from './shared/constants/themes';
-
+import { THEMES } from './shared/constants/themes';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
@@ -18,7 +17,7 @@ export class App {
       {
         path: '',
         loadChildren: async () => {
-          const themeRoutesModule = await themes[theme];
+          const themeRoutesModule = await THEMES[theme];
           return themeRoutesModule.routes;
         },
       },

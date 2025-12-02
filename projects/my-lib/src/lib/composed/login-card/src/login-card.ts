@@ -1,32 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import { Buttons } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton';
-import { StandardButton } from '@zak-lib/ui-library/components/standardbutton/src/standardbutton.interface';
-import { InputElement } from '@zak-lib/ui-library/elements/input';
-import { email } from '@zak-lib/ui-library/components/email/src/email.interface';
-import { password } from '@zak-lib/ui-library/components/password/src/password.interface';
-import { heading } from '@zak-lib/ui-library/components/heading/src/heading.interface';
-import { Heading } from '@zak-lib/ui-library/components/heading';
-import { paragraph } from '@zak-lib/ui-library/components/paragraph/src/paragraph.interface';
-import { Paragraph } from '@zak-lib/ui-library/components/paragraph';
+import {
+  NzStandardButton,
+  NzStandardButtonComponent,
+} from '@zak-lib/ui-library/components/standardbutton';
+import { NzEmailComponent, NzEmail } from '@zak-lib/ui-library/components/email';
+import { NzPassword, NzPasswordComponent } from '@zak-lib/ui-library/components/password';
+import { NzHeading, NzHeadingComponent } from '@zak-lib/ui-library/components/heading';
+import { NzParagraph, NzParagraphComponent } from '@zak-lib/ui-library/components/paragraph';
 import { Router } from '@angular/router';
 import SupabaseClient from '@supabase/supabase-js/dist/module/SupabaseClient';
 import { createClient } from '@supabase/supabase-js';
 import { environment } from './environment';
 @Component({
-  selector: 'lib-login-card',
-  imports: [Buttons, InputElement, Heading, Paragraph],
+  selector: 'nz-login-card',
+  imports: [
+    NzStandardButtonComponent,
+    NzEmailComponent,
+    NzParagraphComponent,
+    NzHeadingComponent,
+    NzParagraphComponent,
+    NzPasswordComponent,
+  ],
   templateUrl: './login-card.html',
   styleUrl: './login-card.scss',
+  standalone: true,
 })
 export class LoginCard implements OnInit {
   private supabase: SupabaseClient;
-  public headingconfig!: heading;
-  public emailconfig!: email;
-  public passwordconfig!: password;
-  public loginconfig!: StandardButton;
-  public paragraphconfig!: paragraph;
-  public gotoregisterconfig!: StandardButton;
-  public gotohomeconfig!: StandardButton;
+  public headingconfig!: NzHeading;
+  public emailconfig!: NzEmail;
+  public passwordconfig!: NzPassword;
+  public loginconfig!: NzStandardButton;
+  public paragraphconfig!: NzParagraph;
+  public gotoregisterconfig!: NzStandardButton;
+  public gotohomeconfig!: NzStandardButton;
   email: string = '';
   password: string = '';
   constructor(private router: Router) {

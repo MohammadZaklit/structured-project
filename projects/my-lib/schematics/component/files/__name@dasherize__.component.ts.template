@@ -1,0 +1,8 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: '<%= prefix %>-<%= name %>',
+  template:``,
+  styles:``
+})
+export class <%= prefix.charAt(0).toUpperCase() + prefix.slice(1) %><%= name.charAt(0).toUpperCase() + name.slice(1) %>Component {}

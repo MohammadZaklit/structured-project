@@ -2,137 +2,198 @@
   #StepFormGroup
   let-stepIndex="stepIndex"
   let-stepId="stepId"
+  let-stepLabel="stepLabel"
   let-stepForm="stepForm"
   let-stepFields="stepFields"
 >
   <form [formGroup]="stepForm">
-    <div class="grid gap-3">
-      <ng-container *ngFor="let field of stepFields">
-        <div class="col-12" *ngIf="field.visible !== false">
-          <label *ngIf="field.label">{{ field.label }}</label>
+    <p-fluid>
+      <div class="flex">
+        <div class="card flex flex-col gap-6 w-full">
+          <div class="font-semibold text-xl">{{ stepLabel }}</div>
+          <div class="flex flex-col gap-6">
+            @for (field of stepFields; track field) {
+              @if (field.visible !== false) {
+                <div class="flex flex-col gap-2 w-full">
+                  <ng-container
+                    [ngTemplateOutlet]="FormField"
+                    [ngTemplateOutletContext]="{
+                      field: field,
+                      stepForm: stepForm,
+                    }"
+                  ></ng-container>
+                </div>
+              }
+            }
+          </div>
 
-          <ng-container [ngSwitch]="field.type">
-            <!-- AutoComplete -->
-            <p-autoComplete
-              *ngSwitchCase="'AutoComplete'"
-              [formControlName]="field.name"
-              [suggestions]="field.options || []"
-              [dropdown]="true"
-              [placeholder]="field.placeholder || ''"
-            ></p-autoComplete>
+          <ng-container [ngTemplateOutlet]="FormButtons"></ng-container>
+        </div>
+      </div>
+    </p-fluid>
+  </form>
+</ng-template>
 
-            <!-- CascadeSelect -->
-            <p-cascadeSelect
+@if (steps.length > 1) {
+  <p-stepper [(value)]="activeStep" [linear]="true">
+    <p-step-list>
+      @for (step of steps; track step.name; let i = $index) {
+        <p-step [value]="i">{{ step.label }}</p-step>
+      }
+    </p-step-list>
+    <p-step-panels>
+      @for (step of steps; track step.name; let i = $index) {
+        <p-step-panel [value]="i">
+          <ng-template #content>
+            <ng-container
+              [ngTemplateOutlet]="StepFormGroup"
+              [ngTemplateOutletContext]="{
+                stepIndex: i,
+                stepId: step.id,
+                stepLabel: step.label,
+                stepForm: form,
+                stepFields: getFieldsForStep(step.id),
+              }"
+            ></ng-container>
+          </ng-template>
+        </p-step-panel>
+      }
+    </p-step-panels>
+  </p-stepper>
+}
+@if (steps.length === 1) {
+  <ng-container
+    [ngTemplateOutlet]="StepFormGroup"
+    [ngTemplateOutletContext]="{
+      stepIndex: 0,
+      stepId: steps[0].id,
+      stepLabel: steps[0].label,
+      stepForm: form,
+      stepFields: getFieldsForStep(0),
+    }"
+  ></ng-container>
+}
+
+<ng-template #FormField let-field="field" let-stepForm="stepForm">
+  <nz-form-field-renderer
+    [config]="{ type: field.type, fieldConfig: field.fieldConfig }"
+  ></nz-form-field-renderer>
+
+  <!-- @switch (field.type) { -->
+  <!-- AutoComplete -->
+
+  <!-- CascadeSelect -->
+  <!-- <p-cascadeSelect
               *ngSwitchCase="'CascadeSelect'"
               [options]="field.options"
-              [formControlName]="field.name"
+               [formControl]="stepForm.get(field.name)"
               optionLabel="label"
               [placeholder]="field.placeholder || ''"
-            ></p-cascadeSelect>
+            ></p-cascadeSelect> -->
 
-            <!-- Checkbox -->
+  <!-- Checkbox -->
 
-            <div class="flex items-center" *ngSwitchCase="'Checkbox'">
-              <p-checkbox [binary]="true" [formControlName]="field.name"></p-checkbox>
+  <!-- <div class="flex items-center" *ngSwitchCase="'Checkbox'">
+              <p-checkbox [binary]="true"  [formControl]="stepForm.get(field.name)"></p-checkbox>
               <label for="{{ field.name + field.value }}" class="ml-2">{{ field.label }}</label>
-            </div>
+            </div> -->
 
-            <!-- ColorPicker -->
-            <p-colorPicker
+  <!-- ColorPicker -->
+  <!-- <p-colorPicker
               *ngSwitchCase="'ColorPicker'"
-              [formControlName]="field.name"
-            ></p-colorPicker>
+              [formControl]="stepForm.get(field.name)"
+            ></p-colorPicker> -->
 
-            <!-- DatePicker -->
-            <p-datepicker
+  <!-- DatePicker -->
+  <!-- <p-datepicker
               *ngSwitchCase="'DatePicker'"
               [showIcon]="true"
-              [formControlName]="field.name"
-            ></p-datepicker>
+               [formControl]="stepForm.get(field.name)"
+            ></p-datepicker> -->
 
-            <!-- Editor -->
-            <!-- <p-editor *ngSwitchCase="'Editor'" [formControlName]="field.name"></p-editor> -->
+  <!-- Editor -->
+  <!-- <p-editor *ngSwitchCase="'Editor'" [formControl]="stepForm.get(field.name)"></p-editor> -->
 
-            <!-- FloatLabel -->
-            <span *ngSwitchCase="'FloatLabel'" class="p-float-label">
-              <input pInputText [id]="field.name" [formControlName]="field.name" />
+  <!-- FloatLabel -->
+  <!-- <span *ngSwitchCase="'FloatLabel'" class="p-float-label">
+              <input pInputText [id]="field.name"  [formControl]="stepForm.get(field.name)" />
               <label [for]="field.name">{{ field.label }}</label>
-            </span>
+            </span> -->
 
-            <!-- IconField -->
-            <p-iconField *ngSwitchCase="'IconField'" icon="pi pi-user">
-              <input pInputText [formControlName]="field.name" />
-            </p-iconField>
+  <!-- IconField -->
+  <!-- <p-iconField *ngSwitchCase="'IconField'" icon="pi pi-user">
+              <input pInputText  [formControl]="stepForm.get(field.name)" />
+            </p-iconField> -->
 
-            <!-- InputGroup -->
-            <p-inputGroup *ngSwitchCase="'InputGroup'">
+  <!-- InputGroup -->
+  <!-- <p-inputGroup *ngSwitchCase="'InputGroup'">
               <span class="p-inputgroup-addon">@</span>
-              <input pInputText [formControlName]="field.name" />
-            </p-inputGroup>
+              <input pInputText  [formControl]="stepForm.get(field.name)" />
+            </p-inputGroup> -->
 
-            <!-- InputMask -->
-            <p-inputMask
+  <!-- InputMask -->
+  <!-- <p-inputMask
               *ngSwitchCase="'InputMask'"
               [mask]="field.extraProps?.mask"
-              [formControlName]="field.name"
+               [formControl]="stepForm.get(field.name)"
               [placeholder]="field.placeholder || ''"
-            ></p-inputMask>
+            ></p-inputMask> -->
 
-            <!-- InputNumber -->
-            <p-inputNumber
+  <!-- InputNumber -->
+  <!-- <p-inputNumber
               *ngSwitchCase="'InputNumber'"
-              [formControlName]="field.name"
-            ></p-inputNumber>
+              [formControl]="stepForm.get(field.name)"
+            ></p-inputNumber> -->
 
-            <!-- InputOtp -->
-            <p-inputOtp *ngSwitchCase="'InputOtp'" [formControlName]="field.name"></p-inputOtp>
+  <!-- InputOtp -->
+  <!-- <p-inputOtp *ngSwitchCase="'InputOtp'"  [formControl]="stepForm.get(field.name)"></p-inputOtp> -->
 
-            <!-- InputText -->
-            <input
+  <!-- InputText -->
+  <!-- <input
               *ngSwitchCase="'InputText'"
               pInputText
-              [formControlName]="field.name"
+             [formControl]="stepForm.get(field.name)"
               [placeholder]="field.placeholder || ''"
-            />
+            /> -->
 
-            <!-- KeyFilter -->
-            <input
+  <!-- KeyFilter -->
+  <!-- <input
               *ngSwitchCase="'KeyFilter'"
               pInputText
               pKeyFilter="int"
-              [formControlName]="field.name"
-            />
+               [formControl]="stepForm.get(field.name)"
+            /> -->
 
-            <!-- Knob -->
-            <p-knob *ngSwitchCase="'Knob'" [formControlName]="field.name"></p-knob>
+  <!-- Knob -->
+  <!-- <p-knob *ngSwitchCase="'Knob'"  [formControl]="stepForm.get(field.name)"></p-knob> -->
 
-            <!-- Listbox -->
-            <p-listbox
+  <!-- Listbox -->
+  <!-- <p-listbox
               *ngSwitchCase="'Listbox'"
               [options]="field.options || []"
-              [formControlName]="field.name"
-            ></p-listbox>
+               [formControl]="stepForm.get(field.name)"
+            ></p-listbox> -->
 
-            <!-- MultiSelect -->
-            <p-multiSelect
+  <!-- MultiSelect -->
+  <!-- <p-multiSelect
               *ngSwitchCase="'MultiSelect'"
               [options]="field.options"
-              [formControlName]="field.name"
+               [formControl]="stepForm.get(field.name)"
               optionLabel="label"
               [placeholder]="field.placeholder || ''"
-            ></p-multiSelect>
+            ></p-multiSelect> -->
 
-            <!-- Password -->
-            <p-password *ngSwitchCase="'Password'" [formControlName]="field.name"></p-password>
+  <!-- Password -->
+  <!-- <p-password *ngSwitchCase="'Password'"  [formControl]="stepForm.get(field.name)"></p-password> -->
 
-            <!-- RadioButton -->
-            <ng-template #sharedRadioButtonContent let-field="field">
+  <!-- RadioButton -->
+  <!-- <ng-template #sharedRadioButtonContent let-field="field">
               <div class="flex flex-wrap gap-4">
                 <div class="flex items-center" *ngFor="let opt of field.options">
                   <p-radioButton
                     [inputId]="field.name + opt.value"
                     [value]="opt.value"
-                    [formControlName]="field.name"
+                     [formControl]="stepForm.get(field.name)"
                   ></p-radioButton>
                   <label for="{{ field.name + opt.value }}" class="ml-2">{{ opt.label }}</label>
                 </div>
@@ -147,56 +208,56 @@
               <ng-container
                 *ngTemplateOutlet="sharedRadioButtonContent; context: { field: field }"
               ></ng-container>
-            </div>
+            </div> -->
 
-            <!-- Rating -->
-            <p-rating *ngSwitchCase="'Rating'" [formControlName]="field.name"></p-rating>
+  <!-- Rating -->
+  <!-- <p-rating *ngSwitchCase="'Rating'"  [formControl]="stepForm.get(field.name)"></p-rating> -->
 
-            <!-- Select -->
-            <!-- <p-dropdown
+  <!-- Select -->
+  <!-- <p-dropdown
                 *ngSwitchCase="'Select'"
                 [options]="field.options"
-                [formControlName]="field.name"
+                 [formControl]="stepForm.get(field.name)"
                 optionLabel="label"
                 optionValue="value"
                 [placeholder]="field.placeholder"
               ></p-dropdown> -->
 
-            <!-- SelectButton -->
-            <p-selectButton
+  <!-- SelectButton -->
+  <!-- <p-selectButton
               *ngSwitchCase="'SelectButton'"
               [options]="field.options"
-              [formControlName]="field.name"
-            ></p-selectButton>
+               [formControl]="stepForm.get(field.name)"
+            ></p-selectButton> -->
 
-            <!-- Slider -->
-            <p-slider *ngSwitchCase="'Slider'" [formControlName]="field.name"></p-slider>
+  <!-- Slider -->
+  <!-- <p-slider *ngSwitchCase="'Slider'"  [formControl]="stepForm.get(field.name)"></p-slider> -->
 
-            <!-- Textarea -->
-            <textarea
+  <!-- Textarea -->
+  <!-- <textarea
               *ngSwitchCase="'Textarea'"
               pInputTextarea
-              [formControlName]="field.name"
+               [formControl]="stepForm.get(field.name)"
               [placeholder]="field.placeholder || ''"
-            ></textarea>
+            ></textarea> -->
 
-            <!-- ToggleButton -->
-            <p-toggleButton
+  <!-- ToggleButton -->
+  <!-- <p-toggleButton
               *ngSwitchCase="'ToggleButton'"
-              [formControlName]="field.name"
+               [formControl]="stepForm.get(field.name)"
               onLabel="Yes"
               offLabel="No"
-            ></p-toggleButton>
+            ></p-toggleButton> -->
 
-            <!-- ToggleSwitch -->
-            <p-inputSwitch
+  <!-- ToggleSwitch -->
+  <!-- <p-inputSwitch
               *ngSwitchCase="'ToggleSwitch'"
-              [formControlName]="field.name"
-            ></p-inputSwitch>
+               [formControl]="stepForm.get(field.name)"
+            ></p-inputSwitch> -->
 
-            <!-- TreeSelect -->
-            <ng-template #sharedTreeSelectContent let-field="field">
-              <p-treeSelect [options]="field.options" [formControlName]="field.name"></p-treeSelect>
+  <!-- TreeSelect -->
+  <!-- <ng-template #sharedTreeSelectContent let-field="field">
+              <p-treeSelect [options]="field.options"  [formControl]="stepForm.get(field.name)"></p-treeSelect>
             </ng-template>
             <div *ngSwitchCase="'TreeSelectDB'">
               <ng-container
@@ -207,42 +268,42 @@
               <ng-container
                 *ngTemplateOutlet="sharedTreeSelectContent; context: { field: field }"
               ></ng-container>
-            </div>
+            </div> -->
 
-            <!-- Button -->
-            <button
+  <!-- Button -->
+  <!-- <button
               *ngSwitchCase="'Button'"
               pButton
               type="button"
               [label]="field.label"
               (click)="field.extraProps?.onClick?.(form.value)"
-            ></button>
+            ></button> -->
 
-            <!-- SpeedDial -->
-            <p-speedDial
+  <!-- SpeedDial -->
+  <!-- <p-speedDial
               *ngSwitchCase="'SpeedDial'"
               [model]="field.options || null"
               direction="up"
-            ></p-speedDial>
+            ></p-speedDial> -->
 
-            <!-- SplitButton -->
-            <p-splitButton
+  <!-- SplitButton -->
+  <!-- <p-splitButton
               *ngSwitchCase="'SplitButton'"
               [label]="field.label"
               [model]="field.options"
-            ></p-splitButton>
+            ></p-splitButton> -->
 
-            <!-- PickList -->
+  <!-- PickList -->
 
-            <!-- RadioButton -->
-            <ng-template #sharedPickListContent let-field="field">
+  <!-- RadioButton -->
+  <!-- <ng-template #sharedPickListContent let-field="field">
               <p-pickList
                 [source]="field.extraProps?.source"
                 [target]="field.extraProps?.target"
                 sourceHeader="Available"
                 targetHeader="Selected"
                 [dragdrop]="true"
-                [formControlName]="field.name"
+                 [formControl]="stepForm.get(field.name)"
               ></p-pickList>
             </ng-template>
             <div *ngSwitchCase="'PickListDB'">
@@ -254,107 +315,74 @@
               <ng-container
                 *ngTemplateOutlet="sharedPickListContent; context: { field: field }"
               ></ng-container>
-            </div>
+            </div> -->
 
-            <!-- FileUpload (drag drop) -->
-            <p-fileUpload
+  <!-- FileUpload (drag drop) -->
+  <!-- <p-fileUpload
               *ngSwitchCase="'FileUploadDragDrop'"
               mode="advanced"
               [auto]="true"
               chooseLabel="Browse"
-              [formControlName]="field.name"
-            ></p-fileUpload>
+               [formControl]="stepForm.get(field.name)"
+            ></p-fileUpload> -->
 
-            <!-- FileUpload (browse button) -->
-            <p-fileUpload
+  <!-- FileUpload (browse button) -->
+  <!-- <p-fileUpload
               *ngSwitchCase="'FileUploadBrowse'"
               mode="basic"
               chooseLabel="Browse"
-              [formControlName]="field.name"
-            ></p-fileUpload>
+              [formControl]="stepForm.get(field.name)"
+            ></p-fileUpload> -->
 
-            <!-- Unsupported -->
-            <span *ngSwitchDefault class="p-error">Unsupported: {{ field.type }}</span>
-          </ng-container>
+  <!-- Unsupported -->
+  <!-- <span *ngSwitchDefault class="p-error">Unsupported: {{ field.type }}</span> -->
+  <!-- } -->
 
-          <small
-            class="p-error"
-            *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched"
-          >
-            Invalid {{ field.label }}
-          </small>
-        </div>
-      </ng-container>
-    </div>
-
-    <!-- Navigation -->
-    <div class="flex justify-content-between mt-3">
-      <button
-        pButton
-        label="Previous"
-        icon="pi pi-arrow-left"
-        (click)="activeStep = activeStep - 1"
-        *ngIf="activeStep > 0"
-      ></button>
-      <button
-        pButton
-        label="Next"
-        icon="pi pi-arrow-right"
-        (click)="activeStep = activeStep + 1"
-        *ngIf="activeStep < steps.length - 1"
-      ></button>
-      <button
-        pButton
-        label="Submit"
-        icon="pi pi-check"
-        (click)="onCreate($event)"
-        *ngIf="activeStep === steps.length - 1 && !isEdit"
-      ></button>
-      <button
-        pButton
-        label="Update"
-        icon="pi pi-check"
-        (click)="onUpdate($event)"
-        *ngIf="activeStep === steps.length - 1 && !!isEdit"
-      ></button>
-    </div>
-  </form>
+  <small class="p-error" *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched">
+    Invalid {{ field.label }}
+  </small>
 </ng-template>
 
-@if (steps.length > 1) {
-<p-stepper [(value)]="activeStep" [linear]="true">
-  <p-step-list>
-    @for (step of steps; track step.name; let i = $index) {
-    <p-step [value]="i">{{ step.label }}</p-step>
+<ng-template #FormButtons>
+  <!-- Navigation -->
+  <div class="flex gap-2 justify-content-between mt-3">
+    <button
+      pButton
+      label="Previous"
+      icon="pi pi-arrow-left"
+      (click)="activeStep = activeStep - 1"
+      *ngIf="activeStep > 0"
+    ></button>
+    <button
+      pButton
+      label="Next"
+      icon="pi pi-arrow-right"
+      (click)="activeStep = activeStep + 1"
+      *ngIf="activeStep < steps.length - 1"
+    ></button>
+    <button
+      pButton
+      label="Submit"
+      icon="pi pi-check"
+      (click)="onCreate($event)"
+      *ngIf="activeStep === steps.length - 1 && !isEdit"
+    ></button>
+    <button
+      pButton
+      label="Update"
+      icon="pi pi-check"
+      (click)="onUpdate($event)"
+      *ngIf="activeStep === steps.length - 1 && !!isEdit"
+    ></button>
+    @if (stepperConfig.backBtn && stepperConfig.backBtn.position === 'inline') {
+      <button
+        label="Cancel"
+        pButton
+        severity="secondary"
+        icon="pi pi-angle-left"
+        (click)="stepperConfig.backBtn.btnCallback()"
+      ></button>
     }
-  </p-step-list>
-  <p-step-panels>
-    @for (step of steps; track step.name; let i = $index) {
-    <p-step-panel [value]="i">
-      <ng-template #content>
-        <ng-container
-          [ngTemplateOutlet]="StepFormGroup"
-          [ngTemplateOutletContext]="{
-            stepIndex: i,
-            stepId: step.id,
-            stepForm: form,
-            stepFields: getFieldsForStep(step.id)
-          }"
-        ></ng-container>
-      </ng-template>
-    </p-step-panel>
-    }
-  </p-step-panels>
-</p-stepper>
-} @if (steps.length === 1) {
-<ng-container
-  [ngTemplateOutlet]="StepFormGroup"
-  [ngTemplateOutletContext]="{
-    stepIndex: 0,
-    stepId: steps[0].id,
-    stepForm: form,
-    stepFields: getFieldsForStep(0)
-  }"
-></ng-container>
-}
-<lib-confirm-dialog [config]="SubmitConfirmDialogConfig"></lib-confirm-dialog>
+  </div>
+</ng-template>
+<nz-confirm-dialog [config]="SubmitConfirmDialogConfig"></nz-confirm-dialog>

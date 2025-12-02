@@ -1,4 +1,4 @@
-export interface ConfirmPopupConfig {
+export interface NzConfirmPopup {
   title: string;
   message: string;
   confirm?(event: Event): void;

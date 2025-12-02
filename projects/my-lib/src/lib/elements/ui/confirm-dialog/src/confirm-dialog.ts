@@ -2,18 +2,18 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ButtonModule } from 'primeng/button';
-import { ConfirmDialogConfig } from './confirm-dialog.interface';
+import { NzConfirmDialog } from './confirm-dialog.interface';
 
 @Component({
-  selector: 'lib-confirm-dialog',
+  selector: 'nz-confirm-dialog',
   imports: [ConfirmDialog, ButtonModule],
   providers: [ConfirmationService],
   templateUrl: './confirm-dialog.html',
   styleUrl: './confirm-dialog.css',
   standalone: true,
 })
-export class ConfirmDialogComponent implements OnInit {
-  @Input() public config!: ConfirmDialogConfig;
+export class NzConfirmDialogComponent implements OnInit {
+  @Input() public config!: NzConfirmDialog;
 
   constructor(private confirmationService: ConfirmationService) {}
 

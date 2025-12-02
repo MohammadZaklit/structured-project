@@ -1,26 +1,20 @@
-import { FieldConfig } from '@zak-lib/ui-library/shared';
+import { NzFormFieldLoaderConfig } from '@zak-lib/ui-library/elements/form-fields/form-field';
 
-export interface StepperConfig {
-  steps: StepConfig[];
+export interface NzStepperConfig {
+  steps: NzStepConfig[];
+  backBtn?: {
+    btnCallback: () => Promise<void>;
+    position: 'top' | 'inline';
+  };
 }
 
-export interface StepConfig {
+export interface NzStepConfig {
   id: number;
   label: string;
   name: string;
   icon?: string;
 }
 
-export interface FormFieldConfig extends FieldConfig {
-  type: string;
+export interface NzWizardFormFieldConfig extends NzFormFieldLoaderConfig {
   step: number;
-  placeholder?: string;
-  value?: any;
-  options?: any[];
-  required?: boolean | ((formValue: any) => boolean);
-  disabled?: boolean | ((formValue: any) => boolean);
-  visible?: boolean | ((formValue: any) => boolean);
-  pattern?: string;
-  apiValidate?: (value: any) => Promise<boolean>;
-  extraProps?: any;
 }

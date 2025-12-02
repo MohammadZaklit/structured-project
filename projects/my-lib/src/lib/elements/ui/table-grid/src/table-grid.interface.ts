@@ -1,36 +1,38 @@
-import { StandardButton } from '@zak-lib/ui-library/components/standardbutton';
-import { FieldConfig, GenericRecord } from '@zak-lib/ui-library/shared';
+import { NzStandardButton } from '@zak-lib/ui-library/components/standardbutton';
+import { NzModuleFieldConfig, NzGenericRecord } from '@zak-lib/ui-library/shared';
 import { Observable } from 'rxjs';
 
-export interface TableColumn extends FieldConfig {
+export interface NzTableColumn extends NzModuleFieldConfig {
   type: string;
   isSortable?: boolean;
   enableFilter?: boolean; // For inline filtering
 }
-export interface TableGrid {
-  columns: TableColumn[];
+export interface NzTableGrid {
+  title?: string;
+  showQuickSearch?: boolean;
+  columns: NzTableColumn[];
   icon?: string;
-  data?: Observable<GenericRecord[]>;
+  data?: Observable<NzGenericRecord[]>;
   paginator?: boolean;
   rows?: number;
   showCurrentPageReport?: boolean;
   rowsPerPageOptions?: number[];
   sortableRows?: boolean; // Enable/disable row reordering
-  rowSelection?: RowSelectionMode;
-  enableStaticActions?: columnStaticActions;
-  dynamicActions?: StandardButton[];
+  rowSelection?: NzRowSelectionMode;
+  enableStaticActions?: NzColumnStaticActions;
+  dynamicActions?: NzStandardButton[];
   enableColumnSorting?: boolean; // Enable/disable sorting by column header
 }
 
-export interface columnStaticActions {
+export interface NzColumnStaticActions {
   edit?: boolean;
   delete?: boolean;
   view?: boolean;
 }
 
-export type RowSelectionMode = 'single' | 'multiple' | null;
+export type NzRowSelectionMode = 'single' | 'multiple' | null;
 
-export interface TableSorting {
+export interface NzTableSorting {
   page: number;
   rows: {
     id: number;

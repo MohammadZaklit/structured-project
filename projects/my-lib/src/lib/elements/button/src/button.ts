@@ -1,16 +1,16 @@
 import { Component, Input } from '@angular/core';
-import { Button } from './button.interface';
+import { NzButton } from './button.interface';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
-  selector: 'lib-button',
+  selector: 'nz-button',
   standalone: true,
   imports: [ButtonModule],
   templateUrl: './button.html',
   styleUrls: ['./button.scss'],
 })
-export class ButtonComponent {
-  @Input() public config!: Button;
+export class NzButtonComponent {
+  @Input() public config!: NzButton;
   public buttonstyle: string = '';
 
   ngOnInit(): void {

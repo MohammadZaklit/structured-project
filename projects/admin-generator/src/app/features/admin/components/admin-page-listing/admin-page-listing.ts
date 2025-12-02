@@ -1,20 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, OnInit, Output, signal } from '@angular/core';
-import { TableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
-import { ListView, ListViewComponent } from '@zak-lib/ui-library/layouts/list-view';
-import { FieldConfig, GenericRecord, ModuleConfig } from '@zak-lib/ui-library/shared';
-import { components } from 'projects/admin-generator/src/app/shared/constants/components';
+import { NzTableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
+import { NzListView, NzListViewComponent } from '@zak-lib/ui-library/layouts/list-view';
+import { NzModuleFieldConfig, NzGenericRecord, NzModuleConfig } from '@zak-lib/ui-library/shared';
+import { COMPONENTS } from '../../../../shared/constants/components';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
 
 @Component({
   selector: 'app-admin-page-listing',
-  imports: [CommonModule, ListViewComponent],
+  imports: [CommonModule, NzListViewComponent],
   templateUrl: './admin-page-listing.html',
   styleUrl: './admin-page-listing.scss',
   standalone: true,
 })
 export class AdminPageListing implements OnInit {
-  ListViewConfig = signal<ListView | undefined>(undefined);
+  ListViewConfig = signal<NzListView | undefined>(undefined);
   private moduleSettings = inject(ModuleSettingsService);
   @Output() public addRow = new EventEmitter<void>();
   @Output() public editRow = new EventEmitter<any>();
@@ -24,14 +24,15 @@ export class AdminPageListing implements OnInit {
 
   ngOnInit(): void {
     this.ListViewConfig.set({
-      pageTitle: this.moduleSettings.module()?.label,
-      module: this.moduleSettings.module() as ModuleConfig,
+      module: this.moduleSettings.module() as NzModuleConfig,
       table: {
+        title: this.moduleSettings.module()?.label,
+        showQuickSearch: true,
         columns: this.mapFieldsToColumns(this.moduleSettings.fields()),
         paginator: true,
-        rows: 50,
+        rows: 10,
         showCurrentPageReport: true,
-        rowsPerPageOptions: [5, 10, 20],
+        rowsPerPageOptions: [10, 25, 50],
         sortableRows: true,
         rowSelection: 'multiple',
         enableStaticActions: {
@@ -42,7 +43,7 @@ export class AdminPageListing implements OnInit {
         dynamicActions: [],
         enableColumnSorting: true,
       },
-      showQuickSearch: true,
+
       showAddButton: true,
       dynamicHeaderButtons: [],
       exportToExcel: true,
@@ -50,12 +51,12 @@ export class AdminPageListing implements OnInit {
     });
   }
 
-  private mapFieldsToColumns(fields: FieldConfig[]): TableColumn[] {
+  private mapFieldsToColumns(fields: NzModuleFieldConfig[]): NzTableColumn[] {
     return (
       fields.map((field) => {
         return Object.assign(field, {
           type:
-            components.find((component) => component.id === field['componentId'])?.componentName ??
+            COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
             'InputText',
           isSortable: true,
           enableFilter: true,
@@ -64,7 +65,7 @@ export class AdminPageListing implements OnInit {
     );
   }
 
-  public editRowCallback(data: GenericRecord): void {
+  public editRowCallback(data: NzGenericRecord): void {
     this.editRow.emit(data);
   }
 }

@@ -1,4 +1,4 @@
-export interface Button {
+export interface NzButton {
   id?: string;
   type?: 'button' | 'submit' | 'clear';
   label?: string;

@@ -1,3 +1,3 @@
-export interface textareaInterface {
+export interface NzTextarea {
   value?: string;
 }

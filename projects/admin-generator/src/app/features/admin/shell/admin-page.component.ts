@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
-import { GenericRecord } from '@zak-lib/ui-library/shared';
+import { NzGenericRecord } from '@zak-lib/ui-library/shared';
 
 @Component({
   selector: 'admin-page',
@@ -26,7 +26,7 @@ export class AdminPageComponent {
     }
 
     if (component.editRow) {
-      component.editRow.pipe(takeUntil(this.onDestroy$)).subscribe((data: GenericRecord) => {
+      component.editRow.pipe(takeUntil(this.onDestroy$)).subscribe((data: NzGenericRecord) => {
         component.id = selectedRecordId;
         this.router.navigate(['edit', data.id], { relativeTo: this.route });
       });
@@ -38,6 +38,12 @@ export class AdminPageComponent {
     }
     if (component.successForm) {
       component.successForm.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+        this.router.navigate(['list'], { relativeTo: this.route });
+      });
+    }
+
+    if (component.backCallback) {
+      component.backCallback.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
         this.router.navigate(['list'], { relativeTo: this.route });
       });
     }

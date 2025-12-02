@@ -1,14 +1,16 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, input } from '@angular/core';
 import { AppMenu } from './app.menu';
+import { MenuItem } from 'primeng/api';
 
 @Component({
-    selector: 'app-sidebar',
-    standalone: true,
-    imports: [AppMenu],
-    template: ` <div class="layout-sidebar">
-        <app-menu></app-menu>
-    </div>`
+  selector: 'app-sidebar',
+  standalone: true,
+  imports: [AppMenu],
+  template: ` <div class="layout-sidebar">
+    <app-menu [menuItems]="menuItems()"></app-menu>
+  </div>`,
 })
 export class AppSidebar {
-    constructor(public el: ElementRef) {}
+  menuItems = input.required<MenuItem[]>();
+  constructor(public el: ElementRef) {}
 }

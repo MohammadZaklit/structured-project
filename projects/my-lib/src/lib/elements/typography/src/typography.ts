@@ -1,14 +1,14 @@
 import { Component, Input } from '@angular/core';
-import { typography } from './typography.interface';
+import { NzTypography } from './typography.interface';
 
 @Component({
-  selector: 'lib-typography',
+  selector: 'nz-typography',
   imports: [],
   templateUrl: './typography.html',
   styleUrl: './typography.scss',
 })
-export class Typography {
-  @Input() public config!: typography;
+export class NzTypographyComponent {
+  @Input() public config!: NzTypography;
   public textstyle: string = '';
   ngOnInit(): void {
     this.textstyle = this.config.textstyle ?? 'default';

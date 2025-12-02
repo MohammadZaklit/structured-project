@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { DragDropModule } from 'primeng/dragdrop';
 import { CommonModule } from '@angular/common';
 @Component({
-  selector: 'lib-drag-drop',
+  selector: 'nz-drag-drop',
   imports: [DragDropModule, CommonModule],
   templateUrl: './drag-drop.html',
   styleUrl: './drag-drop.css',
 })
-export class DragDrop {
+export class NzDragDrop {
   draggedProduct: any = null; // store the item being dragged
   products = [
     { name: 'Laptop', price: 1200 },

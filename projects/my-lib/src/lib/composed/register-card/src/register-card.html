@@ -1,17 +1,17 @@
 <div class="flex justify-content-center align-items-center min-h-screen">
   <div class="surface-card p-6 shadow-2 border-round w-full md:w-6">
-    <lib-heading class="sign-title" [config]="headingconfig"></lib-heading>
+    <nz-heading class="sign-title" [config]="headingconfig"></nz-heading>
     <div class="flex flex-column gap-1 pt-2">
-      <lib-input [config]="nameconfig"></lib-input>
-      <lib-email [config]="emailconfig"></lib-email>
-      <lib-password [config]="passwordconfig"></lib-password>
+      <nz-name [config]="nameconfig"></nz-name>
+      <nz-email [config]="emailconfig"></nz-email>
+      <nz-password [config]="passwordconfig"></nz-password>
       <div>
-        <lib-phone-number></lib-phone-number>
+        <nz-phone-number></nz-phone-number>
       </div>
       <div id="strength" class="password-strength"></div>
       <div class="flex flex-column gap-1 pt-2">
-        <lib-buttons [config]="registerconfig"></lib-buttons>
-        <lib-buttons (click)="goToLogin()" [config]="backtologinconfig"></lib-buttons>
+        <nz-standard-button [config]="registerconfig"></nz-standard-button>
+        <nz-standard-button (click)="goToLogin()" [config]="backtologinconfig"></nz-standard-button>
       </div>
     </div>
   </div>

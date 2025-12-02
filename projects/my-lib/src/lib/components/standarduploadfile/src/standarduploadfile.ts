@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { UploadFile } from '@zak-lib/ui-library/elements/upload-file';
+import { NzUploadFileComponent } from '@zak-lib/ui-library/elements/upload-file';
 @Component({
-  selector: 'lib-standarduploadfile',
-  imports: [UploadFile],
+  selector: 'nz-standarduploadfile',
+  imports: [NzUploadFileComponent],
   templateUrl: './standarduploadfile.html',
   styleUrl: './standarduploadfile.css',
+  standalone: true,
 })
 export class Standarduploadfile {
   currentImage!: string | ArrayBuffer | null;
