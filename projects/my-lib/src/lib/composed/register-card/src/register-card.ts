@@ -1,4 +1,4 @@
-import { Component, Injectable } from '@angular/core';
+import { Component, Injectable, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
   NzStandardButton,
@@ -12,6 +12,8 @@ import { NzPhoneNumberComponent } from '@zak-lib/ui-library/elements/phone-numbe
 import { NzEmail, NzEmailComponent } from '@zak-lib/ui-library/components/email';
 import { NzPasswordComponent, NzPassword } from '@zak-lib/ui-library/components/password';
 import { NzNameComponent, NzName } from '@zak-lib/ui-library/components/name';
+import { NzFormControl } from '@zak-lib/ui-library/shared';
+import { NzLoginCard } from '../../login-card';
 @Injectable({
   providedIn: 'root',
 })
@@ -29,6 +31,7 @@ import { NzNameComponent, NzName } from '@zak-lib/ui-library/components/name';
   styleUrl: './register-card.scss',
 })
 export class RegisterCard {
+  @Input() config!: NzLoginCard;
   message = '';
   private supabase: SupabaseClient;
   public nameconfig!: NzName;
@@ -48,28 +51,35 @@ export class RegisterCard {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
   }
   ngOnInit(): void {
+    this.config.form.addControl('name', new NzFormControl(null));
+    this.config.form.addControl('email', new NzFormControl(null));
+    this.config.form.addControl('password', new NzFormControl(null));
+
     this.headingconfig = {
       id: 'headingconfig',
       label: 'register now',
-      textstyle: 'title',
+      style: 'h1',
     };
     this.nameconfig = {
-      id: 'nameinput',
+      name: 'nameinput',
       label: 'enter your name',
-      textstyle: 'email',
-      value: this.name,
+      value: this.config.form.get('name')?.value,
+      control: this.config.form.get('name') as NzFormControl,
+      form: this.config.form,
     };
     this.emailconfig = {
-      id: 'emailinput',
+      name: 'emailinput',
       label: 'enter an email',
-      textstyle: 'email',
-      value: this.email,
+      value: this.config.form.get('email')?.value,
+      control: this.config.form.get('email') as NzFormControl,
+      form: this.config.form,
     };
     this.passwordconfig = {
-      id: 'passwordInput',
+      name: 'passwordInput',
       label: 'enter a Password',
-      textstyle: 'password',
-      value: this.password,
+      value: this.config.form.get('password')?.value,
+      control: this.config.form.get('password') as NzFormControl,
+      form: this.config.form,
     };
     this.registerconfig = {
       id: 'registerbutton',

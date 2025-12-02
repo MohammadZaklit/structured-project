@@ -16,6 +16,7 @@ export interface NzModuleFieldConfig extends NzFormFieldInfo {
   parentFieldId?: number;
   isDefault: number;
   configuration: NzComponentConfiguration;
+  label: string;
 }
 
 export type NzComponentConfiguration = NzFieldComponentType;

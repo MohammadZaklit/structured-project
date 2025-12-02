@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NzInput, NzInputComponent } from '@zak-lib/ui-library/elements/input';
+import { NzInput, NzInputComponent } from '@zak-lib/ui-library/elements/form-fields/input';
 import { NzName } from './name.interface';
 
 @Component({

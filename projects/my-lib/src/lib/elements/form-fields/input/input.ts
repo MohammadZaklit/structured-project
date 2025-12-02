@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { NzFormField, NzFormFieldComponent } from '../form-field/form-field';
 import { NzBaseInput } from '../interfaces/base-input.interface';

@@ -84,7 +84,7 @@ export class NzLoginCardComponent implements OnInit {
     this.passwordconfig = {
       name: 'password',
       label: 'Password',
-      control: this.config.form.get('passsword') as NzFormControl,
+      control: this.config.form.get('password') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
       form: this.config.form,
     };
     this.loginconfig = {
