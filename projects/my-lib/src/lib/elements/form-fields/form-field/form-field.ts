@@ -11,9 +11,9 @@ export interface NzFormField extends NzFormFieldInfo, NzFormFieldSettings {
 
 export interface NzFormFieldSettings {
   value?: any;
-  required?: boolean | ((formValue: any) => boolean);
-  disabled?: boolean | ((formValue: any) => boolean);
-  visible?: boolean | ((formValue: any) => boolean);
+  isRequired?: boolean | ((formValue: any) => boolean);
+  isDisabled?: boolean | ((formValue: any) => boolean);
+  isVisible?: boolean | ((formValue: any) => boolean);
   apiValidate?: (value: any) => Promise<boolean>;
   extraProps?: any;
   placeholder?: string;

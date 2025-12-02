@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Password } from './password';
+import { Checkbox } from './checkbox';
 
-describe('Password', () => {
-  let component: Password;
-  let fixture: ComponentFixture<Password>;
+describe('Checkbox', () => {
+  let component: Checkbox;
+  let fixture: ComponentFixture<Checkbox>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Password]
+      imports: [Checkbox]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Password);
+    fixture = TestBed.createComponent(Checkbox);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

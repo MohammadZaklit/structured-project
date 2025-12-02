@@ -1,7 +1,8 @@
 import { NzAutoComplete } from '@zak-lib/ui-library/elements/form-fields/autocomplete';
 import { NzInput } from '@zak-lib/ui-library/elements/form-fields/input';
+import { NzToggleSwitch } from '@zak-lib/ui-library/elements/form-fields/toggle-switch';
 
-export type NzFieldComponentType = NzAutoComplete | NzInput;
+export type NzFieldComponentType = NzAutoComplete | NzInput | NzToggleSwitch;
 
 export type NzFieldType =
   | NzFieldTypeEnum.AutoComplete

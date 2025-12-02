@@ -1,18 +1,20 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NzInput, NzInputComponent } from '@zak-lib/ui-library/elements/input';
-import { NzEmail } from './email.interface';
+import { NzInput, NzInputComponent } from '@zak-lib/ui-library/elements/form-fields/input';
 
+export interface NzEmail extends NzInput {}
 @Component({
   selector: 'nz-email',
   imports: [NzInputComponent],
-  templateUrl: './email.html',
-  styleUrl: './email.scss',
+  template: `<nz-input [config]="emailconfig"></nz-input>`,
+  styles: ``,
   standalone: true,
 })
 export class NzEmailComponent implements OnInit {
   @Input() public config!: NzEmail;
   public emailconfig!: NzInput;
   ngOnInit(): void {
-    this.emailconfig = this.config as NzInput;
+    this.emailconfig = Object.assign(this.config, {
+      type: 'email',
+    });
   }
 }
