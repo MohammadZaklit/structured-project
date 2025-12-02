@@ -4,17 +4,33 @@ import { inject } from '@angular/core';
 import { ThemeService } from './shared/services/theme.service';
 import { themes } from './shared/constants/themes';
 
+// Guards
+import { GuestGuard } from './guards/guest-guard/guest-guard';
+import { AuthGuard } from './guards/auth-guard/auth-guard';
+
 export const routes: Routes = [
   {
     path: '',
-    loadChildren: async () => {
-      // Get current theme dynamically
-      const themeService = inject(ThemeService);
-      const theme = themeService.getCurrentTheme(); // e.g. 'default' | 'dark'
 
-      const themeRoutesModule = await (themes[theme] || themes['default']);
-      console.warn('themeRoutesModule: ', themeRoutesModule);
-      return themeRoutesModule.routes;
+    loadChildren: async () => {
+      const themeService = inject(ThemeService);
+      const theme = themeService.getCurrentTheme();
+      const themeRoutesModule = await themes[theme];
+      return themeRoutesModule.routes; // ← AuthGuard should be INSIDE that file
     },
   },
+
+  {
+    path: 'auth-login',
+    loadComponent: () =>
+      import('./features/auth/components/auth-login/auth-login').then((m) => m.AuthLogin),
+  },
+
+  {
+    path: 'auth-register',
+    loadComponent: () =>
+      import('./features/auth/components/auth-register/auth-register').then((m) => m.Authregister),
+  },
+
+  { path: '**', redirectTo: 'auth-login' },
 ];

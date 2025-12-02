@@ -36,6 +36,7 @@ import {
 } from '@zak-lib/ui-library/elements/ui/confirm-popup';
 @Component({
   selector: 'lib-list-view',
+  standalone: true,
   imports: [TableGridComponent, ButtonModule, TooltipModule, FormsModule, ConfirmPopupComponent],
   templateUrl: './list-view.html',
   styleUrl: './list-view.css',
@@ -140,7 +141,7 @@ export class ListViewComponent implements OnInit, OnDestroy {
 
   private async deleteRow(rowData: GenericRecord): Promise<void> {
     const response = await firstValueFrom(
-      this.httpService.delete(this.moduleName, rowData.id || 0)
+      this.httpService.delete(this.moduleName, rowData.id || 0),
     );
     if (response) {
       this.loadData();

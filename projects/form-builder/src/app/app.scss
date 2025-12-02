@@ -108,3 +108,7 @@
   transform: translate(-50%, -50%) scale(1.02); /* centers at cursor */
   transition: transform 0.05s linear;
 }
+.form-nested-column {
+  width: 100%;
+  max-width: 100%;
+}

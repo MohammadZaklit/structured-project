@@ -43,7 +43,7 @@ export class HttpService {
    */
   getAll<T extends GenericRecord>(
     moduleName: string,
-    searchParams?: { [key: string]: any }
+    searchParams?: { [key: string]: any },
   ): Observable<T[]> {
     let params = new HttpParams();
     if (searchParams) {
