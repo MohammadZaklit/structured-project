@@ -1,8 +1,17 @@
 import { NzAutoComplete } from '@zak-lib/ui-library/elements/form-fields/autocomplete';
 import { NzInput } from '@zak-lib/ui-library/elements/form-fields/input';
+import { NzCheckBox } from '@zak-lib/ui-library/elements/form-fields/checkbox';
+import { NzDatePicker } from '@zak-lib/ui-library/elements/form-fields/date-picker';
+import { NzTextarea } from '@zak-lib/ui-library/elements/form-fields/textarea';
 import { NzToggleSwitch } from '@zak-lib/ui-library/elements/form-fields/toggle-switch';
-
-export type NzFieldComponentType = NzAutoComplete | NzInput | NzToggleSwitch;
+// here we can render the component dynamically
+export type NzFieldComponentType =
+  | NzAutoComplete
+  | NzInput
+  | NzToggleSwitch
+  | NzCheckBox
+  | NzDatePicker
+  | NzTextarea;
 
 export type NzFieldType =
   | NzFieldTypeEnum.AutoComplete

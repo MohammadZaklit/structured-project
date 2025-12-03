@@ -4,7 +4,7 @@ import {
   NzStandardButton,
   NzStandardButtonComponent,
 } from '@zak-lib/ui-library/components/standardbutton';
-import { NzHeading, NzHeadingComponent } from '@zak-lib/ui-library/components/heading';
+import { NzHeadingComponent } from '@zak-lib/ui-library/components/heading';
 import { Router } from '@angular/router';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from './environment';
@@ -14,6 +14,7 @@ import { NzPasswordComponent, NzPassword } from '@zak-lib/ui-library/components/
 import { NzNameComponent, NzName } from '@zak-lib/ui-library/components/name';
 import { NzFormControl } from '@zak-lib/ui-library/shared';
 import { NzLoginCard } from '../../login-card';
+import { NzParagraph, NzParagraphComponent } from '@zak-lib/ui-library/components/paragraph';
 @Injectable({
   providedIn: 'root',
 })
@@ -38,7 +39,7 @@ export class RegisterCard {
   public emailconfig!: NzEmail;
   public passwordconfig!: NzPassword;
   public registerconfig!: NzStandardButton;
-  public headingconfig!: NzHeading;
+  public headingconfig!: NzParagraph;
   public backtologinconfig!: NzStandardButton;
   email: string = '';
   password: string = '';

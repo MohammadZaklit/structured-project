@@ -52,6 +52,7 @@ const styles = {
 export class NzTypographyComponent {
   @Input() public config!: NzTypography;
   public textstyle: string = '';
+
   ngOnInit(): void {
     this.textstyle = this.config?.looksLike
       ? styles[this.config.looksLike] || ''

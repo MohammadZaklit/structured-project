@@ -5,8 +5,7 @@ import { NzTextarea } from './textarea.interface';
 @Component({
   selector: 'nz-textarea',
   imports: [TextareaModule, FormsModule],
-  templateUrl: './textarea.html',
-  styleUrl: './textarea.css',
+  template: `<textarea rows="5" cols="30" pTextarea class="w-full"></textarea> `,
 })
 export class NzTextareaComponent {
   @Input() public config!: NzTextarea;

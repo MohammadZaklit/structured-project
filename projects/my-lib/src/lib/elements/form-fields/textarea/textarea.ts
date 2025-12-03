@@ -11,7 +11,7 @@ import { NzFormFieldSettings } from '../form-field/form-field';
     <textarea rows="5" cols="30" pTextarea class="w-full"></textarea>
   </nz-form-field>`,
 })
-export class NzTextareaComponent extends NzFormFieldComponent {
+export class NzTextAreaComponent extends NzFormFieldComponent {
   @Input() public config!: NzTextarea;
 }
 
