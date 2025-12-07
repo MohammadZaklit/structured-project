@@ -35,7 +35,7 @@ export class AccountPage {
     this.successedconfig = {
       id: 'successconfig',
       label: 'Loading...', // temporary text
-      textstyle: 'display-congrats',
+      style: 'h1',
     };
 
     this.gotosigninconfig = {
@@ -54,6 +54,7 @@ export class AccountPage {
     this.datepickerconfig = {
       id: 'datepickerconfig',
       label: 'pick a date',
+      style: 'h1',
     };
     // Now load actual Supabase user
     this.loadUser();

@@ -1,17 +1,17 @@
 import { Component, Input } from '@angular/core';
-import { NzTypographyComponent, NzTypography } from '@zak-lib/ui-library/elements/typography';
+import { NzTypographyComponent } from '@zak-lib/ui-library/elements/typography';
+import { NzHeading } from './heading.interface';
 
 @Component({
   selector: 'nz-heading',
   imports: [NzTypographyComponent],
-  templateUrl: './heading.html',
-  styleUrl: './heading.scss',
+  template: `<nz-typography [config]="headingconfig"></nz-typography> `,
   standalone: true,
 })
 export class NzHeadingComponent {
-  @Input() public config!: NzTypography;
-  public headingconfig!: NzTypography;
+  @Input() public config!: NzHeading;
+  public headingconfig!: NzHeading;
   ngOnInit() {
-    this.headingconfig = this.config as NzTypography;
+    this.headingconfig = this.config;
   }
 }

@@ -15,9 +15,10 @@ export interface NzFormFieldLoaderConfig {
   standalone: true,
 })
 export class NzFormFieldRendererComponent implements OnInit {
-  @Input() config!: NzFormFieldLoaderConfig;
+  @Input() config!: NzFormFieldLoaderConfig; // lets a parent component(nzformFieldLoaderConfig) send data to a child
+  // component(config here) — basically pass values into the component.
 
-  @ViewChild('fieldContainer', { read: ViewContainerRef, static: true })
+  @ViewChild('fieldContainer', { read: ViewContainerRef, static: true }) //@ViewChild() lets a component access a child component,
   container!: ViewContainerRef;
 
   constructor(@Inject(NzFieldRegistry) private registry: Record<string, any>) {}

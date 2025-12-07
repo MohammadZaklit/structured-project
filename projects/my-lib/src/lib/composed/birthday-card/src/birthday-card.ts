@@ -42,6 +42,7 @@ export class BirthdayCard implements OnInit {
     this.messageconfig = {
       id: 'messageconfig',
       label: 'Type your birthday message:',
+      style: 'h1',
     };
 
     this.createcard = {
