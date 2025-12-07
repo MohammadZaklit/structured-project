@@ -1,0 +1,185 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3 bg-light p-3 border-right">
+      <h4>FORM FIELDS</h4>
+      <div class="form-field-palette" [dragula]="bagFieldsName" [dragulaModel]="availableFields">
+        @for (field of availableFields; track field.id) {
+          <div class="card mb-2 p-2 draggable-field">{{ field.label }} ({{ field.type }})</div>
+        }
+      </div>
+    </div>
+
+    <div class="col-md-6 p-3 border-right">
+      <h4>DRAG & DROP AREA</h4>
+      <button class="btn btn-success mb-3 ml-2" (click)="submitForm()">Submit Form</button>
+
+      <div
+        class="form-preview-area form-builder-area"
+        [dragula]="bagFieldsName"
+        [dragulaModel]="droppedRows"
+      >
+        @if (droppedRows.length === 0) {
+          <div class="alert alert-info">Drag a **Row** here to begin!</div>
+        }
+
+        <ng-template
+          #renderRowTemplate
+          let-rows="rows"
+          let-parentRIndex="parentRIndex"
+          let-parentCIndex="parentCIndex"
+        >
+          @for (row of rows; track row.id; let rIndex = $index) {
+            <div
+              class="form-row-container mb-3 p-2 border rounded bg-white"
+              [attr.data-row-id]="row.id"
+              [attr.data-row-index]="rIndex"
+              [dragula]="bagFieldsName"
+              [dragulaModel]="row.columns"
+            >
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                @if (parentRIndex === undefined) {
+                  <strong>Row {{ rIndex + 1 }}</strong>
+                } @else {
+                  <strong class="text-info"
+                    >Nested Row (Inside Col {{ parentCIndex + 1 }} of Main Row
+                    {{ parentRIndex + 1 }})
+                  </strong>
+                }
+                @if (rows === droppedRows) {
+                  <button class="btn btn-danger btn-sm" (click)="removeRow(row.id)">
+                    Remove Row
+                  </button>
+                }
+              </div>
+
+              @if (row.columns.length === 0) {
+                <div class="alert alert-warning text-center">
+                  <p class="mb-0">Drag a **Column** from the left here to create the layout.</p>
+                </div>
+              } @else {
+                <div class="d-flex form-columns-wrapper">
+                  @for (col of row.columns; track col.id; let cIndex = $index) {
+                    <div
+                      [ngClass]="'col-' + 12 / row.columns.length"
+                      class="form-column p-2 border mx-1 rounded bg-light"
+                      [attr.data-row-id]="row.id"
+                      [attr.data-col-id]="col.id"
+                      [attr.data-col-index]="cIndex"
+                      [dragula]="bagFieldsName"
+                      [dragulaModel]="col.fields"
+                    >
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small>Column {{ cIndex + 1 }} </small>
+                        <button
+                          class="btn btn-sm btn-outline-danger py-0"
+                          (click)="removeColumn(row.id, col.id)"
+                        >
+                          X
+                        </button>
+                      </div>
+
+                      @for (field of col.fields; track field.id) {
+                        <div
+                          class="card mb-2 p-2 draggable-field dropped-field"
+                          [class.selected-field]="selectedField === field"
+                          (click)="selectField(field); $event.stopPropagation()"
+                        >
+                          @if (field.type === 'nested-row-container' && field.nestedRow) {
+                            <p class="mb-1 font-weight-bold">[NESTED ROW CONTAINER]</p>
+                            <div class="form-nested-column">
+                              <ng-container
+                                *ngTemplateOutlet="
+                                  renderRowTemplate;
+                                  context: {
+                                    rows: [field.nestedRow],
+                                    parentRIndex:
+                                      parentRIndex !== undefined ? parentRIndex : rIndex,
+                                    parentCIndex: cIndex,
+                                  }
+                                "
+                              ></ng-container>
+                            </div>
+                          } @else {
+                            {{ field.label }} ({{ field.type }})
+                          }
+                        </div>
+                      } @empty {
+                        <div class="text-muted text-center small mt-3">Drag fields here</div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </ng-template>
+
+        <ng-container
+          *ngTemplateOutlet="renderRowTemplate; context: { rows: droppedRows }"
+        ></ng-container>
+      </div>
+    </div>
+
+    <div class="col-md-3 bg-light p-3 border-left">
+      <h4>FIELD CUSTOMIZATION</h4>
+      @if (selectedField && selectedField.type !== 'nested-row-container') {
+        <div class="customization-pane p-3 bg-white border rounded">
+          <h5>Edit: {{ selectedField!.label }}</h5>
+          <div class="form-group">
+            <label for="fieldLabel">Label</label>
+            <input
+              type="text"
+              id="fieldLabel"
+              class="form-control"
+              [(ngModel)]="selectedField!.label"
+            />
+          </div>
+          <div class="form-group">
+            <label for="fieldType">Type</label>
+            <input
+              type="text"
+              id="fieldType"
+              class="form-control"
+              [(ngModel)]="selectedField!.type"
+              disabled
+            />
+          </div>
+          @if (selectedField!.type === 'text' || selectedField!.type === 'number') {
+            <div class="form-group">
+              <label for="placeholder">Placeholder</label>
+              <input
+                type="text"
+                id="placeholder"
+                class="form-control"
+                [(ngModel)]="selectedField!.placeholder"
+              />
+            </div>
+          }
+          <div class="form-group form-check">
+            <input
+              type="checkbox"
+              id="required"
+              class="form-check-input"
+              [(ngModel)]="selectedField!.required"
+            />
+            <label class="form-check-label" for="required">Required</label>
+          </div>
+
+          <button class="btn btn-danger btn-block mt-3" (click)="deleteSelectedField()">
+            Delete Field
+          </button>
+        </div>
+      } @else if (selectedField && selectedField.type === 'nested-row-container') {
+        <div class="customization-pane p-3 bg-white border rounded">
+          <h5>Edit: {{ selectedField!.label }}</h5>
+          <p>This is a Nested Row Container. Edit its label and delete it here.</p>
+          <button class="btn btn-danger btn-block mt-3" (click)="deleteSelectedField()">
+            Delete Nested Row
+          </button>
+        </div>
+      } @else {
+        <div class="alert alert-info">Select a field from the middle container to customize.</div>
+      }
+    </div>
+  </div>
+</div>

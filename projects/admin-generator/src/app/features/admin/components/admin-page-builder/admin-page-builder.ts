@@ -1,10 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import {
-  NzFormWizardComponent,
-  NzStepperConfig,
-  NzWizardFormFieldConfig,
-} from '@zak-lib/ui-library/layouts/form-wizard';
+import { NzStepperConfig, NzWizardFormFieldConfig } from '@zak-lib/ui-library/layouts/form-wizard';
+import { NzFormBuilderComponent } from '@zak-lib/ui-library/layouts/form-builder';
 import {
   NzFormControl,
   NzFormGroup,
@@ -19,13 +16,13 @@ import { firstValueFrom } from 'rxjs';
 import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field/field-component-type';
 
 @Component({
-  selector: 'app-admin-page-form',
-  imports: [CommonModule, NzFormWizardComponent],
-  templateUrl: './admin-page-form.html',
-  styleUrl: './admin-page-form.scss',
+  selector: 'app-admin-page-builder',
+  imports: [CommonModule, NzFormBuilderComponent],
+  templateUrl: './admin-page-builder.html',
+  styleUrl: './admin-page-builder.scss',
   standalone: true,
 })
-export class AdminPageForm implements OnInit {
+export class AdminPageBuilder implements OnInit {
   public dbFields: NzWizardFormFieldConfig[] = [];
   public module!: NzModuleConfig;
   public data?: NzGenericRecord;

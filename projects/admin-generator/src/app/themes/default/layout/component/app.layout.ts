@@ -70,14 +70,30 @@ export class AppLayout {
     const response = await firstValueFrom(this.appSettingsService.getMenuItems());
 
     if (response) {
-      const menuItems = [...DEFAULT_MENU_ITEMS];
+      const menuItems: MenuItem[] = [...(DEFAULT_MENU_ITEMS as MenuItem[])];
       menuItems.splice(1, 0, {
         label: 'Modules',
         items: response.map((item) => {
           return {
             label: item['label'],
             icon: 'pi pi-fw pi-check-square',
-            routerLink: ['/admin/' + item['name']],
+            items: [
+              {
+                label: 'Listing',
+                icon: 'pi pi-fw pi-sign-in',
+                routerLink: ['/admin/' + item['name'] + '/list'],
+              },
+              {
+                label: 'New',
+                icon: 'pi pi-fw pi-sign-in',
+                routerLink: ['/admin/' + item['name'] + '/form'],
+              },
+              {
+                label: 'Build',
+                icon: 'pi pi-fw pi-sign-in',
+                routerLink: ['/admin/' + item['name'] + '/build'],
+              },
+            ],
           };
         }),
       });

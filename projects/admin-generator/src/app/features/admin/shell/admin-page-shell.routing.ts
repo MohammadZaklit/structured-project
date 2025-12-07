@@ -13,13 +13,20 @@ export const ADMIN_PAGE_ROUTES: Routes = [
         path: 'list',
         loadComponent: () =>
           import('../components/admin-page-listing/admin-page-listing').then(
-            (m) => m.AdminPageListing
+            (m) => m.AdminPageListing,
           ),
       },
       {
         path: 'form',
         loadComponent: () =>
           import('../components/admin-page-form/admin-page-form').then((m) => m.AdminPageForm),
+      },
+      {
+        path: 'build',
+        loadComponent: () =>
+          import('../components/admin-page-builder/admin-page-builder').then(
+            (m) => m.AdminPageBuilder,
+          ),
       },
       {
         path: 'edit/:id',
@@ -33,6 +40,10 @@ export const ADMIN_PAGE_ROUTES: Routes = [
       },
       { path: '', redirectTo: 'list', pathMatch: 'full' },
     ],
+  },
+  {
+    path: 'form-builder/:',
+    loadComponent: () => import('../shell/admin-page.component').then((m) => m.AdminPageComponent),
   },
   {
     path: '**',
