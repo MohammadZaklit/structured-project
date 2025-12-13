@@ -90,7 +90,7 @@ import { NzFormFieldRendererComponent } from '@zak-lib/ui-library/elements/form-
     // DatePickerModule,
     NzConfirmDialogComponent,
     FluidModule,
-    CdkDragPlaceholder,
+
     NzFormFieldRendererComponent,
   ],
   templateUrl: './form-wizard.component.html',
