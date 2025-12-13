@@ -1,9 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { TextareaModule } from 'primeng/textarea';
-import { NzFormFieldComponent } from '../form-field/form-field';
+import { NzFormField, NzFormFieldComponent } from '../form-field/form-field';
 import { NzFormFieldModule } from '../form-field/form-field-module';
-import { NzFormFieldInfo, NzFormControl, NzFormGroup } from '@zak-lib/ui-library/shared';
-import { NzFormFieldSettings } from '../form-field/form-field';
+import { NzFormControl, NzFormGroup } from '@zak-lib/ui-library/shared';
 @Component({
   selector: 'nz-textarea',
   imports: [TextareaModule, NzFormFieldModule],
@@ -15,8 +14,4 @@ export class NzTextAreaComponent extends NzFormFieldComponent {
   @Input() public config!: NzTextarea;
 }
 
-export interface NzTextarea extends NzFormFieldInfo, NzFormFieldSettings {
-  value?: string;
-  control: NzFormControl;
-  form: NzFormGroup;
-}
+export interface NzTextarea extends NzFormField {}

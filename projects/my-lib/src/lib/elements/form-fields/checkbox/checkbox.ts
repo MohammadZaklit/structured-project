@@ -3,8 +3,9 @@ import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
 import { NzFormFieldModule } from '../form-field/form-field-module';
-import { NzFormFieldInfo, NzFormControl, NzFormGroup } from '@zak-lib/ui-library/shared';
-import { NzFormFieldSettings } from '../form-field/form-field';
+import { NzFormControl, NzFormGroup } from '@zak-lib/ui-library/shared';
+import { NzFormField } from '../form-field/form-field';
+
 @Component({
   selector: 'nz-Checkbox',
   standalone: true,
@@ -17,7 +18,7 @@ export class NzCheckBoxComponent {
   @Input() config!: NzCheckBox;
   checked: any;
 }
-export interface NzCheckBox extends NzFormFieldInfo, NzFormFieldSettings {
+export interface NzCheckBox extends NzFormField {
   control: NzFormControl;
   form: NzFormGroup;
 }

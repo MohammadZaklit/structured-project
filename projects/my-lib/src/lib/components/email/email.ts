@@ -19,7 +19,7 @@ export class NzEmailComponent implements OnInit {
     });
 
     const validators = [Validators.email];
-    if (this.config.isRequired) {
+    if (this.config.settings?.isRequired) {
       validators.push(Validators.required);
     }
     this.config.control.addValidators(validators);

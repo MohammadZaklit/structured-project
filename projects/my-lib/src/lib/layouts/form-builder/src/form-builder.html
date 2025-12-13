@@ -4,7 +4,7 @@
       <h4>FORM FIELDS</h4>
       <div class="form-field-palette" [dragula]="bagFieldsName" [dragulaModel]="availableFields">
         @for (field of availableFields; track field.id) {
-          <div class="card mb-2 p-2 draggable-field">{{ field.label }} ({{ field.type }})</div>
+          <div class="card mb-2 p-2 draggable-field">{{ field.label }}</div>
         }
       </div>
     </div>
@@ -122,59 +122,17 @@
 
     <div class="col-md-3 bg-light p-3 border-left">
       <h4>FIELD CUSTOMIZATION</h4>
-      @if (selectedField && selectedField.type !== 'nested-row-container') {
+      @if (componentConfig) {
         <div class="customization-pane p-3 bg-white border rounded">
-          <h5>Edit: {{ selectedField!.label }}</h5>
-          <div class="form-group">
-            <label for="fieldLabel">Label</label>
-            <input
-              type="text"
-              id="fieldLabel"
-              class="form-control"
-              [(ngModel)]="selectedField!.label"
-            />
-          </div>
-          <div class="form-group">
-            <label for="fieldType">Type</label>
-            <input
-              type="text"
-              id="fieldType"
-              class="form-control"
-              [(ngModel)]="selectedField!.type"
-              disabled
-            />
-          </div>
-          @if (selectedField!.type === 'text' || selectedField!.type === 'number') {
-            <div class="form-group">
-              <label for="placeholder">Placeholder</label>
-              <input
-                type="text"
-                id="placeholder"
-                class="form-control"
-                [(ngModel)]="selectedField!.placeholder"
-              />
-            </div>
-          }
-          <div class="form-group form-check">
-            <input
-              type="checkbox"
-              id="required"
-              class="form-check-input"
-              [(ngModel)]="selectedField!.required"
-            />
-            <label class="form-check-label" for="required">Required</label>
-          </div>
+          <!-- <h5>Edit: {{ selectedField!.label }}</h5> -->
+
+          <nz-component-configuration [config]="componentConfig"></nz-component-configuration>
 
           <button class="btn btn-danger btn-block mt-3" (click)="deleteSelectedField()">
             Delete Field
           </button>
-        </div>
-      } @else if (selectedField && selectedField.type === 'nested-row-container') {
-        <div class="customization-pane p-3 bg-white border rounded">
-          <h5>Edit: {{ selectedField!.label }}</h5>
-          <p>This is a Nested Row Container. Edit its label and delete it here.</p>
-          <button class="btn btn-danger btn-block mt-3" (click)="deleteSelectedField()">
-            Delete Nested Row
+          <button class="btn btn-danger btn-block mt-3" (click)="closeSettings()">
+            Close Settings
           </button>
         </div>
       } @else {

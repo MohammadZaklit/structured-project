@@ -1,12 +1,9 @@
-import { NzFieldComponentType } from '@zak-lib/ui-library/elements/form-fields/form-field/field-component-type';
-
 export interface NzModuleConfig {
   id: number;
   name: string;
   label: string;
   url?: string;
 }
-
 export interface NzModuleFieldConfig extends NzFormFieldInfo {
   id: number;
   sortOrder: number;
@@ -15,14 +12,21 @@ export interface NzModuleFieldConfig extends NzFormFieldInfo {
   referenceModuleId?: number;
   parentFieldId?: number;
   isDefault: number;
-  configuration: NzComponentConfiguration;
-  label: string;
+  configuration: NzFormFieldSettings;
 }
-
-export type NzComponentConfiguration = NzFieldComponentType;
 
 export interface NzFormFieldInfo {
   name: string;
   label: string;
   hint?: string;
+}
+export interface NzFormFieldSettings {
+  value?: any;
+  isRequired?: boolean | ((formValue: any) => boolean);
+  isDisabled?: boolean | ((formValue: any) => boolean);
+  isVisible?: boolean | ((formValue: any) => boolean);
+  apiValidate?: (value: any) => Promise<boolean>;
+  extraProps?: any;
+  placeholder?: string;
+  pattern?: string;
 }

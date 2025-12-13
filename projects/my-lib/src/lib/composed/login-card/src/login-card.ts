@@ -77,7 +77,6 @@ export class NzLoginCardComponent implements OnInit {
     this.emailconfig = {
       name: 'email',
       label: 'Email',
-      isRequired: true,
       control: this.config.form.get('email') as NzFormControl,
       form: this.config.form,
     };

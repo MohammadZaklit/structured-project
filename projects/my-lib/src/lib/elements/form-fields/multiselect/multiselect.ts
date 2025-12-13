@@ -15,7 +15,7 @@ export interface NzMultiSelect extends NzFormField, NzBaseSelect {}
     ><p-multi-select
       [formControl]="config.control"
       [options]="options()"
-      [placeholder]="config.placeholder || ''"
+      [placeholder]="config.settings?.placeholder || ''"
     ></p-multi-select
   ></nz-form-field>`,
   styles: ``,

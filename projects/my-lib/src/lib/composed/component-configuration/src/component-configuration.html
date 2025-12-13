@@ -1,0 +1,27 @@
+<form [formGroup]="form">
+  <p-tabs value="fieldInfo">
+    <p-tablist>
+      <p-tab value="fieldInfo">Field Info</p-tab>
+      <p-tab value="settings">Settings</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="fieldInfo">
+        <nz-input [config]="nameFieldConfig"></nz-input>
+        <nz-input [config]="labelFieldConfig"></nz-input>
+        <nz-input [config]="hintFieldConfig"></nz-input>
+      </p-tabpanel>
+      <p-tabpanel value="settings">
+        <div formGroupName="settings">
+          <nz-input [config]="valueFieldConfig"></nz-input>
+          <nz-input [config]="placeholderFieldConfig"></nz-input>
+          <nz-input [config]="patternFieldConfig"></nz-input>
+          <nz-input [config]="extraPropsFieldConfig"></nz-input>
+          <nz-input [config]="apiToValidateFieldConfig"></nz-input>
+          <nz-toggle-switch [config]="isRequiredFieldConfig"></nz-toggle-switch>
+          <nz-toggle-switch [config]="isDisabledFieldConfig"></nz-toggle-switch>
+          <nz-toggle-switch [config]="isVisibleFieldConfig"></nz-toggle-switch>
+        </div>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</form>

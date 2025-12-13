@@ -4,7 +4,7 @@ import { Account } from './features/account/account';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Account],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
