@@ -1,41 +1,29 @@
-import { ChangeDetectorRef, Component, inject, Input, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+  signal,
+} from '@angular/core';
 import {
   NzConfigurationComponent,
   NzComponentConfiguration,
+  NzComponentType,
 } from '@zak-lib/ui-library/composed/component-configuration';
 import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { NzFormFieldModule } from '@zak-lib/ui-library/elements/form-fields/form-field/form-field-module';
-import { COMPONENTS, NzFormControl } from '@zak-lib/ui-library/shared';
+import { COMPONENTS, NzUiType, NzUiTypeEnum } from '@zak-lib/ui-library/shared';
 import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import { NzFormBuilder } from './form-builder.interface';
-
-interface FormField {
-  id?: number;
-  type: FormFieldType;
-  label: string;
-  configuration?: Record<string, any>;
-  nestedRow?: FormRow;
-}
-
-type FormFieldType = NzFieldType | 'row' | 'column' | 'nested-row-container';
-
-interface FormColumn {
-  id: number; // Unique ID for column
-  fields: FormField[];
-  width?: number; // e.g., for custom column widths (not fully implemented here)
-}
-
-interface FormRow {
-  id: number; // Unique ID for the row
-  columns: FormColumn[];
-  tempNumColumns?: number; // Temporary property for new row column selection (now unused)
-}
+import { NzComponentConfig, NzComponentTypeEnum, NzFormBuilder } from './form-builder.interface';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'nz-form-builder',
-  imports: [NzFormFieldModule, DragulaModule, NzConfigurationComponent], // ✅ Directly import DragulaModule
+  imports: [NzFormFieldModule, DragulaModule, NzConfigurationComponent, ButtonModule], // ✅ Directly import DragulaModule
   providers: [DragulaService], // ✅ Service provider
   templateUrl: './form-builder.html',
   styleUrl: './form-builder.scss',
@@ -48,19 +36,21 @@ export class NzFormBuilderComponent {
 
   public bagFieldsName!: string;
   public bagFormBuilderName!: string;
+  public mainDroppableAreaName = 'main-droppable-area';
 
   private subs = new Subscription();
 
-  availableFields: FormField[] = [
-    { type: 'row', label: 'Row' },
-    { type: 'column', label: 'Column' },
-  ];
+  componentTypeEnum = NzComponentTypeEnum;
 
-  droppedRows: FormRow[] = [];
-  selectedField: FormField | null = null;
+  availableFields: NzComponentConfig[] = [];
+
+  droppedRows: NzComponentConfig[] = [];
+  selectedField: NzComponentConfig | undefined = undefined;
 
   private dragulaService = inject(DragulaService);
   private cd = inject(ChangeDetectorRef);
+
+  @Output() save = new EventEmitter<Record<string, any>>();
 
   constructor() {}
 
@@ -71,114 +61,140 @@ export class NzFormBuilderComponent {
 
     COMPONENTS.forEach((component) => {
       this.availableFields.push({
-        type: component.componentName as FormFieldType,
+        id: 0,
+        type: component.componentName as NzComponentType,
         label: component.label,
+        isNew: true,
+        configuration: {},
+        childComponents: [],
       });
     });
 
+    if (this.config.components) {
+      // this.droppedRows = [...this.config.components];
+    }
+
     // create one bag only
     this.dragulaService.createGroup(this.bagFieldsName, {
+      moves: (_el?: Element, _container?: Element, _handle?: Element) => {
+        return _el?.classList.contains('is-draggable') ?? false;
+      },
       copy: (_el?: Element, source?: Element) =>
         source?.classList.contains('form-field-palette') ?? false,
       copyItem: (item: any) => JSON.parse(JSON.stringify(item)),
-      accepts: (_el?: Element, target?: Element, _source?: Element) => {
-        return (
-          (target?.classList.contains('form-builder-area') ||
-            target?.classList.contains('form-row-container') || // Accept rows and columns
-            target?.classList.contains('form-column')) ??
-          false
-        );
+      accepts: (el?: Element, target?: Element, _source?: Element) => {
+        const draggedComponentType = el?.getAttribute('data-component-type');
+        const res =
+          (target?.classList.contains('is-droppable') &&
+            ((draggedComponentType === this.componentTypeEnum.Row &&
+              (target?.classList.contains(this.mainDroppableAreaName) ||
+                target?.getAttribute('data-component-type') === this.componentTypeEnum.Column)) ||
+              (draggedComponentType === this.componentTypeEnum.Column &&
+                target?.getAttribute('data-component-type') === this.componentTypeEnum.Row))) ||
+          (draggedComponentType !== this.componentTypeEnum.Row &&
+            draggedComponentType !== this.componentTypeEnum.Column &&
+            target?.getAttribute('data-component-type') === this.componentTypeEnum.Column) ||
+          false;
+
+        return res;
       },
     });
 
-    const savedForm = localStorage.getItem('savedFormData');
-    if (savedForm) {
-      this.droppedRows = JSON.parse(savedForm);
-    }
     // dropModel for the same bag
     this.subs.add(
       this.dragulaService
         .dropModel(this.bagFieldsName)
-        .subscribe(({ target, source, item }: any) => {
-          // Only handle drops from the palette
-          if (source.classList.contains('form-field-palette')) {
-            // 1. Dropping a ROW into the main form area
-            if (item.type === 'row' && target.classList.contains('form-builder-area')) {
-              const newRowId = this._rowUUID();
-              // A row is initialized with ZERO columns (user must add them)
-              this.droppedRows.push({
-                id: newRowId,
-                columns: [],
-              });
-              this.cd.detectChanges();
-              return; // Stop processing
-            }
-
-            // 2. Dropping a COLUMN into a ROW container (main or nested)
-            else if (item.type === 'column' && target.classList.contains('form-row-container')) {
-              // CRITICAL FIX: Find the specific row object (main or nested) by traversing the model
-              const row = this.findRowByDomElement(target);
-
-              if (row) {
-                // Create a new column object
-                const newCol: FormColumn = {
-                  id: this._rowUUID(),
-                  fields: [],
-                };
-
-                // Add it to the correct row's columns array
-                row.columns.push(newCol);
-                this.cd.detectChanges();
-              }
-              return; // Stop processing
-            }
-
-            // 3. Dropping fields or a ROW for nesting into a COLUMN
-            else if (target.classList.contains('form-column')) {
-              // Find the correct row ID and column ID from the DOM element
-              const rowId = Number(target.getAttribute('data-row-id'));
-              const colId = Number(target.getAttribute('data-col-id'));
-
-              if (!rowId || !colId) {
-                console.error('Dropped field into column, but row/col IDs are missing.');
-                return;
-              }
-
-              let fieldToAdd: FormField = item;
-
-              if (item.type === 'row') {
-                // Handle nested row creation: The 'row' field is dropped into a column
-                const newNestedRowId = this._rowUUID();
-                const nestedRowStructure: FormRow = {
-                  id: newNestedRowId,
-                  columns: [], // Nested row also starts with NO columns
-                };
-
-                // Create a field wrapper for the nested row structure
-                fieldToAdd = {
-                  id: this._rowUUID(),
-                  type: 'nested-row-container', // New type to distinguish
-                  label: 'Nested Row',
-                  nestedRow: nestedRowStructure,
-                };
-              } else {
-                // Standard field - Ensure it has a unique ID
-                // Deep copy is handled by copyItem/dragula, but ensure unique ID for fields dropped from palette
-                fieldToAdd.id = this._rowUUID();
-              }
-
-              // Find the target column in the model
-              const targetCol = this.findColumnById(this.droppedRows, rowId, colId);
-
-              if (targetCol) {
-                // Dragula handles the DOM movement, we just need to ensure the model is updated
-                targetCol.fields.push(fieldToAdd);
-                this.cd.detectChanges();
-              }
-            }
+        .subscribe(({ target, _source, item }: any) => {
+          if (target.classList.contains(this.mainDroppableAreaName)) {
+            this.droppedRows.push({ ...item, ...{ id: this._rowUUID() } });
+            this.cd.detectChanges();
+          } else {
+            this.handleDrop(target, item);
           }
         }),
     );
+  }
+
+  private handleDrop(target: HTMLElement, draggedItem: NzComponentConfig) {
+    const targetComponentId = Number(target.getAttribute('data-component-id'));
+
+    const targetContainer = this.findComponentById(this.droppedRows, targetComponentId);
+
+    if (!targetContainer || !draggedItem) return;
+
+    if (draggedItem.isNew) {
+      this.cloneFromPalette(targetContainer, draggedItem);
+    } else {
+      this.moveBetweenContainers(targetContainer, draggedItem);
+    }
+
+    this.cd.detectChanges();
+  }
+
+  private cloneFromPalette(target: NzComponentConfig, item: NzComponentConfig) {
+    target.childComponents.push({
+      ...item,
+      id: this._rowUUID(),
+      isNew: false,
+      childComponents: [],
+    });
+  }
+
+  private moveBetweenContainers(target: NzComponentConfig, item: NzComponentConfig) {
+    const parent = this.findParentComponent(this.droppedRows, item.id);
+
+    if (!parent || parent === target) return;
+
+    const removed = this.removeComponentById(this.droppedRows, item.id);
+
+    if (!removed) return;
+
+    parent.childComponents = parent.childComponents.filter((c) => c.id !== item.id);
+
+    target.childComponents.push(item);
+  }
+
+  private findComponentById(components: NzComponentConfig[], id: number): NzComponentConfig | null {
+    for (const component of components) {
+      if (component.id === id) return component;
+
+      const found = this.findComponentById(component.childComponents, id);
+
+      if (found) return found;
+    }
+    return null;
+  }
+
+  private findParentComponent(
+    components: NzComponentConfig[],
+    childId: number,
+  ): NzComponentConfig | null {
+    for (const component of components) {
+      if (component.childComponents.some((c) => c.id === childId)) {
+        return component;
+      }
+
+      const found = this.findParentComponent(component.childComponents, childId);
+
+      if (found) return found;
+    }
+    return null;
+  }
+
+  private removeComponentById(components: NzComponentConfig[], id: number): boolean {
+    for (const component of components) {
+      const index = component.childComponents.findIndex((c) => c.id === id);
+
+      if (index !== -1) {
+        component.childComponents.splice(index, 1);
+        return true;
+      }
+
+      if (this.removeComponentById(component.childComponents, id)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private _rowUUID(): number {
@@ -191,17 +207,18 @@ export class NzFormBuilderComponent {
     this.dragulaService.destroy(this.bagFormBuilderName);
   }
 
-  // --- Recursive Model Finders ---
-
-  // Recursive search to find a row by its unique ID
-  private findRowById(rows: FormRow[], rowId: number): FormRow | undefined {
+  /**
+   * @deprecated
+   * @returns
+   */
+  private findRowById(rows: NzComponentConfig[], rowId: number): NzComponentConfig | undefined {
     for (const row of rows) {
       if (row.id === rowId) return row;
       // Check for nested rows inside columns
-      for (const col of row.columns) {
-        for (const field of col.fields) {
-          if (field.nestedRow) {
-            const found = this.findRowById([field.nestedRow], rowId);
+      for (const col of row.childComponents) {
+        for (const field of col.childComponents) {
+          if (field.childComponents) {
+            const found = this.findRowById(field.childComponents, rowId);
             if (found) return found;
           }
         }
@@ -210,51 +227,23 @@ export class NzFormBuilderComponent {
     return undefined;
   }
 
-  // Helper function to find a row (main or nested) object by its DOM element
-  private findRowByDomElement(element: Element): FormRow | undefined {
-    const container = element.closest('.form-row-container');
-    if (!container) return undefined;
-
-    const rowId = container.getAttribute('data-row-id');
-    if (!rowId) return undefined;
-
-    return this.findRowById(this.droppedRows, Number(rowId));
-  }
-
-  // Recursive search to find a column by its parent row ID and column ID
-  private findColumnById(
-    rows: FormRow[],
-    parentRowId: number,
-    columnId: number,
-  ): FormColumn | undefined {
+  /**
+   * @deprecated
+   * @returns
+   */
+  private findParentColumnOfField(
+    rows: NzComponentConfig[],
+    fieldToFind: NzComponentConfig,
+  ): NzComponentConfig | null {
     for (const row of rows) {
-      if (row.id === parentRowId) {
-        return row.columns.find((col) => col.id === columnId);
-      }
-      // Check for nested rows
-      for (const col of row.columns) {
-        for (const field of col.fields) {
-          if (field.nestedRow) {
-            const found = this.findColumnById([field.nestedRow], parentRowId, columnId);
-            if (found) return found;
-          }
-        }
-      }
-    }
-    return undefined;
-  }
-
-  // Recursive search to find the parent column of a field
-  private findParentColumnOfField(rows: FormRow[], fieldToFind: FormField): FormColumn | null {
-    for (const row of rows) {
-      for (const col of row.columns) {
-        if (col.fields.includes(fieldToFind)) {
+      for (const col of row.childComponents) {
+        if (col.childComponents.includes(fieldToFind)) {
           return col;
         }
         // Check for nested rows
-        for (const field of col.fields) {
-          if (field.nestedRow) {
-            const parent = this.findParentColumnOfField([field.nestedRow], fieldToFind);
+        for (const field of col.childComponents) {
+          if (field.childComponents) {
+            const parent = this.findParentColumnOfField(field.childComponents, fieldToFind);
             if (parent) return parent;
           }
         }
@@ -265,8 +254,12 @@ export class NzFormBuilderComponent {
 
   // --- Layout Manipulation Methods ---
 
+  /**
+   * @deprecated
+   * @returns
+   */
   removeRow(rowId: number): void {
-    const deleteRecursive = (rows: FormRow[]): boolean => {
+    const deleteRecursive = (rows: NzComponentConfig[]): boolean => {
       const initialLength = rows.length;
       // Remove from the current array
       const newRows = rows.filter((row) => row.id !== rowId);
@@ -278,10 +271,10 @@ export class NzFormBuilderComponent {
 
       // If not found, check nested rows
       for (const row of rows) {
-        for (const col of row.columns) {
-          for (const field of col.fields) {
-            if (field.nestedRow) {
-              if (deleteRecursive([field.nestedRow])) {
+        for (const col of row.childComponents) {
+          for (const field of col.childComponents) {
+            if (field.childComponents) {
+              if (deleteRecursive(field.childComponents)) {
                 return true;
               }
             }
@@ -302,23 +295,27 @@ export class NzFormBuilderComponent {
     }
   }
 
+  /**
+   * @deprecated
+   * @returns
+   */
   removeColumn(parentRowId: number, columnId: number): void {
     if (confirm('Are you sure you want to delete this column and all its contents?')) {
       const row = this.findRowById(this.droppedRows, parentRowId);
 
       if (row) {
         // Find the column by ID and remove it
-        const initialLength = row.columns.length;
-        row.columns = row.columns.filter((col) => col.id !== columnId);
+        const initialLength = row.childComponents.length;
+        row.childComponents = row.childComponents.filter((col) => col.id !== columnId);
 
-        if (row.columns.length < initialLength) {
+        if (row.childComponents.length < initialLength) {
           // Deletion occurred
           // Clear selection if the selected field was in this column
           if (this.selectedField) {
             const parentCol = this.findParentColumnOfField(this.droppedRows, this.selectedField);
             if (!parentCol || parentCol.id === columnId) {
               // If the selected field's parent column was the one deleted
-              this.selectedField = null;
+              this.selectedField = undefined;
             }
           }
           this.cd.detectChanges();
@@ -335,18 +332,18 @@ export class NzFormBuilderComponent {
 
   // Recursive function to find the field and its parent column
   private findFieldAndParentColumn(
-    rows: FormRow[],
-    fieldToFind: FormField,
-  ): { field: FormField; parentColumn: FormColumn } | null {
+    rows: NzComponentConfig[],
+    fieldToFind: NzComponentConfig,
+  ): { field: NzComponentConfig; parentColumn: NzComponentConfig } | null {
     for (const row of rows) {
-      for (const col of row.columns) {
-        for (const field of col.fields) {
+      for (const col of row.childComponents) {
+        for (const field of col.childComponents) {
           if (field === fieldToFind) {
             return { field: field, parentColumn: col };
           }
           // Check nested rows
-          if (field.nestedRow) {
-            const result = this.findFieldAndParentColumn([field.nestedRow], fieldToFind);
+          if (field.childComponents) {
+            const result = this.findFieldAndParentColumn(field.childComponents, fieldToFind);
             if (result) return result;
           }
         }
@@ -355,14 +352,15 @@ export class NzFormBuilderComponent {
     return null;
   }
 
-  selectField(field: FormField): void {
+  selectField(field: NzComponentConfig): void {
+    this.selectedField = field;
     this.buildComponentConfiguration(field);
   }
 
-  private buildComponentConfiguration(field: FormField): void {
+  private buildComponentConfiguration(field: NzComponentConfig): void {
     this.componentConfig = {
       type: field.type as NzFieldType,
-      control: new NzFormControl(null),
+      configuration: field.configuration,
     };
   }
 
@@ -374,18 +372,22 @@ export class NzFormBuilderComponent {
     this.destroyComponentConfiguration();
   }
 
+  /**
+   * @deprecated
+   * @returns
+   */
   deleteSelectedField(): void {
     // Stop if nothing is selected
     if (!this.selectedField) return;
 
-    const field = this.selectedField;
+    const field = { ...this.selectedField };
 
     // Use the recursive finder to get the field's actual parent column
     const location = this.findFieldAndParentColumn(this.droppedRows, field);
 
     if (!location) {
       console.error('Could not find the parent column for the selected field.');
-      this.selectedField = null;
+      this.selectedField = undefined;
       return;
     }
 
@@ -393,34 +395,22 @@ export class NzFormBuilderComponent {
       const parentCol = location.parentColumn;
 
       // Remove the field using filter
-      parentCol.fields = parentCol.fields.filter((f) => f.id !== field.id);
+      parentCol.childComponents = parentCol.childComponents.filter((f) => f.id !== field.id);
 
       // Clear selection
-      this.selectedField = null;
+      this.selectedField = undefined;
       this.cd.detectChanges();
     }
   }
 
-  // --- Updated Submit Method ---
+  saveField(data: Record<string, any>): void {
+    this.selectedField!.configuration = data;
+    this.selectedField!.label = data['label'];
+    this.destroyComponentConfiguration();
+  }
+
   submitForm(): void {
-    const outputFormDefinition = JSON.parse(JSON.stringify(this.droppedRows));
-    alert('downloaded json file successfully');
-    // Log output
-    console.log('--- Form Submission Successful ---');
-    console.log('The generated form structure has been returned as JSON:');
-    console.log(outputFormDefinition);
-    console.log('---------------------------------');
-    // Save to LocalStorage (for auto load on refresh)
-    localStorage.setItem('savedFormData', JSON.stringify(outputFormDefinition));
-    // --- Save to file ---
-    const dataStr = JSON.stringify(outputFormDefinition, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' }); //wraps that text so the browser treats it like a downloadable file.
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const date = new Date();
-    a.download = `formData_${date}.json`;
-    a.click();
-    window.URL.revokeObjectURL(url); // freeing up memory.
+    const outputFormData = JSON.parse(JSON.stringify(this.droppedRows));
+    this.save.emit(outputFormData);
   }
 }

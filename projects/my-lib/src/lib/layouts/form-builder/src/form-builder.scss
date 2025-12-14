@@ -41,7 +41,7 @@
   border-radius: 8px;
 }
 
-.form-row-container {
+.droppable-area {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 5px;
@@ -53,15 +53,6 @@
 .form-columns-wrapper {
   display: flex;
   flex-wrap: wrap; /* Allows columns to wrap if too many for a single row */
-}
-
-.form-column {
-  min-height: 100px; /* Make columns droppable targets */
-  border: 1px dashed #a0a0a0;
-  border-radius: 3px;
-  background-color: #fdfdfd;
-  margin: 5px; /* Spacing between columns */
-  flex-grow: 1; /* Allows columns to fill available space */
 }
 
 /* Dynamically generated Bootstrap-like column classes */
@@ -111,4 +102,29 @@
 .form-nested-column {
   width: 100%;
   max-width: 100%;
+}
+
+.component-item {
+  position: relative;
+  .component-item-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.2s linear,
+      visibility 0s linear 0.2s;
+  }
+  &:hover {
+    .component-item-actions {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+.is-draggable {
+  cursor: move !important;
 }

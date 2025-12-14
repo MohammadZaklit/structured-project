@@ -1,3 +1,3 @@
 @if (formBuilderConfig) {
-  <nz-form-builder [config]="formBuilderConfig"></nz-form-builder>
+  <nz-form-builder [config]="formBuilderConfig" (save)="saveData($event)"></nz-form-builder>
 }
