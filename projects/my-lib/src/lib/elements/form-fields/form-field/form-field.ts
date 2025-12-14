@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { NzFormControl } from '@zak-lib/ui-library/shared/src/classes/NzFormControl';
 import { NzFormFieldInfo, NzFormFieldSettings, NzFormGroup } from '@zak-lib/ui-library/shared';
+import { MessageModule } from 'primeng/message';
 
 export interface NzFormField extends NzFormFieldInfo {
   control: NzFormControl;
@@ -11,12 +12,20 @@ export interface NzFormField extends NzFormFieldInfo {
 }
 @Component({
   selector: 'nz-form-field',
-  imports: [CommonModule],
+  imports: [CommonModule, MessageModule],
   template: `<div>
     @if (!baseConfig()?.hideLabel) {
       <label>{{ baseConfig()?.label }}</label>
     }
     <ng-content></ng-content>
+
+    @if (baseConfig()?.control?.invalid && baseConfig()?.control?.touched) {
+      @for (error of baseConfig()?.control?.errors | keyvalue; track error.key) {
+        <p-message severity="error" variant="simple" size="small"
+          >{{ error.key }}: {{ error.value }}</p-message
+        >
+      }
+    }
   </div>`,
   styles: ``,
   standalone: true,

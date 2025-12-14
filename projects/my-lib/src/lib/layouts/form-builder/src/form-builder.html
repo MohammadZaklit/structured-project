@@ -126,11 +126,11 @@
         <div class="customization-pane p-3 bg-white border rounded">
           <!-- <h5>Edit: {{ selectedField!.label }}</h5> -->
 
-          <nz-component-configuration [config]="componentConfig"></nz-component-configuration>
-
-          <button class="btn btn-danger btn-block mt-3" (click)="deleteSelectedField()">
-            Delete Field
-          </button>
+          <nz-component-configuration
+            (cancel)="closeSettings()"
+            (save)="saveField($event)"
+            [config]="componentConfig"
+          ></nz-component-configuration>
           <button class="btn btn-danger btn-block mt-3" (click)="closeSettings()">
             Close Settings
           </button>

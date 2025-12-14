@@ -11,7 +11,12 @@ export interface NzInput extends NzFormField, NzBaseInput {}
   selector: 'nz-input',
   imports: [NzFormFieldModule, InputTextModule, InputGroupModule],
   template: `<nz-form-field [baseConfig]="config"
-    ><input type="{{ config.type || 'text' }}" pInputText [formControl]="config.control" fluid
+    ><input
+      type="{{ config.type || 'text' }}"
+      pInputText
+      [formControl]="config.control"
+      fluid
+      [invalid]="config.control.invalid && (config.control.dirty || config.control.touched)"
   /></nz-form-field>`,
   styles: ``,
   standalone: true,

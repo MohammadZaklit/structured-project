@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NzComponentConfiguration } from './component-configuration.interface';
 import { NzFormControl, NzFormGroup } from '@zak-lib/ui-library/shared';
 import { NzInput, NzInputComponent } from '@zak-lib/ui-library/elements/form-fields/input';
@@ -10,10 +10,17 @@ import { NzFormFieldModule } from '@zak-lib/ui-library/elements/form-fields/form
 import { NzFieldTypeEnum } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { TabsModule } from 'primeng/tabs';
 import { Validators } from '@angular/forms';
+import { NzButton, NzButtonComponent } from '@zak-lib/ui-library/elements/button';
 
 @Component({
   selector: 'nz-component-configuration',
-  imports: [NzFormFieldModule, NzInputComponent, NzToggleSwitchComponent, TabsModule],
+  imports: [
+    NzFormFieldModule,
+    NzInputComponent,
+    NzToggleSwitchComponent,
+    TabsModule,
+    NzButtonComponent,
+  ],
   templateUrl: './component-configuration.html',
   styles: ``,
 })
@@ -38,10 +45,37 @@ export class NzConfigurationComponent implements OnInit {
 
   form!: NzFormGroup;
 
+  cancelBtn!: NzButton;
+  saveBtn!: NzButton;
+
+  @Output() cancel = new EventEmitter<void>();
+  @Output() save = new EventEmitter<NzComponentConfiguration>();
+
   constructor() {}
 
   ngOnInit(): void {
     this.form = new NzFormGroup({});
+
+    this.cancelBtn = {
+      label: 'Cancel',
+      type: 'button',
+      onclick: () => {
+        this.form.reset();
+        this.cancel.emit();
+      },
+    };
+
+    this.saveBtn = {
+      label: 'Save',
+      type: 'button',
+      onclick: () => {
+        if (this.form.valid) {
+          this.save.emit(this.form.getRawValue());
+        } else {
+          this.form.markAllAsTouched();
+        }
+      },
+    };
 
     this.addFields();
     this.initConfig();
@@ -59,9 +93,9 @@ export class NzConfigurationComponent implements OnInit {
     settingsFormGroup.addControl('pattern', new NzFormControl(null, []));
     this.form.addControl('settings', settingsFormGroup);
 
-    settingsFormGroup.addControl('name', new NzFormControl(null, [Validators.required]));
-    settingsFormGroup.addControl('label', new NzFormControl(null, [Validators.required]));
-    settingsFormGroup.addControl('hint', new NzFormControl(null, []));
+    this.form.addControl('name', new NzFormControl(null, [Validators.required]));
+    this.form.addControl('label', new NzFormControl(null, [Validators.required]));
+    this.form.addControl('hint', new NzFormControl(null, []));
   }
 
   private initConfig(): void {
@@ -71,6 +105,9 @@ export class NzConfigurationComponent implements OnInit {
       name: 'name',
       form: this.form,
     };
+
+    console.warn('nameFieldConfig: ', this.nameFieldConfig);
+    debugger;
 
     this.labelFieldConfig = {
       control: this.form.get('label') as NzFormControl,
@@ -87,56 +124,56 @@ export class NzConfigurationComponent implements OnInit {
     };
 
     this.valueFieldConfig = {
-      control: this.form.get('value') as NzFormControl,
+      control: this.form.get('settings.value') as NzFormControl,
       label: 'Value',
       name: 'value',
       form: this.form,
     };
 
     this.apiToValidateFieldConfig = {
-      control: this.form.get('apiValidate') as NzFormControl,
+      control: this.form.get('settings.apiValidate') as NzFormControl,
       label: 'Validate Value by API',
       name: 'apiValidate',
       form: this.form,
     };
 
     this.extraPropsFieldConfig = {
-      control: this.form.get('extraProps') as NzFormControl,
+      control: this.form.get('settings.extraProps') as NzFormControl,
       label: 'Extra Parameters',
       name: 'extraProps',
       form: this.form,
     };
 
     this.placeholderFieldConfig = {
-      control: this.form.get('placeholder') as NzFormControl,
+      control: this.form.get('settings.placeholder') as NzFormControl,
       label: 'Placeholder',
       name: 'placeholder',
       form: this.form,
     };
 
     this.patternFieldConfig = {
-      control: this.form.get('pattern') as NzFormControl,
+      control: this.form.get('settings.pattern') as NzFormControl,
       label: 'Pattern',
       name: 'pattern',
       form: this.form,
     };
 
     this.isRequiredFieldConfig = {
-      control: this.form.get('isRequired') as NzFormControl,
+      control: this.form.get('settings.isRequired') as NzFormControl,
       label: 'Is Required?',
       name: 'isRequired',
       form: this.form,
     };
 
     this.isDisabledFieldConfig = {
-      control: this.form.get('isDisabled') as NzFormControl,
+      control: this.form.get('settings.isDisabled') as NzFormControl,
       label: 'Is Disabled?',
       name: 'isDisabled',
       form: this.form,
     };
 
     this.isVisibleFieldConfig = {
-      control: this.form.get('isVisible') as NzFormControl,
+      control: this.form.get('settings.isVisible') as NzFormControl,
       label: 'Is Visible?',
       name: 'isVisible',
       form: this.form,

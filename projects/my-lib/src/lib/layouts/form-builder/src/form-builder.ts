@@ -401,6 +401,11 @@ export class NzFormBuilderComponent {
     }
   }
 
+  saveField(config: NzComponentConfiguration): void {
+    console.warn('config: ', config);
+    this.destroyComponentConfiguration();
+  }
+
   // --- Updated Submit Method ---
   submitForm(): void {
     const outputFormDefinition = JSON.parse(JSON.stringify(this.droppedRows));
