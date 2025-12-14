@@ -3,6 +3,9 @@
  */
 //components
 
+// constants
+export * from './src/constants/components';
+
 //interfaces
 export * from './src/interfaces/GenericRecord.interface';
 export * from './src/interfaces/CommonConfig.interface';

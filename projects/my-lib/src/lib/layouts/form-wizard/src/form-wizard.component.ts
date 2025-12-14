@@ -3,56 +3,23 @@ import {
   Input,
   Output,
   EventEmitter,
-  ChangeDetectorRef,
   OnInit,
   inject,
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { debounceTime, take } from 'rxjs/operators';
-
 import { StepperModule } from 'primeng/stepper';
-import { InputTextModule } from 'primeng/inputtext';
-import { CheckboxModule } from 'primeng/checkbox';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-//import { EditorModule } from 'primeng/editor';
-import { PasswordModule } from 'primeng/password';
-import { SliderModule } from 'primeng/slider';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { FileUploadModule } from 'primeng/fileupload';
-import { ButtonModule } from 'primeng/button';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { RatingModule } from 'primeng/rating';
-import { ColorPickerModule } from 'primeng/colorpicker';
-import { CascadeSelectModule } from 'primeng/cascadeselect';
-import { KnobModule } from 'primeng/knob';
-import { ListboxModule } from 'primeng/listbox';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { PickListModule } from 'primeng/picklist';
-import { SpeedDialModule } from 'primeng/speeddial';
-import { SplitButtonModule } from 'primeng/splitbutton';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { InputMaskModule } from 'primeng/inputmask';
-import { KeyFilterModule } from 'primeng/keyfilter';
-import { InputOtpModule } from 'primeng/inputotp';
-import { TreeSelectModule } from 'primeng/treeselect';
-import { FloatLabelModule } from 'primeng/floatlabel';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputGroupModule } from 'primeng/inputgroup';
 import { NzStepperConfig, NzWizardFormFieldConfig } from './form-wizard.interface';
-import { DatePickerModule } from 'primeng/datepicker';
 import { NzGenericRecord, NzHttpService, NzModuleConfig } from '@zak-lib/ui-library/shared';
 import {
   NzConfirmDialogComponent,
   NzConfirmDialog,
 } from '@zak-lib/ui-library/elements/ui/confirm-dialog';
 import { FluidModule } from 'primeng/fluid';
-import { CdkDragPlaceholder } from '@angular/cdk/drag-drop';
-import { NzAutocomplete } from '@zak-lib/ui-library/elements/form-fields/autocomplete';
 import { NzFormFieldRendererComponent } from '@zak-lib/ui-library/elements/form-fields/form-field';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'nz-form-wizard',
@@ -61,36 +28,8 @@ import { NzFormFieldRendererComponent } from '@zak-lib/ui-library/elements/form-
     CommonModule,
     StepperModule,
     ReactiveFormsModule,
-    // CheckboxModule,
-    // RadioButtonModule,
-    //EditorModule,
-    // PasswordModule,
-    // SliderModule,
-    // MultiSelectModule,
-    // FileUploadModule,
-    // ButtonModule,
-    // ToggleButtonModule,
-    // RatingModule,
-    // ColorPickerModule,
-    // CascadeSelectModule,
-    // KnobModule,
-    // ListboxModule,
-    // SelectButtonModule,
-    // PickListModule,
-    // SpeedDialModule,
-    // SplitButtonModule,
-    // InputNumberModule,
-    // InputMaskModule,
-    // KeyFilterModule,
-    // InputOtpModule,
-    // TreeSelectModule,
-    // FloatLabelModule,
-    // IconFieldModule,
-    // InputGroupModule,
-    // DatePickerModule,
     NzConfirmDialogComponent,
     FluidModule,
-    CdkDragPlaceholder,
     NzFormFieldRendererComponent,
   ],
   templateUrl: './form-wizard.component.html',

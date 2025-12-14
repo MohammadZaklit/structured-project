@@ -3,7 +3,7 @@ import { Component, EventEmitter, inject, OnInit, Output, signal } from '@angula
 import { NzTableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
 import { NzListView, NzListViewComponent } from '@zak-lib/ui-library/layouts/list-view';
 import { NzModuleFieldConfig, NzGenericRecord, NzModuleConfig } from '@zak-lib/ui-library/shared';
-import { COMPONENTS } from '../../../../shared/constants/components';
+import { COMPONENTS } from '../../../../../../../my-lib/src/lib/shared/src/constants/components';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
 
 @Component({

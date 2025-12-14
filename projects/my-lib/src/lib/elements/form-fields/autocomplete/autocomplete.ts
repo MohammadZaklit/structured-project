@@ -16,7 +16,7 @@ export interface NzAutoComplete extends NzFormField, NzBaseSelect {}
       [formControl]="config.control"
       [suggestions]="options()"
       [dropdown]="true"
-      [placeholder]="config.placeholder || ''"
+      [placeholder]="config.settings?.placeholder || ''"
     ></p-autoComplete
   ></nz-form-field>`,
   styles: ``,

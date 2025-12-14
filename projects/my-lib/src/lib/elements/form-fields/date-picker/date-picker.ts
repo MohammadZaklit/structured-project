@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
 import { NzFormFieldModule } from '../form-field/form-field-module';
 import { NzFormFieldInfo, NzFormControl, NzFormGroup } from '@zak-lib/ui-library/shared';
-import { NzFormFieldSettings } from '../form-field/form-field';
+import { NzFormField } from '../form-field/form-field';
+
 @Component({
   selector: 'nz-date-picker',
   standalone: true,
@@ -15,7 +16,7 @@ export class NzDatePickerComponent {
   @Input() config!: NzDatePicker;
 }
 
-export interface NzDatePicker extends NzFormFieldInfo, NzFormFieldSettings {
+export interface NzDatePicker extends NzFormField {
   control: NzFormControl;
   form: NzFormGroup;
 }

@@ -13,7 +13,7 @@ import {
   NzModuleConfig,
   NzModuleFieldConfig,
 } from '@zak-lib/ui-library/shared';
-import { COMPONENTS } from '../../../../shared/constants/components';
+import { COMPONENTS } from '../../../../../../../my-lib/src/lib/shared/src/constants/components';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
 import { firstValueFrom } from 'rxjs';
 import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field/field-component-type';
@@ -83,14 +83,7 @@ export class AdminPageForm implements OnInit {
         name: field.name,
         label: field.label,
         hint: field.hint || undefined,
-        value: field?.configuration?.value || undefined,
-        isRequired: field?.configuration?.isRequired || false,
-        isDisabled: field?.configuration?.isDisabled || false,
-        isVisible: field?.configuration?.isVisible || true,
-        apiValidate: field?.configuration?.apiValidate || undefined,
-        extraProps: field?.configuration?.extraProps || undefined,
-        placeholder: field?.configuration?.placeholder || undefined,
-        pattern: field?.configuration?.pattern || undefined,
+        settings: field?.configuration,
       },
     };
   }

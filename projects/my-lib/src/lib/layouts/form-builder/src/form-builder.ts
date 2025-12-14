@@ -1,93 +1,80 @@
-import { ChangeDetectorRef, Component, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input, signal } from '@angular/core';
+import {
+  NzConfigurationComponent,
+  NzComponentConfiguration,
+} from '@zak-lib/ui-library/composed/component-configuration';
+import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { NzFormFieldModule } from '@zak-lib/ui-library/elements/form-fields/form-field/form-field-module';
+import { COMPONENTS, NzFormControl } from '@zak-lib/ui-library/shared';
 import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import { NzFormBuilder } from './form-builder.interface';
 
 interface FormField {
-  id: string;
-  type: string;
+  id?: number;
+  type: FormFieldType;
   label: string;
-  placeholder?: string;
-  required?: boolean;
-  options?: { value: string; label: string }[]; // For select, radio, checkbox
-  value?: any;
-  // A field can itself be a row definition for nesting!
+  configuration?: Record<string, any>;
   nestedRow?: FormRow;
 }
 
+type FormFieldType = NzFieldType | 'row' | 'column' | 'nested-row-container';
+
 interface FormColumn {
-  id: string; // Unique ID for column
+  id: number; // Unique ID for column
   fields: FormField[];
   width?: number; // e.g., for custom column widths (not fully implemented here)
 }
 
 interface FormRow {
-  id: string; // Unique ID for the row
+  id: number; // Unique ID for the row
   columns: FormColumn[];
   tempNumColumns?: number; // Temporary property for new row column selection (now unused)
 }
 
 @Component({
   selector: 'nz-form-builder',
-  imports: [NzFormFieldModule, DragulaModule], // ✅ Directly import DragulaModule
+  imports: [NzFormFieldModule, DragulaModule, NzConfigurationComponent], // ✅ Directly import DragulaModule
   providers: [DragulaService], // ✅ Service provider
   templateUrl: './form-builder.html',
   styleUrl: './form-builder.scss',
   standalone: true,
 })
 export class NzFormBuilderComponent {
+  @Input() public config!: NzFormBuilder;
   protected readonly title = signal('form-builder');
+  public componentConfig!: NzComponentConfiguration | undefined;
 
-  public bagFieldsName: string;
-  public bagFormBuilderName: string;
+  public bagFieldsName!: string;
+  public bagFormBuilderName!: string;
 
   private subs = new Subscription();
 
-  // Left palette of available fields
   availableFields: FormField[] = [
-    { id: 'row', type: 'row', label: 'Row' },
-    { id: 'column', type: 'column', label: 'Column' },
-    { id: 'text-input', type: 'text', label: 'Text Input', placeholder: 'Enter text' },
-    { id: 'number-input', type: 'number', label: 'Number Input', placeholder: 'Enter number' },
-    { id: 'textarea-input', type: 'textarea', label: 'Textarea', placeholder: 'Enter long text' },
-    {
-      id: 'checkbox-input',
-      type: 'checkbox',
-      label: 'Checkbox',
-      options: [{ value: 'option1', label: 'Option 1' }],
-    },
-    {
-      id: 'radio-input',
-      type: 'radio',
-      label: 'Radio Button',
-      options: [{ value: 'radio1', label: 'Radio 1' }],
-    },
-    {
-      id: 'select-input',
-      type: 'select',
-      label: 'Dropdown',
-      options: [{ value: 'opt1', label: 'Option A' }],
-    },
-    { id: 'date-input', type: 'date', label: 'Date Picker' },
-    { id: 'button-input', type: 'button', label: 'Button' },
+    { type: 'row', label: 'Row' },
+    { type: 'column', label: 'Column' },
   ];
 
-  // Middle container: Represents the structure of the built form
   droppedRows: FormRow[] = [];
-  // Right container: Currently selected field for customization
   selectedField: FormField | null = null;
 
-  // We no longer need selectedRowIndex/selectedColIndex as they are index-based and misleading in nested scenarios
-  // We'll use a field-specific lookup instead when deleting.
+  private dragulaService = inject(DragulaService);
+  private cd = inject(ChangeDetectorRef);
 
-  constructor(
-    private dragulaService: DragulaService,
-    private cd: ChangeDetectorRef,
-  ) {
+  constructor() {}
+
+  ngOnInit(): void {
     const instanceId = uuidv4();
     this.bagFieldsName = `BAG_FIELDS_${instanceId}`;
     this.bagFormBuilderName = `BAG_FORM_BUILDER_${instanceId}`;
+
+    COMPONENTS.forEach((component) => {
+      this.availableFields.push({
+        type: component.componentName as FormFieldType,
+        label: component.label,
+      });
+    });
 
     // create one bag only
     this.dragulaService.createGroup(this.bagFieldsName, {
@@ -103,9 +90,7 @@ export class NzFormBuilderComponent {
         );
       },
     });
-  }
 
-  ngOnInit(): void {
     const savedForm = localStorage.getItem('savedFormData');
     if (savedForm) {
       this.droppedRows = JSON.parse(savedForm);
@@ -119,7 +104,7 @@ export class NzFormBuilderComponent {
           if (source.classList.contains('form-field-palette')) {
             // 1. Dropping a ROW into the main form area
             if (item.type === 'row' && target.classList.contains('form-builder-area')) {
-              const newRowId = uuidv4();
+              const newRowId = this._rowUUID();
               // A row is initialized with ZERO columns (user must add them)
               this.droppedRows.push({
                 id: newRowId,
@@ -137,7 +122,7 @@ export class NzFormBuilderComponent {
               if (row) {
                 // Create a new column object
                 const newCol: FormColumn = {
-                  id: uuidv4(),
+                  id: this._rowUUID(),
                   fields: [],
                 };
 
@@ -151,8 +136,8 @@ export class NzFormBuilderComponent {
             // 3. Dropping fields or a ROW for nesting into a COLUMN
             else if (target.classList.contains('form-column')) {
               // Find the correct row ID and column ID from the DOM element
-              const rowId = target.getAttribute('data-row-id');
-              const colId = target.getAttribute('data-col-id');
+              const rowId = Number(target.getAttribute('data-row-id'));
+              const colId = Number(target.getAttribute('data-col-id'));
 
               if (!rowId || !colId) {
                 console.error('Dropped field into column, but row/col IDs are missing.');
@@ -163,7 +148,7 @@ export class NzFormBuilderComponent {
 
               if (item.type === 'row') {
                 // Handle nested row creation: The 'row' field is dropped into a column
-                const newNestedRowId = uuidv4();
+                const newNestedRowId = this._rowUUID();
                 const nestedRowStructure: FormRow = {
                   id: newNestedRowId,
                   columns: [], // Nested row also starts with NO columns
@@ -171,7 +156,7 @@ export class NzFormBuilderComponent {
 
                 // Create a field wrapper for the nested row structure
                 fieldToAdd = {
-                  id: uuidv4(),
+                  id: this._rowUUID(),
                   type: 'nested-row-container', // New type to distinguish
                   label: 'Nested Row',
                   nestedRow: nestedRowStructure,
@@ -179,7 +164,7 @@ export class NzFormBuilderComponent {
               } else {
                 // Standard field - Ensure it has a unique ID
                 // Deep copy is handled by copyItem/dragula, but ensure unique ID for fields dropped from palette
-                fieldToAdd.id = uuidv4();
+                fieldToAdd.id = this._rowUUID();
               }
 
               // Find the target column in the model
@@ -196,6 +181,10 @@ export class NzFormBuilderComponent {
     );
   }
 
+  private _rowUUID(): number {
+    return Number(`${Date.now()}${Math.floor(Math.random() * 1000)}`);
+  }
+
   ngOnDestroy(): void {
     this.subs.unsubscribe();
     this.dragulaService.destroy(this.bagFieldsName);
@@ -205,7 +194,7 @@ export class NzFormBuilderComponent {
   // --- Recursive Model Finders ---
 
   // Recursive search to find a row by its unique ID
-  private findRowById(rows: FormRow[], rowId: string): FormRow | undefined {
+  private findRowById(rows: FormRow[], rowId: number): FormRow | undefined {
     for (const row of rows) {
       if (row.id === rowId) return row;
       // Check for nested rows inside columns
@@ -229,14 +218,14 @@ export class NzFormBuilderComponent {
     const rowId = container.getAttribute('data-row-id');
     if (!rowId) return undefined;
 
-    return this.findRowById(this.droppedRows, rowId);
+    return this.findRowById(this.droppedRows, Number(rowId));
   }
 
   // Recursive search to find a column by its parent row ID and column ID
   private findColumnById(
     rows: FormRow[],
-    parentRowId: string,
-    columnId: string,
+    parentRowId: number,
+    columnId: number,
   ): FormColumn | undefined {
     for (const row of rows) {
       if (row.id === parentRowId) {
@@ -276,7 +265,7 @@ export class NzFormBuilderComponent {
 
   // --- Layout Manipulation Methods ---
 
-  removeRow(rowId: string): void {
+  removeRow(rowId: number): void {
     const deleteRecursive = (rows: FormRow[]): boolean => {
       const initialLength = rows.length;
       // Remove from the current array
@@ -313,7 +302,7 @@ export class NzFormBuilderComponent {
     }
   }
 
-  removeColumn(parentRowId: string, columnId: string): void {
+  removeColumn(parentRowId: number, columnId: number): void {
     if (confirm('Are you sure you want to delete this column and all its contents?')) {
       const row = this.findRowById(this.droppedRows, parentRowId);
 
@@ -367,7 +356,22 @@ export class NzFormBuilderComponent {
   }
 
   selectField(field: FormField): void {
-    this.selectedField = field;
+    this.buildComponentConfiguration(field);
+  }
+
+  private buildComponentConfiguration(field: FormField): void {
+    this.componentConfig = {
+      type: field.type as NzFieldType,
+      control: new NzFormControl(null),
+    };
+  }
+
+  private destroyComponentConfiguration(): void {
+    this.componentConfig = undefined;
+  }
+
+  public closeSettings(): void {
+    this.destroyComponentConfiguration();
   }
 
   deleteSelectedField(): void {

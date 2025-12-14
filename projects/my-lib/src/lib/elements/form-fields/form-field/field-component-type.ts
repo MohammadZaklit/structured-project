@@ -4,7 +4,7 @@ import { NzCheckBox } from '@zak-lib/ui-library/elements/form-fields/checkbox';
 import { NzDatePicker } from '@zak-lib/ui-library/elements/form-fields/date-picker';
 import { NzTextarea } from '@zak-lib/ui-library/elements/form-fields/textarea';
 import { NzToggleSwitch } from '@zak-lib/ui-library/elements/form-fields/toggle-switch';
-// here we can render the component dynamically
+
 export type NzFieldComponentType =
   | NzAutoComplete
   | NzInput
@@ -47,7 +47,10 @@ export type NzFieldType =
   | NzFieldTypeEnum.PickListDB
   | NzFieldTypeEnum.PickListOptions
   | NzFieldTypeEnum.FileUploadDragDrop
-  | NzFieldTypeEnum.FileUploadBrowse;
+  | NzFieldTypeEnum.FileUploadBrowse
+  | NzFieldTypeEnum.FormGroup
+  | NzFieldTypeEnum.FormArray
+  | NzFieldTypeEnum.FormComponent;
 
 export enum NzFieldTypeEnum {
   AutoComplete = 'AutoComplete',
@@ -84,4 +87,7 @@ export enum NzFieldTypeEnum {
   PickListOptions = 'PickListOptions',
   FileUploadDragDrop = 'FileUploadDragDrop',
   FileUploadBrowse = 'FileUploadBrowse',
+  FormGroup = 'FormGroup',
+  FormArray = 'FormArray',
+  FormComponent = 'FormComponent',
 }

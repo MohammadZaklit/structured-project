@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NzFormField, NzFormFieldComponent } from '../form-field/form-field';
 import { NzFormFieldModule } from '../form-field/form-field-module';
 import { ToggleSwitch, ToggleSwitchModule } from 'primeng/toggleswitch';
@@ -16,10 +16,14 @@ export interface NzToggleSwitch extends NzFormField {
   >`,
   styles: ``,
 })
-export class NzToggleSwitchComponent extends NzFormFieldComponent {
+export class NzToggleSwitchComponent extends NzFormFieldComponent implements OnInit {
   @Input() config!: NzToggleSwitch;
 
   constructor() {
     super();
+  }
+
+  ngOnInit(): void {
+    this.config.hideLabel = true;
   }
 }

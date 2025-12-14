@@ -7,6 +7,6 @@
     "sourceMap": true,
     "types": []
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "../my-lib/src/lib/shared/src/constants/components.ts"],
   "exclude": ["src/**/*.spec.ts"]
 }

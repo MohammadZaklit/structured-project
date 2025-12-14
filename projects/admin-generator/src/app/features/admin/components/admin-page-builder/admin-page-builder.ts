@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { NzStepperConfig, NzWizardFormFieldConfig } from '@zak-lib/ui-library/layouts/form-wizard';
-import { NzFormBuilderComponent } from '@zak-lib/ui-library/layouts/form-builder';
+import { NzFormBuilder, NzFormBuilderComponent } from '@zak-lib/ui-library/layouts/form-builder';
 import {
   NzFormControl,
   NzFormGroup,
@@ -10,10 +10,12 @@ import {
   NzModuleConfig,
   NzModuleFieldConfig,
 } from '@zak-lib/ui-library/shared';
-import { COMPONENTS } from '../../../../shared/constants/components';
+import { COMPONENTS } from '../../../../../../../my-lib/src/lib/shared/src/constants/components';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
 import { firstValueFrom } from 'rxjs';
 import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field/field-component-type';
+import { NzComponentConfiguration } from '@zak-lib/ui-library/composed/component-configuration';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-page-builder',
@@ -23,7 +25,7 @@ import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field
   standalone: true,
 })
 export class AdminPageBuilder implements OnInit {
-  public dbFields: NzWizardFormFieldConfig[] = [];
+  public dbFields: NzComponentConfiguration[] = [];
   public module!: NzModuleConfig;
   public data?: NzGenericRecord;
   private moduleSettings = inject(ModuleSettingsService);
@@ -39,23 +41,21 @@ export class AdminPageBuilder implements OnInit {
   @Output() public successForm = new EventEmitter<any>();
   @Output() public backCallback = new EventEmitter<any>();
 
+  public formBuilderConfig!: NzFormBuilder;
+
   constructor() {}
 
   ngOnInit(): void {
     this.module = this.moduleSettings.module() as NzModuleConfig;
 
     this.moduleSettings.fields().forEach((field: NzModuleFieldConfig) => {
+      console.warn('field: ', field);
       this.dbFields.push(this.mapFieldConfig(field));
     });
 
-    this.stepConfig.backBtn = {
-      position: 'inline',
-      btnCallback: () => {
-        return new Promise((resolve, reject) => {
-          this.backCallback.emit();
-          resolve();
-        });
-      },
+    this.formBuilderConfig = {
+      module: this.module,
+      components: this.dbFields,
     };
 
     if (this.id) {
@@ -63,7 +63,7 @@ export class AdminPageBuilder implements OnInit {
     }
   }
 
-  private mapFieldConfig(field: NzModuleFieldConfig): NzWizardFormFieldConfig {
+  private mapFieldConfig(field: NzModuleFieldConfig): NzComponentConfiguration {
     const fieldType =
       COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
       'InputText';
@@ -73,22 +73,7 @@ export class AdminPageBuilder implements OnInit {
 
     return {
       type: fieldType as NzFieldType,
-      step: 1,
-      fieldConfig: {
-        control: newControl,
-        form: this.form,
-        name: field.name,
-        label: field.label,
-        hint: field.hint || undefined,
-        value: field?.configuration?.value || undefined,
-        isRequired: field?.configuration?.isRequired || false,
-        isDisabled: field?.configuration?.isDisabled || false,
-        isVisible: field?.configuration?.isVisible || true,
-        apiValidate: field?.configuration?.apiValidate || undefined,
-        extraProps: field?.configuration?.extraProps || undefined,
-        placeholder: field?.configuration?.placeholder || undefined,
-        pattern: field?.configuration?.pattern || undefined,
-      },
+      control: new NzFormControl(null, [Validators.required]),
     };
   }
 
