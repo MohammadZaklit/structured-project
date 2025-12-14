@@ -106,9 +106,6 @@ export class NzConfigurationComponent implements OnInit {
       form: this.form,
     };
 
-    console.warn('nameFieldConfig: ', this.nameFieldConfig);
-    debugger;
-
     this.labelFieldConfig = {
       control: this.form.get('label') as NzFormControl,
       label: 'Label',

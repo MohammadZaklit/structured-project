@@ -30,3 +30,10 @@ export interface NzFormFieldSettings {
   placeholder?: string;
   pattern?: string;
 }
+
+export type NzUiType = NzUiTypeEnum.Row | NzUiTypeEnum.Column;
+
+export enum NzUiTypeEnum {
+  Row = 'row',
+  Column = 'column',
+}

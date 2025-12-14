@@ -52,15 +52,15 @@
                 }
               </div>
 
-              @if (row.columns.length === 0) {
+              @if (row.childComponents.length === 0) {
                 <div class="alert alert-warning text-center">
                   <p class="mb-0">Drag a **Column** from the left here to create the layout.</p>
                 </div>
               } @else {
                 <div class="d-flex form-columns-wrapper">
-                  @for (col of row.columns; track col.id; let cIndex = $index) {
+                  @for (col of row.childComponents; track col.id; let cIndex = $index) {
                     <div
-                      [ngClass]="'col-' + 12 / row.columns.length"
+                      [ngClass]="'col-' + 12 / row.childComponents.length"
                       class="form-column p-2 border mx-1 rounded bg-light"
                       [attr.data-row-id]="row.id"
                       [attr.data-col-id]="col.id"
@@ -131,9 +131,6 @@
             (save)="saveField($event)"
             [config]="componentConfig"
           ></nz-component-configuration>
-          <button class="btn btn-danger btn-block mt-3" (click)="closeSettings()">
-            Close Settings
-          </button>
         </div>
       } @else {
         <div class="alert alert-info">Select a field from the middle container to customize.</div>

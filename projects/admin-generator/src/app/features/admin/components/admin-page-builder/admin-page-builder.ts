@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { NzStepperConfig, NzWizardFormFieldConfig } from '@zak-lib/ui-library/layouts/form-wizard';
-import { NzFormBuilder, NzFormBuilderComponent } from '@zak-lib/ui-library/layouts/form-builder';
+import { NzStepperConfig } from '@zak-lib/ui-library/layouts/form-wizard';
+import {
+  NzComponentConfig,
+  NzFormBuilder,
+  NzFormBuilderComponent,
+} from '@zak-lib/ui-library/layouts/form-builder';
 import {
   NzFormControl,
   NzFormGroup,
@@ -10,12 +14,11 @@ import {
   NzModuleConfig,
   NzModuleFieldConfig,
 } from '@zak-lib/ui-library/shared';
-import { COMPONENTS } from '../../../../../../../my-lib/src/lib/shared/src/constants/components';
+import { COMPONENTS } from '@zak-lib/ui-library/shared';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
 import { firstValueFrom } from 'rxjs';
 import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field/field-component-type';
-import { NzComponentConfiguration } from '@zak-lib/ui-library/composed/component-configuration';
-import { Validators } from '@angular/forms';
+import { NzComponentType } from '@zak-lib/ui-library/composed/component-configuration';
 
 @Component({
   selector: 'app-admin-page-builder',
@@ -25,7 +28,7 @@ import { Validators } from '@angular/forms';
   standalone: true,
 })
 export class AdminPageBuilder implements OnInit {
-  public dbFields: NzComponentConfiguration[] = [];
+  public dbFields: NzComponentConfig[] = [];
   public module!: NzModuleConfig;
   public data?: NzGenericRecord;
   private moduleSettings = inject(ModuleSettingsService);
@@ -49,7 +52,6 @@ export class AdminPageBuilder implements OnInit {
     this.module = this.moduleSettings.module() as NzModuleConfig;
 
     this.moduleSettings.fields().forEach((field: NzModuleFieldConfig) => {
-      console.warn('field: ', field);
       this.dbFields.push(this.mapFieldConfig(field));
     });
 
@@ -63,7 +65,7 @@ export class AdminPageBuilder implements OnInit {
     }
   }
 
-  private mapFieldConfig(field: NzModuleFieldConfig): NzComponentConfiguration {
+  private mapFieldConfig(field: NzModuleFieldConfig): NzComponentConfig {
     const fieldType =
       COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
       'InputText';
@@ -72,8 +74,17 @@ export class AdminPageBuilder implements OnInit {
     this.form.addControl(field.name, newControl);
 
     return {
-      type: fieldType as NzFieldType,
-      control: new NzFormControl(null, [Validators.required]),
+      id: field.id,
+      isNew: false,
+      label: field.label,
+      childComponents: [],
+      configuration: {
+        name: field.name,
+        label: field.label,
+        hint: field.hint,
+        settings: field.configuration,
+      },
+      type: fieldType as NzComponentType,
     };
   }
 
@@ -81,7 +92,7 @@ export class AdminPageBuilder implements OnInit {
     this.data = await firstValueFrom(this.httpService.getById(this.module.name, id));
   }
 
-  public onFormSubmit(data: any): void {
-    this.successForm.emit(data);
+  public saveData(data: any): void {
+    console.warn('data :', data);
   }
 }
