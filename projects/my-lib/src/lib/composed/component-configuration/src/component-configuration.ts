@@ -83,19 +83,52 @@ export class NzConfigurationComponent implements OnInit {
 
   private addFields(): void {
     const settingsFormGroup = new NzFormGroup({});
-    settingsFormGroup.addControl('value', new NzFormControl(null, []));
-    settingsFormGroup.addControl('isRequired', new NzFormControl(false, []));
-    settingsFormGroup.addControl('isDisabled', new NzFormControl(false, []));
-    settingsFormGroup.addControl('isVisible', new NzFormControl(false, []));
-    settingsFormGroup.addControl('apiValidate', new NzFormControl(null, []));
-    settingsFormGroup.addControl('extraProps', new NzFormControl(null, []));
-    settingsFormGroup.addControl('placeholder', new NzFormControl(null, []));
-    settingsFormGroup.addControl('pattern', new NzFormControl(null, []));
+    settingsFormGroup.addControl(
+      'value',
+      new NzFormControl(this.config?.configuration?.['settings']?.value || null, []),
+    );
+    settingsFormGroup.addControl(
+      'isRequired',
+      new NzFormControl(this.config?.configuration?.['settings']?.isRequired || false, []),
+    );
+    settingsFormGroup.addControl(
+      'isDisabled',
+      new NzFormControl(this.config?.configuration?.['settings']?.isDisabled || false, []),
+    );
+    settingsFormGroup.addControl(
+      'isVisible',
+      new NzFormControl(this.config?.configuration?.['settings']?.isVisible || false, []),
+    );
+    settingsFormGroup.addControl(
+      'apiValidate',
+      new NzFormControl(this.config?.configuration?.['settings']?.apiValidate || null, []),
+    );
+    settingsFormGroup.addControl(
+      'extraProps',
+      new NzFormControl(this.config?.configuration?.['settings']?.extraProps || null, []),
+    );
+    settingsFormGroup.addControl(
+      'placeholder',
+      new NzFormControl(this.config?.configuration?.['settings']?.placeholder || null, []),
+    );
+    settingsFormGroup.addControl(
+      'pattern',
+      new NzFormControl(this.config?.configuration?.['settings']?.pattern || null, []),
+    );
     this.form.addControl('settings', settingsFormGroup);
 
-    this.form.addControl('name', new NzFormControl(null, [Validators.required]));
-    this.form.addControl('label', new NzFormControl(null, [Validators.required]));
-    this.form.addControl('hint', new NzFormControl(null, []));
+    this.form.addControl(
+      'name',
+      new NzFormControl(this.config?.configuration?.['name'] || null, [Validators.required]),
+    );
+    this.form.addControl(
+      'label',
+      new NzFormControl(this.config?.configuration?.['label'] || null, [Validators.required]),
+    );
+    this.form.addControl(
+      'hint',
+      new NzFormControl(this.config?.configuration?.['hint'] || null, []),
+    );
   }
 
   private initConfig(): void {
