@@ -3,7 +3,7 @@ import { NzUiType } from '@zak-lib/ui-library/shared';
 
 export interface NzComponentConfiguration {
   type: NzComponentType;
-  configuration: Record<string, any>;
+  configuration: Record<string, any>; //TypeScript guarantees it’s an object
 }
 
 export type NzComponentType = NzFieldType | NzUiType;

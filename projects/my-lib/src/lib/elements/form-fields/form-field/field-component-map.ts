@@ -6,4 +6,5 @@ export const NzFormFieldComponents: Record<string, () => Promise<any>> = {
   DatePicker: () => import('../date-picker').then((m) => m.NzDatePickerComponent),
   CheckBox: () => import('../checkbox').then((m) => m.NzCheckBoxComponent),
   TextArea: () => import('../textarea').then((m) => m.NzTextAreaComponent),
+  ColorPicker: () => import('../color-picker').then((m) => m.NzColorPickerComponent),
 };

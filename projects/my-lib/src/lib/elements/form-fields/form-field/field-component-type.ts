@@ -4,6 +4,8 @@ import { NzCheckBox } from '@zak-lib/ui-library/elements/form-fields/checkbox';
 import { NzDatePicker } from '@zak-lib/ui-library/elements/form-fields/date-picker';
 import { NzTextarea } from '@zak-lib/ui-library/elements/form-fields/textarea';
 import { NzToggleSwitch } from '@zak-lib/ui-library/elements/form-fields/toggle-switch';
+import { NzColorPicker } from '@zak-lib/ui-library/elements/form-fields/color-picker';
+import { NzMultiSelect } from '@zak-lib/ui-library/elements/form-fields/multiselect';
 
 export type NzFieldComponentType =
   | NzAutoComplete
@@ -11,7 +13,9 @@ export type NzFieldComponentType =
   | NzToggleSwitch
   | NzCheckBox
   | NzDatePicker
-  | NzTextarea;
+  | NzTextarea
+  | NzColorPicker
+  | NzMultiSelect;
 
 export type NzFieldType =
   | NzFieldTypeEnum.AutoComplete
