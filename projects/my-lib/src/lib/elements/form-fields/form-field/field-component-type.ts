@@ -6,6 +6,7 @@ import { NzTextarea } from '@zak-lib/ui-library/elements/form-fields/textarea';
 import { NzToggleSwitch } from '@zak-lib/ui-library/elements/form-fields/toggle-switch';
 import { NzColorPicker } from '@zak-lib/ui-library/elements/form-fields/color-picker';
 import { NzMultiSelect } from '@zak-lib/ui-library/elements/form-fields/multiselect';
+import { NzPickList } from '@zak-lib/ui-library/elements/form-fields/picklist';
 
 export type NzFieldComponentType =
   | NzAutoComplete
@@ -15,7 +16,8 @@ export type NzFieldComponentType =
   | NzDatePicker
   | NzTextarea
   | NzColorPicker
-  | NzMultiSelect;
+  | NzMultiSelect
+  | NzPickList;
 
 export type NzFieldType =
   | NzFieldTypeEnum.AutoComplete
@@ -48,8 +50,7 @@ export type NzFieldType =
   | NzFieldTypeEnum.Button
   | NzFieldTypeEnum.SpeedDial
   | NzFieldTypeEnum.SplitButton
-  | NzFieldTypeEnum.PickListDB
-  | NzFieldTypeEnum.PickListOptions
+  | NzFieldTypeEnum.PickList
   | NzFieldTypeEnum.FileUploadDragDrop
   | NzFieldTypeEnum.FileUploadBrowse
   | NzFieldTypeEnum.FormGroup
@@ -87,8 +88,7 @@ export enum NzFieldTypeEnum {
   Button = 'Button',
   SpeedDial = 'SpeedDial',
   SplitButton = 'SplitButton',
-  PickListDB = 'PickListDB',
-  PickListOptions = 'PickListOptions',
+  PickList = 'PickList',
   FileUploadDragDrop = 'FileUploadDragDrop',
   FileUploadBrowse = 'FileUploadBrowse',
   FormGroup = 'FormGroup',

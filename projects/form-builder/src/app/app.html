@@ -99,6 +99,8 @@
                                 "
                               ></ng-container>
                             </div>
+                          } @else if (field.type === 'picklist') {
+                            <nz-picklist></nz-picklist>>
                           } @else {
                             {{ field.label }} ({{ field.type }})
                           }

@@ -7,4 +7,5 @@ export const NzFormFieldComponents: Record<string, () => Promise<any>> = {
   CheckBox: () => import('../checkbox').then((m) => m.NzCheckBoxComponent),
   TextArea: () => import('../textarea').then((m) => m.NzTextAreaComponent),
   ColorPicker: () => import('../color-picker').then((m) => m.NzColorPickerComponent),
+  PickList: () => import('../picklist').then((m) => m.NzPickListComponent),
 };

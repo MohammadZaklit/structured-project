@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DragulaWrapperModule } from './dragula-wrapper.module';
 import { v4 as uuidv4 } from 'uuid';
-
+import { NzPickListComponent } from '@zak-lib/ui-library/elements/form-fields/picklist';
 // Define interfaces for better type safety
 interface FormField {
   id: string;
@@ -35,7 +35,7 @@ interface FormRow {
 @Component({
   selector: 'app-root',
   standalone: true, // Use standalone for a modern Angular component setup
-  imports: [FormsModule, CommonModule, DragulaModule], // ✅ Directly import DragulaModule
+  imports: [FormsModule, CommonModule, DragulaModule, NzPickListComponent], // ✅ Directly import DragulaModule
   providers: [DragulaService], // ✅ Service provider
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -75,6 +75,7 @@ export class App implements OnInit, OnDestroy {
     },
     { id: 'date-input', type: 'date', label: 'Date Picker' },
     { id: 'button-input', type: 'button', label: 'Button' },
+    { id: 'picklist-input', type: 'picklist', label: 'picklist' },
   ];
 
   // Middle container: Represents the structure of the built form

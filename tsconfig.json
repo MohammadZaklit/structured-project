@@ -59,6 +59,12 @@
     },
     {
       "path": "./projects/admin-generator/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/testing/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/testing/tsconfig.spec.json"
     }
   ]
 }
