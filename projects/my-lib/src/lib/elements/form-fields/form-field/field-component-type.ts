@@ -7,6 +7,7 @@ import { NzToggleSwitch } from '@zak-lib/ui-library/elements/form-fields/toggle-
 import { NzColorPicker } from '@zak-lib/ui-library/elements/form-fields/color-picker';
 import { NzMultiSelect } from '@zak-lib/ui-library/elements/form-fields/multiselect';
 import { NzPickList } from '@zak-lib/ui-library/elements/form-fields/picklist';
+import { NzUploadFileComponent } from '../fileuploader';
 
 export type NzFieldComponentType =
   | NzAutoComplete
