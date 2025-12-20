@@ -6,7 +6,7 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { AppConfigurator } from './app.configurator';
 import { LayoutService } from '../service/layout.service';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from 'projects/admin-generator/src/app/core/services/auth.services';
+import { NzAuthService } from '@zak-lib/ui-library/auth';
 
 @Component({
   selector: 'app-topbar',
@@ -157,20 +157,17 @@ import { AuthService } from 'projects/admin-generator/src/app/core/services/auth
 export class AppTopbar {
   items!: MenuItem[];
   dropdownVisible = false;
-  isLoggedIn = false;
 
   constructor(
     public layoutService: LayoutService,
     private router: Router,
-    private authService: AuthService,
+    private authService: NzAuthService,
   ) {}
 
-  ngOnInit() {
-    // Subscribe to reactive login state
-    this.authService.isLoggedIn$.subscribe((loggedIn) => {
-      this.isLoggedIn = loggedIn;
-    });
+  get isLoggedIn(): boolean {
+    return this.authService.isAuthenticated();
   }
+
   toggleDropdown() {
     this.dropdownVisible = !this.dropdownVisible;
   }

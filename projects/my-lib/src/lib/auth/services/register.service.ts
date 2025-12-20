@@ -12,7 +12,7 @@ export interface NzRegisterPayload {
   providedIn: 'root',
 })
 export class NzRegisterService {
-  private readonly API_URL = '/api/auth/register';
+  private readonly API_URL = 'auth/register';
   private httpService = inject(NzHttpService);
   constructor() {}
 

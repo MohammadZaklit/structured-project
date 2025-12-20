@@ -18,16 +18,14 @@ export interface NzAuthUser {
   providedIn: 'root',
 })
 export class NzAuthService {
-  private readonly API_URL = '/api/auth/login';
+  private readonly API_URL = 'auth/login';
   private readonly TOKEN_KEY = 'access_token';
   private readonly USER_KEY = 'auth_user';
-
+  private httpService = inject(NzHttpService);
+  private storage = inject(NzStorageService);
   private userSignal = signal<NzAuthUser | null>(this.getStoredUser());
 
   isAuthenticated = computed(() => !!this.userSignal());
-
-  private httpService = inject(NzHttpService);
-  private storage = inject(NzStorageService);
 
   constructor() {}
 

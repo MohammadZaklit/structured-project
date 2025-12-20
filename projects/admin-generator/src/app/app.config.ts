@@ -13,6 +13,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideNzBaseConfig } from '@zak-lib/ui-library/shared';
+import { environment } from './environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -31,5 +33,8 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideHttpClient(withFetch()),
+    provideNzBaseConfig({
+      apiBaseUrl: environment.apiUrl,
+    }),
   ],
 };

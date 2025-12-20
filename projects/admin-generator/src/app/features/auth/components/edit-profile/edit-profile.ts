@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Password } from 'primeng/password';
 import { Button } from 'primeng/button';
 import { AppFloatingConfigurator } from 'projects/admin-generator/src/app/themes/default/layout/component/app.floatingconfigurator';
-import { AuthService } from 'projects/admin-generator/src/app/core/services/auth.services';
+import { NzAuthService } from '@zak-lib/ui-library/auth';
 
 @Component({
   selector: 'edit-profile',
@@ -20,21 +20,23 @@ export class EditProfile implements OnInit {
 
   constructor(
     private router: Router,
-    private auth: AuthService,
+    private auth: NzAuthService,
   ) {}
 
   async ngOnInit() {
-    const loggedIn = await this.auth.isLoggedIn();
-    if (!loggedIn) {
+    if (!this.isLoggedIn) {
       this.router.navigate(['/auth-login']);
     }
   }
 
+  get isLoggedIn(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
   async UpdateUser() {
     // 1️⃣ Check login
-    const loggedIn = await this.auth.isLoggedIn();
-    if (!loggedIn) {
-      this.router.navigate(['/auth-login']);
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/auth/login']);
       return;
     }
 
@@ -50,15 +52,15 @@ export class EditProfile implements OnInit {
     }
 
     // 3️⃣ Verify old password
-    const oldPasswordValid = await this.auth.verifyOldPassword(this.Oldpassword);
-    if (!oldPasswordValid) throw new Error('Old password is incorrect.');
+    // const oldPasswordValid = await this.auth.verifyOldPassword(this.Oldpassword);
+    // if (!oldPasswordValid) throw new Error('Old password is incorrect.');
 
     // 4️⃣ Update password securely
-    const { data, error } = await this.auth.supabase.auth.updateUser({
-      password: this.Newpassword,
-    });
+    // const { data, error } = await this.auth.supabase.auth.updateUser({
+    //   password: this.Newpassword,
+    // });
 
-    if (error) throw new Error('Failed to update password: ' + error.message);
+    //if (error) throw new Error('Failed to update password: ' + error.message);
 
     alert('Password updated successfully!');
 

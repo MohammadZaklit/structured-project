@@ -54,10 +54,6 @@ export class NzRegisterCardComponent {
     );
     this.config.form.addControl(
       'password',
-      new NzFormControl(null, [Validators.required, Validators.email]),
-    );
-    this.config.form.addControl(
-      'password',
       new NzFormControl(null, [
         Validators.required,
         NzPasswordComplexityValidator({
