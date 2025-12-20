@@ -8,4 +8,5 @@ export const NzFormFieldComponents: Record<string, () => Promise<any>> = {
   TextArea: () => import('../textarea').then((m) => m.NzTextAreaComponent),
   ColorPicker: () => import('../color-picker').then((m) => m.NzColorPickerComponent),
   PickList: () => import('../picklist').then((m) => m.NzPickListComponent),
+  FileUploader: () => import('../fileuploader').then((m) => m.NzUploadFileComponent),
 };
