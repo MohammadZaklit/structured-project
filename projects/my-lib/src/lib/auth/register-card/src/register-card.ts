@@ -14,6 +14,10 @@ import { NzParagraph, NzParagraphComponent } from '@zak-lib/ui-library/component
 import { firstValueFrom } from 'rxjs';
 import { NzRegisterService } from '../../services/register.service';
 import { NzPasswordComplexityValidator } from '../../classes/password-complexity.validator';
+import {
+  NzAlertDialogComponent,
+  NzAlertDialog,
+} from '@zak-lib/ui-library/elements/ui/alert-dialog';
 @Injectable({
   providedIn: 'root',
 })
@@ -26,6 +30,7 @@ import { NzPasswordComplexityValidator } from '../../classes/password-complexity
     NzParagraphComponent,
     NzPasswordComponent,
     NzNameComponent,
+    NzAlertDialogComponent,
   ],
   templateUrl: './register-card.html',
   styleUrl: './register-card.scss',
@@ -42,7 +47,7 @@ export class NzRegisterCardComponent {
   private registerService = inject(NzRegisterService);
 
   @Output() redirectToLogin = new EventEmitter<void>();
-  @Output() successRegistration = new EventEmitter<any>();
+  @Output() successRegistration = new EventEmitter<NzAlertDialog>();
 
   constructor() {}
 
@@ -109,16 +114,23 @@ export class NzRegisterCardComponent {
 
     try {
       const response = await firstValueFrom(this.registerService.register(data));
-
       if (response) {
-        this.successRegistration.emit(response);
+        // Emit success dialog config
+        this.successRegistration.emit({
+          type: 'success',
+          title: 'Registration Successful',
+          message: 'You have registered successfully!',
+        } as NzAlertDialog);
       }
     } catch (error: any) {
-      alert(error.message);
-      return;
+      // Emit error dialog config
+      this.successRegistration.emit({
+        type: 'error', // error type
+        title: 'Registration Failed',
+        message: error.message,
+      } as NzAlertDialog);
     }
   }
-
   goToLogin() {
     this.redirectToLogin.emit();
   }
