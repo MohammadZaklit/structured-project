@@ -16,3 +16,8 @@
   <nz-standard-button [config]="registerconfig"></nz-standard-button>
   <nz-standard-button (click)="goToLogin()" [config]="backtologinconfig"></nz-standard-button>
 </div>
+
+<!--Alert dialog-->
+<div>
+  <nz-alert-dialog (successRegistration)="register()"></nz-alert-dialog>
+</div>

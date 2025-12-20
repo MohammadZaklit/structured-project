@@ -11,6 +11,10 @@ import { NzLoginCard } from './login-card.interface';
 import { NzFormControl } from '@zak-lib/ui-library/shared';
 import { NzAuthService, NzAuthUser } from '../../services/auth.service';
 import { firstValueFrom } from 'rxjs';
+import {
+  NzAlertDialog,
+  NzAlertDialogComponent,
+} from '@zak-lib/ui-library/elements/ui/alert-dialog';
 @Component({
   selector: 'nz-login-card',
   imports: [
@@ -20,6 +24,7 @@ import { firstValueFrom } from 'rxjs';
     NzHeadingComponent,
     NzParagraphComponent,
     NzPasswordComponent,
+    NzAlertDialogComponent,
   ],
   templateUrl: './login-card.html',
   styles: ``,
@@ -34,12 +39,11 @@ export class NzLoginCardComponent implements OnInit {
   public paragraphconfig!: NzParagraph;
   public goToRegisterConfig!: NzStandardButton;
   public goToForgotPasswordConfig!: NzStandardButton;
-
   private authService = inject(NzAuthService);
   @Output() register = new EventEmitter<void>();
   @Output() forgorPassword = new EventEmitter<void>();
-  @Output() successLogin = new EventEmitter<NzAuthUser>();
-
+  @Output() successLogin = new EventEmitter<{ user: NzAuthUser | null; alert: NzAlertDialog }>();
+  alertConfig?: NzAlertDialog;
   constructor() {}
 
   goToRegister(): void {
@@ -53,15 +57,25 @@ export class NzLoginCardComponent implements OnInit {
     const data = this.config.form.getRawValue();
 
     try {
-      const response = await firstValueFrom(this.authService.login(data));
+      const response: NzAuthUser = await firstValueFrom(this.authService.login(data));
 
-      if (response) {
-        this.successLogin.emit(response as NzAuthUser);
-      }
+      // Success
+      const successAlert: NzAlertDialog = {
+        type: 'success',
+        title: 'Login Successful',
+        message: 'You have logged in successfully!',
+      };
+
+      this.successLogin.emit({ user: response, alert: successAlert });
     } catch (error: any) {
-      console.error('Supabase login error:', error.message);
-      alert(error.message);
-      return;
+      // Error
+      const errorAlert: NzAlertDialog = {
+        type: 'error',
+        title: 'Login Failed',
+        message: 'Email or password is incorrect.',
+      };
+
+      this.successLogin.emit({ user: null, alert: errorAlert });
     }
   }
 

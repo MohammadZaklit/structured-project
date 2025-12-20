@@ -62,7 +62,8 @@ export class NzAuthService {
   }
 
   private getStoredUser(): NzAuthUser | null {
-    const user = this.storage.get(this.USER_KEY) as NzAuthUser | null;
-    return user ? user : null;
+    /*const user = this.storage.get(this.USER_KEY) as NzAuthUser | null;
+    return user ? user : null;*/
+    return null;
   }
 }

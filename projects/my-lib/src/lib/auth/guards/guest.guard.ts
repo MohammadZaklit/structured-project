@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
-import { NzAuthService } from '../../../auth/services/auth.service';
+import { NzAuthService } from '../../auth/services/auth.service';
 
 export const NzGuestGuard: CanActivateFn = async (_route, _state) => {
   const authService = inject(NzAuthService);
