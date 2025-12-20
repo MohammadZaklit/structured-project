@@ -18,3 +18,7 @@ export * from './src/services/storage.service';
 export * from './src/classes/NzFormControl';
 export * from './src/classes/NzFormArray';
 export * from './src/classes/NzFormGroup';
+
+// providers
+export * from './src/tokens/base.token';
+export * from './src/providers/base.config';

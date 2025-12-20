@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
-import { environment } from '../../../../../../admin-generator/src/app/environments/environment';
-import { NzGenericRecord } from '@zak-lib/ui-library/shared';
+import { Observable } from 'rxjs';
+import { NZ_BASE_URL_CONFIG, NzGenericRecord } from '@zak-lib/ui-library/shared';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NzHttpService {
-  private apiUrl = environment.apiUrl;
-
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    @Inject(NZ_BASE_URL_CONFIG) private apiUrl: string,
+  ) {}
 
   // --- Helper to build request options (e.g., headers) ---
   private getHttpOptions() {
