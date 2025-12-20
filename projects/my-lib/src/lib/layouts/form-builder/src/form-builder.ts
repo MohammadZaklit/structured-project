@@ -77,7 +77,16 @@ export class NzFormBuilderComponent {
     // create one bag only
     this.dragulaService.createGroup(this.bagFieldsName, {
       moves: (_el?: Element, _container?: Element, _handle?: Element) => {
-        return _el?.classList.contains('is-draggable') ?? false;
+        // must click on drag handler
+        if (!!_handle?.classList.contains('main-field')) return true;
+
+        if (!_handle?.closest('.drag-handler')) return false;
+
+        // find the draggable item related to THIS container
+        const draggable = _handle?.closest('.component-item');
+        console.error(_container, _el, _handle, draggable);
+        // only allow dragging if this draggable is a direct child of the source container
+        return draggable !== null;
       },
       copy: (_el?: Element, source?: Element) =>
         source?.classList.contains('form-field-palette') ?? false,
@@ -95,7 +104,6 @@ export class NzFormBuilderComponent {
             draggedComponentType !== this.componentTypeEnum.Column &&
             target?.getAttribute('data-component-type') === this.componentTypeEnum.Column) ||
           false;
-
         return res;
       },
     });
