@@ -19,6 +19,6 @@ export const AUTH_PAGE_ROUTES: Routes = [
   },
   {
     path: '**',
-    redirectTo: '404',
+    redirectTo: 'login',
   },
 ];

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GuestGuard } from './guest-guard';
+import { AuthBase } from './auth-base';
 
-describe('GuestGuard', () => {
-  let component: GuestGuard;
-  let fixture: ComponentFixture<GuestGuard>;
+describe('AuthBase', () => {
+  let component: AuthBase;
+  let fixture: ComponentFixture<AuthBase>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GuestGuard]
+      imports: [AuthBase]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(GuestGuard);
+    fixture = TestBed.createComponent(AuthBase);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

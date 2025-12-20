@@ -3,6 +3,7 @@ import { AppLayout } from './layout/component/app.layout';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { Documentation } from './pages/documentation/documentation';
 import { Landing } from './pages/landing/landing';
+import { NzAuthGuard, NzGuestGuard } from '@zak-lib/ui-library/auth';
 
 export const routes: Routes = [
   {
@@ -11,9 +12,10 @@ export const routes: Routes = [
   },
   {
     path: '',
+    canActivate: [NzAuthGuard],
     component: AppLayout,
     children: [
-      { path: '', component: Dashboard },
+      { path: 'dashboard', component: Dashboard },
       {
         path: 'admin',
         loadChildren: () =>
@@ -34,6 +36,7 @@ export const routes: Routes = [
   { path: 'landing', component: Landing }, // for landing page
   {
     path: 'auth',
+    canActivate: [NzGuestGuard],
     loadChildren: () =>
       import('../../features/auth/shell/auth-shell-routing').then((m) => m.AUTH_PAGE_ROUTES),
   },

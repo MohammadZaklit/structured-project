@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import {
   NzStandardButton,
   NzStandardButtonComponent,
@@ -7,12 +7,10 @@ import { NzEmailComponent, NzEmail } from '@zak-lib/ui-library/components/email'
 import { NzPassword, NzPasswordComponent } from '@zak-lib/ui-library/components/password';
 import { NzHeading, NzHeadingComponent } from '@zak-lib/ui-library/components/heading';
 import { NzParagraph, NzParagraphComponent } from '@zak-lib/ui-library/components/paragraph';
-import { Router } from '@angular/router';
-import SupabaseClient from '@supabase/supabase-js/dist/module/SupabaseClient';
-import { createClient } from '@supabase/supabase-js';
-import { environment } from './environment';
 import { NzLoginCard } from './login-card.interface';
 import { NzFormControl } from '@zak-lib/ui-library/shared';
+import { NzAuthService, NzAuthUser } from '../../services/auth.service';
+import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'nz-login-card',
   imports: [
@@ -29,30 +27,37 @@ import { NzFormControl } from '@zak-lib/ui-library/shared';
 })
 export class NzLoginCardComponent implements OnInit {
   @Input() config!: NzLoginCard;
-  private supabase: SupabaseClient;
   public headingconfig!: NzHeading;
   public emailconfig!: NzEmail;
   public passwordconfig!: NzPassword;
   public loginconfig!: NzStandardButton;
   public paragraphconfig!: NzParagraph;
-  public gotoregisterconfig!: NzStandardButton;
-  public gotohomeconfig!: NzStandardButton;
-  constructor(private router: Router) {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
-  }
+  public goToRegisterConfig!: NzStandardButton;
+  public goToForgotPasswordConfig!: NzStandardButton;
+
+  private authService = inject(NzAuthService);
+  @Output() register = new EventEmitter<void>();
+  @Output() forgorPassword = new EventEmitter<void>();
+  @Output() successLogin = new EventEmitter<NzAuthUser>();
+
+  constructor() {}
+
   goToRegister(): void {
-    this.router.navigate(['/register']);
+    this.register.emit();
   }
-  goTohome(): void {
-    this.router.navigate(['/account']);
+
+  goToForgotPassword(): void {
+    this.forgorPassword.emit();
   }
   async login(): Promise<void> {
     const data = this.config.form.getRawValue();
 
     try {
-      const response = await this.supabase.auth.signInWithPassword(data);
-      alert('Signed in successfully');
-      this.router.navigate(['/account']);
+      const response = await firstValueFrom(this.authService.login(data));
+
+      if (response) {
+        this.successLogin.emit(response as NzAuthUser);
+      }
     } catch (error: any) {
       console.error('Supabase login error:', error.message);
       alert(error.message);
@@ -94,7 +99,7 @@ export class NzLoginCardComponent implements OnInit {
         this.login();
       },
     };
-    this.gotoregisterconfig = {
+    this.goToRegisterConfig = {
       id: 'gotoregister',
       label: 'Create Account',
       style: 'back-button',
@@ -102,12 +107,12 @@ export class NzLoginCardComponent implements OnInit {
         this.goToRegister();
       },
     };
-    this.gotohomeconfig = {
+    this.goToForgotPasswordConfig = {
       id: 'gotohome',
       label: 'back to home ',
       style: 'back-button',
       onclick: () => {
-        this.goTohome();
+        this.goToForgotPassword();
       },
     };
   }

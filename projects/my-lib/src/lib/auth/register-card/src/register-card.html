@@ -1,0 +1,18 @@
+<!-- Heading -->
+<nz-heading class="sign-title" [config]="headingconfig"></nz-heading>
+
+<!-- Paragraph / Subtitle -->
+<nz-paragraph class="sign-subtitle" [config]="paragraphconfig"></nz-paragraph>
+
+<!-- Inputs -->
+<div class="flex flex-column gap-3">
+  <nz-name [config]="nameconfig"></nz-name>
+  <nz-email [config]="emailconfig"></nz-email>
+  <nz-password [config]="passwordconfig"></nz-password>
+</div>
+
+<!-- Buttons -->
+<div class="flex flex-column sm:flex-row gap-2 justify-content-between">
+  <nz-standard-button [config]="registerconfig"></nz-standard-button>
+  <nz-standard-button (click)="goToLogin()" [config]="backtologinconfig"></nz-standard-button>
+</div>
