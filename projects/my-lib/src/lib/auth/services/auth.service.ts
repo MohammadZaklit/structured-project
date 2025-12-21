@@ -13,6 +13,10 @@ export interface NzAuthUser {
   email: string;
   name?: string;
 }
+export interface NzForgotPasswordPayload {
+  email: string;
+  message: string;
+}
 
 @Injectable({
   providedIn: 'root',
