@@ -110,8 +110,10 @@ import { NzAuthService } from '@zak-lib/ui-library/auth';
 
             <!-- Dropdown Menu -->
             <div class="profile-dropdown-menu" *ngIf="dropdownVisible">
-              <button *ngIf="!isLoggedIn" (click)="gotologin()">Login</button>
-              <button *ngIf="isLoggedIn" (click)="logout()">Logout</button>
+              @if (isLoggedIn) {
+                <button (click)="logout()">Logout</button>
+              }
+
               <button (click)="gotoEditProfile()">edit profile</button>
             </div>
           </div>
@@ -174,12 +176,10 @@ export class AppTopbar {
   toggleDarkMode() {
     this.layoutService.layoutConfig.update((state) => ({ ...state, darkTheme: !state.darkTheme })); // spread operater => when you update only darkTheme, you don’t lose the other properties.
   } // !state.darkTheme => changes true to false, and false to true.
-  gotologin() {
-    this.router.navigate(['/auth/login']);
-  }
+
   async logout() {
     await this.authService.logout();
-    this.router.navigate(['']);
+    this.router.navigate(['/auth/login']);
   }
   gotoEditProfile() {
     this.router.navigate(['/edit-profile']);

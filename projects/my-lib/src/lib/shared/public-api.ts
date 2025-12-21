@@ -13,6 +13,7 @@ export * from './src/interfaces/CommonConfig.interface';
 //services
 export * from './src/services/http.service';
 export * from './src/services/storage.service';
+export * from './src/services/dialog.service';
 
 // classes
 export * from './src/classes/NzFormControl';

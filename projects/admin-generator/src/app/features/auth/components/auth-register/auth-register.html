@@ -1,5 +1,9 @@
 <app-auth-base>
   <div content>
-    <nz-register-card [config]="registerCardConfig"></nz-register-card>
+    <nz-register-card
+      [config]="registerCardConfig"
+      (login)="goToLogin()"
+      (successRegistration)="applySuccessRegistration()"
+    ></nz-register-card>
   </div>
 </app-auth-base>

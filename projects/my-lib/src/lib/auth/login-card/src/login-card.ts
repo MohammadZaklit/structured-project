@@ -11,10 +11,7 @@ import { NzLoginCard } from './login-card.interface';
 import { NzFormControl } from '@zak-lib/ui-library/shared';
 import { NzAuthService, NzAuthUser } from '../../services/auth.service';
 import { firstValueFrom } from 'rxjs';
-import {
-  NzAlertDialog,
-  NzAlertDialogComponent,
-} from '@zak-lib/ui-library/elements/ui/alert-dialog';
+import { NzAlertDialog, NzAlertDialogService } from '@zak-lib/ui-library/elements/ui/alert-dialog';
 @Component({
   selector: 'nz-login-card',
   imports: [
@@ -24,7 +21,6 @@ import {
     NzHeadingComponent,
     NzParagraphComponent,
     NzPasswordComponent,
-    NzAlertDialogComponent,
   ],
   templateUrl: './login-card.html',
   styles: ``,
@@ -40,9 +36,10 @@ export class NzLoginCardComponent implements OnInit {
   public goToRegisterConfig!: NzStandardButton;
   public goToForgotPasswordConfig!: NzStandardButton;
   private authService = inject(NzAuthService);
+  private alertService = inject(NzAlertDialogService);
   @Output() register = new EventEmitter<void>();
-  @Output() forgorPassword = new EventEmitter<void>();
-  @Output() successLogin = new EventEmitter<{ user: NzAuthUser | null; alert: NzAlertDialog }>();
+  @Output() forgotPassword = new EventEmitter<void>();
+  @Output() successLogin = new EventEmitter<NzAuthUser>();
   alertConfig?: NzAlertDialog;
   constructor() {}
 
@@ -51,31 +48,33 @@ export class NzLoginCardComponent implements OnInit {
   }
 
   goToForgotPassword(): void {
-    this.forgorPassword.emit();
+    this.forgotPassword.emit();
   }
   async login(): Promise<void> {
     const data = this.config.form.getRawValue();
 
     try {
-      const response: NzAuthUser = await firstValueFrom(this.authService.login(data));
+      const response: {
+        token: string;
+        user: NzAuthUser;
+      } = await firstValueFrom(this.authService.login(data));
 
       // Success
-      const successAlert: NzAlertDialog = {
+
+      this.alertService.openDialog({
         type: 'success',
         title: 'Login Successful',
         message: 'You have logged in successfully!',
-      };
-
-      this.successLogin.emit({ user: response, alert: successAlert });
+      });
+      this.successLogin.emit(response.user);
     } catch (error: any) {
       // Error
-      const errorAlert: NzAlertDialog = {
+
+      this.alertService.openDialog({
         type: 'error',
         title: 'Login Failed',
-        message: 'Email or password is incorrect.',
-      };
-
-      this.successLogin.emit({ user: null, alert: errorAlert });
+        message: 'Invalid Credentials',
+      });
     }
   }
 
@@ -108,7 +107,6 @@ export class NzLoginCardComponent implements OnInit {
     this.loginconfig = {
       id: 'loginbutton',
       label: 'submit',
-      style: 'default',
       onclick: () => {
         this.login();
       },
@@ -116,15 +114,13 @@ export class NzLoginCardComponent implements OnInit {
     this.goToRegisterConfig = {
       id: 'gotoregister',
       label: 'Create Account',
-      style: 'back-button',
       onclick: () => {
         this.goToRegister();
       },
     };
     this.goToForgotPasswordConfig = {
       id: 'gotohome',
-      label: 'back to home ',
-      style: 'back-button',
+      label: 'Forgot Password?',
       onclick: () => {
         this.goToForgotPassword();
       },

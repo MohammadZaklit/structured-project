@@ -46,8 +46,8 @@ export class NzRegisterCardComponent {
   public backtologinconfig!: NzStandardButton;
   private registerService = inject(NzRegisterService);
 
-  @Output() redirectToLogin = new EventEmitter<void>();
-  @Output() successRegistration = new EventEmitter<NzAlertDialog>();
+  @Output() login = new EventEmitter<void>();
+  @Output() successRegistration = new EventEmitter<void>();
 
   constructor() {}
 
@@ -116,22 +116,11 @@ export class NzRegisterCardComponent {
       const response = await firstValueFrom(this.registerService.register(data));
       if (response) {
         // Emit success dialog config
-        this.successRegistration.emit({
-          type: 'success',
-          title: 'Registration Successful',
-          message: 'You have registered successfully!',
-        } as NzAlertDialog);
+        this.successRegistration.emit();
       }
-    } catch (error: any) {
-      // Emit error dialog config
-      this.successRegistration.emit({
-        type: 'error', // error type
-        title: 'Registration Failed',
-        message: error.message,
-      } as NzAlertDialog);
-    }
+    } catch (error: any) {}
   }
   goToLogin() {
-    this.redirectToLogin.emit();
+    this.login.emit();
   }
 }

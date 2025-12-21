@@ -14,6 +14,13 @@ export const AUTH_PAGE_ROUTES: Routes = [
         loadComponent: () =>
           import('../components/auth-register/auth-register').then((m) => m.Authregister),
       },
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('../components/auth-forgot-password/auth-forgot-password').then(
+            (m) => m.AuthForgotPassword,
+          ),
+      },
       { path: '**', redirectTo: 'login' },
     ],
   },

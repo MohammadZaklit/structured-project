@@ -29,7 +29,10 @@ export class NzAuthService {
 
   constructor() {}
 
-  login(payload: NzLoginPayload): Observable<any> {
+  login(payload: NzLoginPayload): Observable<{
+    token: string;
+    user: NzAuthUser;
+  }> {
     return this.httpService.post<any>(this.API_URL, payload).pipe(
       tap((res) => {
         this.setSession(res.token, res.user);
@@ -60,8 +63,7 @@ export class NzAuthService {
   }
 
   private getStoredUser(): NzAuthUser | null {
-    /*const user = this.storage.get(this.USER_KEY) as NzAuthUser | null;
-    return user ? user : null;*/
-    return null;
+    const user = this.storage.get(this.USER_KEY) as NzAuthUser | null;
+    return user ? user : null;
   }
 }

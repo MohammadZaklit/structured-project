@@ -1,5 +1,10 @@
 <app-auth-base>
   <div content>
-    <nz-login-card [config]="loginCardConfig"></nz-login-card>
+    <nz-login-card
+      [config]="loginCardConfig"
+      (forgotPassword)="goToForgotPassword()"
+      (register)="goToRegister()"
+      (successLogin)="applySuccessLogin($event)"
+    ></nz-login-card>
   </div>
 </app-auth-base>

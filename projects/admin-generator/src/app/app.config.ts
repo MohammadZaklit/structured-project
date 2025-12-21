@@ -15,6 +15,7 @@ import Aura from '@primeuix/themes/aura';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideNzBaseConfig } from '@zak-lib/ui-library/shared';
 import { environment } from './environments/environment';
+import { DialogService } from 'primeng/dynamicdialog';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,5 +37,6 @@ export const appConfig: ApplicationConfig = {
     provideNzBaseConfig({
       apiBaseUrl: environment.apiUrl,
     }),
+    DialogService,
   ],
 };
