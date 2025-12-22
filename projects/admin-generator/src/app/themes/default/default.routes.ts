@@ -31,7 +31,9 @@ export const routes: Routes = [
   {
     path: 'edit-profile',
     loadComponent: () =>
-      import('../../features/auth/components/edit-profile/edit-profile').then((m) => m.EditProfile),
+      import('../../features/account/components/account-profile/account-profile').then(
+        (m) => m.AccountProfile,
+      ),
   },
   { path: 'landing', component: Landing }, // for landing page
   {

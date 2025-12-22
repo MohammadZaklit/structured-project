@@ -7,13 +7,13 @@ import { AppFloatingConfigurator } from 'projects/admin-generator/src/app/themes
 import { NzAuthService } from '@zak-lib/ui-library/auth';
 
 @Component({
-  selector: 'edit-profile',
+  selector: 'nz-profile',
   standalone: true,
   imports: [FormsModule, Password, Button, AppFloatingConfigurator],
-  templateUrl: './edit-profile.html',
-  styleUrls: ['./edit-profile.scss'],
+  templateUrl: './profile.html',
+  styleUrls: ['./profile.scss'],
 })
-export class EditProfile implements OnInit {
+export class NzAccountProfile implements OnInit {
   Oldpassword: string = '';
   Newpassword: string = '';
   Confirmpassword: string = '';
