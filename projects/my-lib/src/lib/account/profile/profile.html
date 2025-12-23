@@ -1,49 +1,16 @@
 <app-floating-configurator />
-<div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">
-  Welcome to our generator! Mohammad Zaklit
+
+<!-- Heading -->
+<nz-heading class="sign-title" [config]="headingconfig"></nz-heading>
+
+<!-- Inputs -->
+<div class="flex flex-column gap-3">
+  <nz-password [config]="oldPasswordconfig"></nz-password>
+  <nz-password [config]="newPasswordconfig"></nz-password>
+  <nz-password [config]="confirmPasswordconfig"></nz-password>
 </div>
-<span class="text-muted-color font-medium">Edit password</span>
 
-<label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
-  >Old password</label
->
-<p-password
-  id="password1"
-  [(ngModel)]="Oldpassword"
-  placeholder="Old Password"
-  [toggleMask]="true"
-  styleClass="mb-4"
-  [fluid]="true"
-  [feedback]="false"
-></p-password>
-<label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
-  >New Password</label
->
-<p-password
-  id="password2"
-  [(ngModel)]="Newpassword"
-  placeholder="New Password"
-  [toggleMask]="true"
-  styleClass="mb-4"
-  [fluid]="true"
-  [feedback]="false"
-></p-password>
-<label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
-  >confirm Password</label
->
-<p-password
-  id="password3"
-  [(ngModel)]="Confirmpassword"
-  placeholder="confirm Password"
-  [toggleMask]="true"
-  styleClass="mb-4"
-  [fluid]="true"
-  [feedback]="false"
-></p-password>
-
-<p-button
-  label="Change password"
-  styleClass="w-full"
-  routerLink="/"
-  (onClick)="UpdateUser()"
-></p-button>
+<!-- Buttons -->
+<div class="flex flex-column sm:flex-row gap-2 justify-content-between">
+  <nz-standard-button [config]="changePasswordConfig"></nz-standard-button>
+</div>

@@ -1,72 +1,113 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Password } from 'primeng/password';
-import { Button } from 'primeng/button';
 import { AppFloatingConfigurator } from 'projects/admin-generator/src/app/themes/default/layout/component/app.floatingconfigurator';
 import { NzAuthService } from '@zak-lib/ui-library/auth';
+import { NzPassword, NzPasswordComponent } from '@zak-lib/ui-library/components/password';
+import {
+  NzStandardButton,
+  NzStandardButtonComponent,
+} from '@zak-lib/ui-library/components/standardbutton';
+import { NzAccountProfile } from './profile.interface';
+import { NzFormControl } from '@zak-lib/ui-library/shared';
+import { NzHeading, NzHeadingComponent } from '@zak-lib/ui-library/components/heading';
+import { NzAlertDialog, NzAlertDialogService } from '@zak-lib/ui-library/elements/ui/alert-dialog';
 
 @Component({
   selector: 'nz-profile',
   standalone: true,
-  imports: [FormsModule, Password, Button, AppFloatingConfigurator],
+  imports: [
+    FormsModule,
+    AppFloatingConfigurator,
+    NzHeadingComponent,
+    NzPasswordComponent,
+    NzStandardButtonComponent,
+  ],
   templateUrl: './profile.html',
   styleUrls: ['./profile.scss'],
 })
-export class NzAccountProfile implements OnInit {
-  Oldpassword: string = '';
-  Newpassword: string = '';
-  Confirmpassword: string = '';
+export class NzAccountProfileComponent implements OnInit {
+  @Input() config!: NzAccountProfile;
+  private authService = inject(NzAuthService);
+  public headingconfig!: NzHeading;
+  public oldPasswordconfig!: NzPassword;
+  public newPasswordconfig!: NzPassword;
+  public confirmPasswordconfig!: NzPassword;
+  public changePasswordConfig!: NzStandardButton;
+  private alertService = inject(NzAlertDialogService);
+  @Output() Login = new EventEmitter();
+  constructor() {}
 
-  constructor(
-    private router: Router,
-    private auth: NzAuthService,
-  ) {}
-
-  async ngOnInit() {
-    if (!this.isLoggedIn) {
-      this.router.navigate(['/auth-login']);
-    }
+  ngOnInit(): void {
+    this.headingconfig = {
+      id: 'headingconfig',
+      label: 'Change Your Password',
+      style: 'h1',
+    };
+    this.oldPasswordconfig = {
+      name: 'Old password',
+      label: 'Old Password',
+      control: this.config.form.get('password') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
+      form: this.config.form,
+    };
+    this.newPasswordconfig = {
+      name: 'New password',
+      label: 'New Password',
+      control: this.config.form.get('password') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
+      form: this.config.form,
+    };
+    this.confirmPasswordconfig = {
+      name: 'Confirm password',
+      label: 'Confirm Password',
+      control: this.config.form.get('password') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
+      form: this.config.form,
+    };
+    this.changePasswordConfig = {
+      id: 'gotoregister',
+      label: 'Create Account',
+      onclick: () => {
+        this.UpdateUser();
+      },
+    };
   }
 
   get isLoggedIn(): boolean {
-    return this.auth.isAuthenticated();
+    return this.authService.isAuthenticated();
   }
 
   async UpdateUser() {
     // 1️⃣ Check login
     if (!this.isLoggedIn) {
-      this.router.navigate(['/auth/login']);
-      return;
+      this.Login.emit();
     }
-
     // 2️⃣ Validate password fields
-    if (!this.Oldpassword || !this.Newpassword || !this.Confirmpassword) {
-      throw new Error('Please fill in all password fields.');
+    if (!this.oldPasswordconfig || !this.newPasswordconfig || !this.confirmPasswordconfig) {
+      this.alertService.openDialog({
+        type: 'error',
+        title: 'error in changing password',
+        message: 'You must fill the required fields',
+      });
     }
-    if (this.Newpassword !== this.Confirmpassword) {
-      throw new Error('New password and confirm password do not match.');
+    if (this.newPasswordconfig !== this.confirmPasswordconfig) {
+      this.alertService.openDialog({
+        type: 'error',
+        title: 'error in changing password',
+        message: 'New password and confirm password do not match.',
+      });
     }
-    if (this.Newpassword === this.Oldpassword) {
-      throw new Error('New password cannot be the same as the old password.');
+    if (this.newPasswordconfig === this.oldPasswordconfig) {
+      this.alertService.openDialog({
+        type: 'error',
+        title: 'error in changing password',
+        message: 'New password cannot be the same as the old password.',
+      });
     }
 
-    // 3️⃣ Verify old password
-    // const oldPasswordValid = await this.auth.verifyOldPassword(this.Oldpassword);
-    // if (!oldPasswordValid) throw new Error('Old password is incorrect.');
-
-    // 4️⃣ Update password securely
-    // const { data, error } = await this.auth.supabase.auth.updateUser({
-    //   password: this.Newpassword,
-    // });
-
-    //if (error) throw new Error('Failed to update password: ' + error.message);
-
-    alert('Password updated successfully!');
-
+    this.alertService.openDialog({
+      type: 'success',
+      title: 'password has changed',
+      message: 'Password updated successfully!',
+    });
     // 5️⃣ Clear form fields
-    this.Oldpassword = '';
-    this.Newpassword = '';
-    this.Confirmpassword = '';
+    this.config.form.reset();
   }
 }

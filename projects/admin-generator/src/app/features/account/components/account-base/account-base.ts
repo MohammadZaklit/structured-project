@@ -7,4 +7,4 @@ import { AppFloatingConfigurator } from 'projects/admin-generator/src/app/themes
   templateUrl: './account-base.html',
   styleUrl: './account-base.scss',
 })
-export class AccountBase {}
+export class AccountBaseComponent {}
