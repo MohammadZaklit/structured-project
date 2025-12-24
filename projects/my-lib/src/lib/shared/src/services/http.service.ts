@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { NZ_BASE_URL_CONFIG, NzGenericRecord } from '@zak-lib/ui-library/shared';
+import { NZ_API_URL_CONFIG, NzGenericRecord } from '@zak-lib/ui-library/shared';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +9,7 @@ import { NZ_BASE_URL_CONFIG, NzGenericRecord } from '@zak-lib/ui-library/shared'
 export class NzHttpService {
   constructor(
     private http: HttpClient,
-    @Inject(NZ_BASE_URL_CONFIG) private apiUrl: string,
+    @Inject(NZ_API_URL_CONFIG) private apiUrl: string,
   ) {}
 
   // --- Helper to build request options (e.g., headers) ---
