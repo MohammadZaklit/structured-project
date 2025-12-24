@@ -13,6 +13,7 @@ export interface NzInput extends NzFormField, NzBaseInput {}
   template: `<nz-form-field [baseConfig]="config"
     ><input
       type="{{ config.type || 'text' }}"
+      [placeholder]="config.settings?.placeholder || null"
       pInputText
       [formControl]="config.control"
       fluid

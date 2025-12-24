@@ -12,6 +12,8 @@ import { NzFormControl } from '@zak-lib/ui-library/shared';
 import { NzAuthService, NzAuthUser } from '../../services/auth.service';
 import { firstValueFrom } from 'rxjs';
 import { NzAlertDialog, NzAlertDialogService } from '@zak-lib/ui-library/elements/ui/alert-dialog';
+import { NzLink, NzLinkComponent } from '@zak-lib/ui-library/elements/link';
+import { CheckboxModule } from 'primeng/checkbox';
 @Component({
   selector: 'nz-login-card',
   imports: [
@@ -21,6 +23,8 @@ import { NzAlertDialog, NzAlertDialogService } from '@zak-lib/ui-library/element
     NzHeadingComponent,
     NzParagraphComponent,
     NzPasswordComponent,
+    NzLinkComponent,
+    CheckboxModule,
   ],
   templateUrl: './login-card.html',
   styles: ``,
@@ -28,13 +32,13 @@ import { NzAlertDialog, NzAlertDialogService } from '@zak-lib/ui-library/element
 })
 export class NzLoginCardComponent implements OnInit {
   @Input() config!: NzLoginCard;
+  public forgotPasswordLinkConfig!: NzLink;
   public headingConfig!: NzHeading;
   public emailConfig!: NzEmail;
   public passwordConfig!: NzPassword;
   public loginConfig!: NzStandardButton;
   public paragraphConfig!: NzParagraph;
-  public gotoRegisterConfig!: NzStandardButton;
-  public gotoForgotPasswordConfig!: NzStandardButton;
+  public gotoRegisterConfig!: NzLink;
   private authService = inject(NzAuthService);
   private alertService = inject(NzAlertDialogService);
   @Output() register = new EventEmitter<void>();
@@ -84,45 +88,58 @@ export class NzLoginCardComponent implements OnInit {
 
     this.headingConfig = {
       id: 'headingconfig',
-      label: 'sign in',
+      label: 'Sign In',
       style: 'h1',
     };
     this.paragraphConfig = {
       id: 'paragraphconfig',
       style: 'p',
-      label: 'Welcome back! Please log in to your account.',
+      label: 'Sign in to continue.',
     };
     this.emailConfig = {
       name: 'email',
       label: 'Email',
+      settings: {
+        placeholder: 'Enter your email address',
+      },
       control: this.config.form.get('email') as NzFormControl,
       form: this.config.form,
     };
     this.passwordConfig = {
       name: 'password',
       label: 'Password',
+      settings: {
+        placeholder: 'Enter your password',
+      },
       control: this.config.form.get('password') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
       form: this.config.form,
     };
     this.loginConfig = {
       id: 'loginbutton',
-      label: 'submit',
+      label: 'Sign In',
+      isFullWidth: true,
       onclick: () => {
         this.login();
       },
     };
-    this.gotoRegisterConfig = {
-      id: 'gotoregister',
-      label: 'Create Account',
-      onclick: () => {
-        this.goToRegister();
+
+    this.forgotPasswordLinkConfig = {
+      label: 'Forgot password?',
+      click: (): Promise<void> => {
+        return new Promise((resolve, _reject) => {
+          this.goToForgotPassword();
+          resolve();
+        });
       },
     };
-    this.gotoForgotPasswordConfig = {
-      id: 'gotohome',
-      label: 'Forgot Password?',
-      onclick: () => {
-        this.goToForgotPassword();
+
+    this.gotoRegisterConfig = {
+      label: 'Need account?',
+      click: (): Promise<void> => {
+        return new Promise((resolve, _reject) => {
+          this.goToRegister();
+          resolve();
+        });
       },
     };
   }

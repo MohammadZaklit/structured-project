@@ -13,9 +13,11 @@ export interface NzFormField extends NzFormFieldInfo {
 @Component({
   selector: 'nz-form-field',
   imports: [CommonModule, MessageModule],
-  template: `<div>
+  template: `<div class="text-left">
     @if (!baseConfig()?.hideLabel) {
-      <label>{{ baseConfig()?.label }}</label>
+      <label class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-1">{{
+        baseConfig()?.label
+      }}</label>
     }
     <ng-content></ng-content>
 

@@ -14,6 +14,7 @@ import { NzParagraph, NzParagraphComponent } from '@zak-lib/ui-library/component
 import { firstValueFrom } from 'rxjs';
 import { NzRegisterService } from '../../services/register.service';
 import { NzPasswordComplexityValidator } from '@zak-lib/ui-library/shared';
+import { NzLink, NzLinkComponent } from '@zak-lib/ui-library/elements/link';
 @Injectable({
   providedIn: 'root',
 })
@@ -26,6 +27,7 @@ import { NzPasswordComplexityValidator } from '@zak-lib/ui-library/shared';
     NzParagraphComponent,
     NzPasswordComponent,
     NzNameComponent,
+    NzLinkComponent,
   ],
   templateUrl: './register-card.html',
   styleUrl: './register-card.scss',
@@ -38,7 +40,7 @@ export class NzRegisterCardComponent {
   public passwordconfig!: NzPassword;
   public registerconfig!: NzStandardButton;
   public headingconfig!: NzParagraph;
-  public backtologinconfig!: NzStandardButton;
+  public backtologinconfig!: NzLink;
   private registerService = inject(NzRegisterService);
 
   @Output() login = new EventEmitter<void>();
@@ -71,23 +73,32 @@ export class NzRegisterCardComponent {
     this.paragraphconfig = {
       id: 'paragraphconfig',
       style: 'p',
-      label: 'Welcome back! Please create your account by filling the below information.',
+      label: 'Please create your account by filling the below information.',
     };
     this.nameconfig = {
       name: 'name',
-      label: 'Enter your Name',
+      label: 'Full Name',
+      settings: {
+        placeholder: 'Enter your full name',
+      },
       control: this.config.form.get('name') as NzFormControl,
       form: this.config.form,
     };
     this.emailconfig = {
       name: 'email',
-      label: 'Enter an Email',
+      label: 'Email',
+      settings: {
+        placeholder: 'Enter your email address',
+      },
       control: this.config.form.get('email') as NzFormControl,
       form: this.config.form,
     };
     this.passwordconfig = {
       name: 'password',
-      label: 'Enter a Password',
+      label: 'Password',
+      settings: {
+        placeholder: 'Enter your password',
+      },
       control: this.config.form.get('password') as NzFormControl,
       form: this.config.form,
     };
@@ -98,10 +109,13 @@ export class NzRegisterCardComponent {
       onclick: () => this.register(),
     };
     this.backtologinconfig = {
-      id: 'backtologin',
       label: 'Back to Login',
-      style: 'back-button',
-      onclick() {},
+      click: (): Promise<void> => {
+        return new Promise((resolve, _reject) => {
+          this.gotoLogin();
+          resolve();
+        });
+      },
     };
   }
   async register(): Promise<void> {

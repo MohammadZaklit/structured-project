@@ -5,17 +5,19 @@
 <nz-paragraph class="sign-subtitle" [config]="paragraphConfig"></nz-paragraph>
 
 <!-- Inputs -->
-<div class="flex flex-column gap-3">
+<div class="flex flex-col gap-3 mt-6">
   <nz-email [config]="emailConfig"></nz-email>
   <nz-password [config]="passwordConfig"></nz-password>
-</div>
-
-<!-- Buttons -->
-<div class="flex flex-column sm:flex-row gap-2 justify-content-between">
-  <nz-standard-button [config]="loginConfig"></nz-standard-button>
-  <nz-standard-button [config]="gotoRegisterConfig"></nz-standard-button>
-  <nz-standard-button
-    (click)="goToForgotPassword()"
-    [config]="gotoForgotPasswordConfig"
-  ></nz-standard-button>
+  <div class="flex items-center justify-between mt-2 mb-8 gap-8">
+    <div class="flex items-center">
+      <p-checkbox id="rememberme1" binary class="mr-2"></p-checkbox>
+      <label for="rememberme1">Remember me</label>
+    </div>
+    <nz-link [config]="forgotPasswordLinkConfig"></nz-link>
+  </div>
+  <!-- Buttons -->
+  <div class="flex flex-col gap-2 justify-content-between">
+    <nz-standard-button [config]="loginConfig"></nz-standard-button>
+    <nz-link [config]="gotoRegisterConfig"></nz-link>
+  </div>
 </div>

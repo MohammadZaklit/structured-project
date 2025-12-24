@@ -12,6 +12,7 @@ import { NzFormControl } from '@zak-lib/ui-library/shared';
 import { NzForgotPasswordService } from '../../services/forgot-password.service';
 import { firstValueFrom } from 'rxjs';
 import { NzAlertDialog, NzAlertDialogService } from '@zak-lib/ui-library/elements/ui/alert-dialog';
+import { NzLink, NzLinkComponent } from '@zak-lib/ui-library/elements/link';
 @Component({
   selector: 'nz-forgetpassword-card',
   imports: [
@@ -20,6 +21,7 @@ import { NzAlertDialog, NzAlertDialogService } from '@zak-lib/ui-library/element
     NzParagraphComponent,
     NzHeadingComponent,
     NzParagraphComponent,
+    NzLinkComponent,
   ],
   templateUrl: './forgetpassword-card.html',
   styles: ``,
@@ -32,7 +34,7 @@ export class NzForgetPasswordComponent implements OnInit {
   public passwordConfig!: NzPassword;
   public confirmEmailConfig!: NzStandardButton;
   public paragraphConfig!: NzParagraph;
-  public goToLoginConfig!: NzStandardButton;
+  public goToLoginConfig!: NzLink;
   public goToForgotPasswordConfig!: NzStandardButton;
   private forgetPasswordService = inject(NzForgotPasswordService);
   private alertService = inject(NzAlertDialogService);
@@ -86,6 +88,9 @@ export class NzForgetPasswordComponent implements OnInit {
     this.emailConfig = {
       name: 'email',
       label: 'Email',
+      settings: {
+        placeholder: 'Enter your email address',
+      },
       control: this.config.form.get('email') as NzFormControl,
       form: this.config.form,
     };
@@ -97,10 +102,12 @@ export class NzForgetPasswordComponent implements OnInit {
       },
     };
     this.goToLoginConfig = {
-      id: 'gotologin',
-      label: 'Go to Login',
-      onclick: () => {
-        this.gotoLogin();
+      label: 'Back to Login',
+      click: (): Promise<void> => {
+        return new Promise((resolve, _reject) => {
+          this.gotoLogin();
+          resolve();
+        });
       },
     };
   }

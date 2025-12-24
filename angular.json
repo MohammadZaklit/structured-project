@@ -311,8 +311,6 @@
               }
             ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/font-awesome/css/font-awesome.min.css",
               "projects/admin-generator/src/styles.scss"
             ],
             "scripts": ["projects/admin-generator/src/polyfills.js"]

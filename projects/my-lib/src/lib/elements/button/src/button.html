@@ -1,3 +1,8 @@
-<p-button class="{{ buttonstyle }}" [type]="config.type || 'button'" (click)="config.onclick()">
+<p-button
+  class="{{ buttonstyle }}"
+  [styleClass]="config.isFullWidth ? 'w-full' : ''"
+  [type]="config.type || 'button'"
+  (click)="config.onclick()"
+>
   {{ config.label || 'Click' }}
 </p-button>
