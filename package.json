@@ -6,7 +6,7 @@
     "format": "prettier --write \"**/*.{js,mjs,ts,mts,d.ts,html}\" --cache",
     "start": "ng serve --project=my-first-app --ssl",
     "start:form-builder": "ng serve --project=form-builder --ssl --port=1200",
-    "start:admin-generator": "ng serve --project=admin-generator --ssl",
+    "admin": "ng serve --project=admin-generator --ssl",
     "build": "ng build admin-generator",
     "watch": "ng build --watch --configuration development",
     "migrate-prefix": "ts-node tools/scripts/update-prefix.ts",
