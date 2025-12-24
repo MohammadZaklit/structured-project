@@ -12,10 +12,10 @@ export const routes: Routes = [
   },
   {
     path: '',
-    canActivate: [NzAuthGuard],
+    //canActivate: [NzAuthGuard],
     component: AppLayout,
     children: [
-      { path: 'dashboard', component: Dashboard },
+      { path: '', component: Dashboard },
       {
         path: 'admin',
         loadChildren: () =>
@@ -29,16 +29,16 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'edit-profile',
-    loadComponent: () =>
-      import('../../features/account/components/account-profile/account-profile').then(
-        (m) => m.AccountProfile,
+    path: 'account',
+    loadChildren: () =>
+      import('../../features/account/shell/account-shell-routing').then(
+        (m) => m.ACCOUNT_PAGE_ROUTES,
       ),
   },
   { path: 'landing', component: Landing }, // for landing page
   {
     path: 'auth',
-    canActivate: [NzGuestGuard],
+    //canActivate: [NzGuestGuard],
     loadChildren: () =>
       import('../../features/auth/shell/auth-shell-routing').then((m) => m.AUTH_PAGE_ROUTES),
   },

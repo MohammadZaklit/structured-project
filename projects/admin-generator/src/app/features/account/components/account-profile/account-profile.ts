@@ -1,25 +1,32 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { NzAccountProfile, NzAccountProfileComponent } from '@zak-lib/ui-library/account';
+import {
+  NzProfile,
+  NzProfileComponent,
+  NzUpdatePasswordPayload,
+} from '@zak-lib/ui-library/account';
 import { AccountBaseComponent } from '../account-base/account-base';
-import { NzFormGroup } from '@zak-lib/ui-library/shared';
+import { NzFormControl, NzFormGroup } from '@zak-lib/ui-library/shared';
+import { FormGroup } from '@angular/forms';
 @Component({
   selector: 'profile',
   standalone: true,
-  imports: [NzAccountProfileComponent, AccountBaseComponent],
+  imports: [NzProfileComponent, AccountBaseComponent],
   templateUrl: './account-profile.html',
   styleUrls: ['./account-profile.scss'],
 })
 export class AccountProfile implements OnInit {
-  @Output() Login = new EventEmitter();
-  AccountProfileConfig!: NzAccountProfile;
-  @Input() Accountprofileconfig!: NzAccountProfile;
+  @Output() Login = new EventEmitter<void>();
+  accountProfileConfig!: NzProfile;
   form = new NzFormGroup({});
   ngOnInit(): void {
-    this.AccountProfileConfig = {
+    this.accountProfileConfig = {
       form: this.form,
     };
   }
-  gotologin() {
+  gotoLogin() {
     this.Login.emit();
+  }
+  applyUpdatePassword(): void {
+    this.Login.emit;
   }
 }

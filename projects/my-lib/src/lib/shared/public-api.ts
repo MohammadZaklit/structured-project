@@ -19,6 +19,7 @@ export * from './src/services/dialog.service';
 export * from './src/classes/NzFormControl';
 export * from './src/classes/NzFormArray';
 export * from './src/classes/NzFormGroup';
+export * from './src/classes/password-complexity.validator';
 
 // providers
 export * from './src/tokens/base.token';

@@ -1,5 +1,5 @@
 import { NzFormGroup } from '@zak-lib/ui-library/shared';
 
-export interface NzAccountProfile {
+export interface NzProfile {
   form: NzFormGroup;
 }

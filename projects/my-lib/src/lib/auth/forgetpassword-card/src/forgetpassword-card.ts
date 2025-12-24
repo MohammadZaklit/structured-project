@@ -27,11 +27,11 @@ import { NzAlertDialog, NzAlertDialogService } from '@zak-lib/ui-library/element
 })
 export class NzForgetPasswordComponent implements OnInit {
   @Input() config!: NzForgetPassword;
-  public headingconfig!: NzHeading;
-  public emailconfig!: NzEmail;
-  public passwordconfig!: NzPassword;
+  public headingConfig!: NzHeading;
+  public emailConfig!: NzEmail;
+  public passwordConfig!: NzPassword;
   public confirmEmailConfig!: NzStandardButton;
-  public paragraphconfig!: NzParagraph;
+  public paragraphConfig!: NzParagraph;
   public goToLoginConfig!: NzStandardButton;
   public goToForgotPasswordConfig!: NzStandardButton;
   private forgetPasswordService = inject(NzForgotPasswordService);
@@ -41,7 +41,7 @@ export class NzForgetPasswordComponent implements OnInit {
   alertConfig?: NzAlertDialog;
   constructor() {}
 
-  goToLogin(): void {
+  gotoLogin(): void {
     this.login.emit();
   }
 
@@ -73,17 +73,17 @@ export class NzForgetPasswordComponent implements OnInit {
 
   ngOnInit(): void {
     this.config.form.addControl('email', new NzFormControl(null));
-    this.headingconfig = {
+    this.headingConfig = {
       id: 'headingconfig',
       label: 'Forgot Password',
       style: 'h1',
     };
-    this.paragraphconfig = {
+    this.paragraphConfig = {
       id: 'paragraphconfig',
       style: 'p',
       label: 'Write your email address to recieve the reset link.',
     };
-    this.emailconfig = {
+    this.emailConfig = {
       name: 'email',
       label: 'Email',
       control: this.config.form.get('email') as NzFormControl,
@@ -100,7 +100,7 @@ export class NzForgetPasswordComponent implements OnInit {
       id: 'gotologin',
       label: 'Go to Login',
       onclick: () => {
-        this.goToLogin();
+        this.gotoLogin();
       },
     };
   }

@@ -23,8 +23,13 @@ export class AccountLayoutComponent {
     }
 
     if (component.profile) {
-      component.login.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      component.profile.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
         this.router.navigate(['/account/profile']);
+      });
+    }
+    if (component.login) {
+      component.login.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+        this.router.navigate(['/auth/login']);
       });
     }
   }

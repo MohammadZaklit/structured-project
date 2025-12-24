@@ -1,3 +1,9 @@
 <app-account-base>
-  <nz-profile [config]="Accountprofileconfig" (Login)="gotologin()"></nz-profile>
+  <div content>
+    <nz-profile
+      [config]="accountProfileConfig"
+      (Login)="gotoLogin()"
+      (successUpdatePassword)="applyUpdatePassword()"
+    ></nz-profile>
+  </div>
 </app-account-base>
