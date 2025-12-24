@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { NzFormField, NzFormFieldComponent } from '../form-field/form-field';
 import { NzBaseInput } from '../interfaces/base-input.interface';
@@ -21,14 +21,10 @@ export interface NzInput extends NzFormField, NzBaseInput {}
   styles: ``,
   standalone: true,
 })
-export class NzInputComponent extends NzFormFieldComponent implements OnInit {
+export class NzInputComponent extends NzFormFieldComponent {
   @Input() public config!: NzInput;
 
   constructor() {
     super();
-  }
-  ngOnInit(): void {
-    console.warn(this.config);
-    debugger;
   }
 }
