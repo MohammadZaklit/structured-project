@@ -15,7 +15,7 @@ export const routes: Routes = [
     //canActivate: [NzAuthGuard],
     component: AppLayout,
     children: [
-      { path: '', component: Dashboard },
+      { path: 'dashboard', component: Dashboard },
       {
         path: 'admin',
         loadChildren: () =>
