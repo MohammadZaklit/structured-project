@@ -14,10 +14,5 @@
 <!-- Buttons -->
 <div class="flex flex-column sm:flex-row gap-2 justify-content-between">
   <nz-standard-button [config]="registerconfig"></nz-standard-button>
-  <nz-standard-button (click)="goToLogin()" [config]="backtologinconfig"></nz-standard-button>
-</div>
-
-<!--Alert dialog-->
-<div>
-  <nz-alert-dialog (successRegistration)="register()"></nz-alert-dialog>
+  <nz-standard-button (click)="gotoLogin()" [config]="backtologinconfig"></nz-standard-button>
 </div>

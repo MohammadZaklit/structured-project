@@ -182,6 +182,6 @@ export class AppTopbar {
     this.router.navigate(['/auth/login']);
   }
   gotoEditProfile() {
-    this.router.navigate(['/edit-profile']);
+    this.router.navigate(['account']);
   }
 }

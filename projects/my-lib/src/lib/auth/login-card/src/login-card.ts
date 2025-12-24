@@ -28,13 +28,13 @@ import { NzAlertDialog, NzAlertDialogService } from '@zak-lib/ui-library/element
 })
 export class NzLoginCardComponent implements OnInit {
   @Input() config!: NzLoginCard;
-  public headingconfig!: NzHeading;
-  public emailconfig!: NzEmail;
-  public passwordconfig!: NzPassword;
-  public loginconfig!: NzStandardButton;
-  public paragraphconfig!: NzParagraph;
-  public goToRegisterConfig!: NzStandardButton;
-  public goToForgotPasswordConfig!: NzStandardButton;
+  public headingConfig!: NzHeading;
+  public emailConfig!: NzEmail;
+  public passwordConfig!: NzPassword;
+  public loginConfig!: NzStandardButton;
+  public paragraphConfig!: NzParagraph;
+  public gotoRegisterConfig!: NzStandardButton;
+  public gotoForgotPasswordConfig!: NzStandardButton;
   private authService = inject(NzAuthService);
   private alertService = inject(NzAlertDialogService);
   @Output() register = new EventEmitter<void>();
@@ -82,43 +82,43 @@ export class NzLoginCardComponent implements OnInit {
     this.config.form.addControl('email', new NzFormControl(null));
     this.config.form.addControl('password', new NzFormControl(null));
 
-    this.headingconfig = {
+    this.headingConfig = {
       id: 'headingconfig',
       label: 'sign in',
       style: 'h1',
     };
-    this.paragraphconfig = {
+    this.paragraphConfig = {
       id: 'paragraphconfig',
       style: 'p',
       label: 'Welcome back! Please log in to your account.',
     };
-    this.emailconfig = {
+    this.emailConfig = {
       name: 'email',
       label: 'Email',
       control: this.config.form.get('email') as NzFormControl,
       form: this.config.form,
     };
-    this.passwordconfig = {
+    this.passwordConfig = {
       name: 'password',
       label: 'Password',
       control: this.config.form.get('password') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
       form: this.config.form,
     };
-    this.loginconfig = {
+    this.loginConfig = {
       id: 'loginbutton',
       label: 'submit',
       onclick: () => {
         this.login();
       },
     };
-    this.goToRegisterConfig = {
+    this.gotoRegisterConfig = {
       id: 'gotoregister',
       label: 'Create Account',
       onclick: () => {
         this.goToRegister();
       },
     };
-    this.goToForgotPasswordConfig = {
+    this.gotoForgotPasswordConfig = {
       id: 'gotohome',
       label: 'Forgot Password?',
       onclick: () => {

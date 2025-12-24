@@ -1,5 +1,5 @@
 import { Component, EventEmitter, inject, Injectable, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import {
   NzStandardButton,
   NzStandardButtonComponent,
@@ -13,11 +13,7 @@ import { NzRegisterCard } from './register-card.interface';
 import { NzParagraph, NzParagraphComponent } from '@zak-lib/ui-library/components/paragraph';
 import { firstValueFrom } from 'rxjs';
 import { NzRegisterService } from '../../services/register.service';
-import { NzPasswordComplexityValidator } from '../../classes/password-complexity.validator';
-import {
-  NzAlertDialogComponent,
-  NzAlertDialog,
-} from '@zak-lib/ui-library/elements/ui/alert-dialog';
+import { NzPasswordComplexityValidator } from '@zak-lib/ui-library/shared';
 @Injectable({
   providedIn: 'root',
 })
@@ -30,7 +26,6 @@ import {
     NzParagraphComponent,
     NzPasswordComponent,
     NzNameComponent,
-    NzAlertDialogComponent,
   ],
   templateUrl: './register-card.html',
   styleUrl: './register-card.scss',
@@ -70,7 +65,7 @@ export class NzRegisterCardComponent {
 
     this.headingconfig = {
       id: 'headingconfig',
-      label: 'register now',
+      label: 'Register Now',
       style: 'h1',
     };
     this.paragraphconfig = {
@@ -80,13 +75,13 @@ export class NzRegisterCardComponent {
     };
     this.nameconfig = {
       name: 'name',
-      label: 'Enter your name',
+      label: 'Enter your Name',
       control: this.config.form.get('name') as NzFormControl,
       form: this.config.form,
     };
     this.emailconfig = {
       name: 'email',
-      label: 'Enter an email',
+      label: 'Enter an Email',
       control: this.config.form.get('email') as NzFormControl,
       form: this.config.form,
     };
@@ -98,7 +93,7 @@ export class NzRegisterCardComponent {
     };
     this.registerconfig = {
       id: 'registerbutton',
-      label: 'create account',
+      label: 'Create Account',
       style: 'default',
       onclick: () => this.register(),
     };
@@ -120,7 +115,7 @@ export class NzRegisterCardComponent {
       }
     } catch (error: any) {}
   }
-  goToLogin() {
+  gotoLogin() {
     this.login.emit();
   }
 }

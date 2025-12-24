@@ -1,0 +1,14 @@
+<!-- Heading -->
+<nz-heading [config]="headingConfig"></nz-heading>
+
+<!-- Inputs -->
+<div class="flex flex-column gap-3">
+  <nz-password [config]="oldPasswordConfig"></nz-password>
+  <nz-password [config]="newPasswordConfig"></nz-password>
+  <nz-password [config]="confirmPasswordConfig"></nz-password>
+</div>
+
+<!-- Buttons -->
+<div class="flex flex-column sm:flex-row gap-2 justify-content-between">
+  <nz-standard-button [config]="changePasswordConfig"></nz-standard-button>
+</div>
