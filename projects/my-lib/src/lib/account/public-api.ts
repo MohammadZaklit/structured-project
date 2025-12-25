@@ -3,8 +3,4 @@
  */
 
 //services
-export * from './services/profile-services';
-
-//Composed Component
-export * from './profile/profile';
-export * from './profile/profile.interface';
+export * from './services/account.service';

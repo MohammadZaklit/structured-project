@@ -7,7 +7,7 @@ import { NzHttpService } from '../../shared/src/services/http.service';
   providedIn: 'root',
 })
 export class NzForgotPasswordService {
-  private readonly API_URL = '/api/auth';
+  private readonly API_URL = 'auth';
   private httpService = inject(NzHttpService);
   constructor() {}
 
@@ -15,7 +15,7 @@ export class NzForgotPasswordService {
    * Request reset password link
    */
   requestReset(email: string): Observable<any> {
-    return this.httpService.post(`${this.API_URL}/request-password-reset`, { email });
+    return this.httpService.post(`${this.API_URL}/request-reset-password`, { email });
   }
 
   /**

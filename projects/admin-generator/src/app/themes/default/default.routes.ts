@@ -12,7 +12,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    //canActivate: [NzAuthGuard],
+    canActivate: [NzAuthGuard],
     component: AppLayout,
     children: [
       { path: 'dashboard', component: Dashboard },
@@ -26,19 +26,19 @@ export const routes: Routes = [
       { path: 'uikit', loadChildren: () => import('./pages/uikit/uikit.routes') }, // for all UI components
       { path: 'documentation', component: Documentation }, // for documentation page
       { path: 'pages', loadChildren: () => import('./pages/pages.routes') }, // for crud page
+      {
+        path: 'account',
+        loadChildren: () =>
+          import('../../features/account/shell/account-shell-routing').then(
+            (m) => m.ACCOUNT_PAGE_ROUTES,
+          ),
+      },
     ],
-  },
-  {
-    path: 'account',
-    loadChildren: () =>
-      import('../../features/account/shell/account-shell-routing').then(
-        (m) => m.ACCOUNT_PAGE_ROUTES,
-      ),
   },
   { path: 'landing', component: Landing }, // for landing page
   {
     path: 'auth',
-    //canActivate: [NzGuestGuard],
+    canActivate: [NzGuestGuard],
     loadChildren: () =>
       import('../../features/auth/shell/auth-shell-routing').then((m) => m.AUTH_PAGE_ROUTES),
   },

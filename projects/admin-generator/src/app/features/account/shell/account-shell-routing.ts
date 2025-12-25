@@ -10,8 +10,15 @@ export const ACCOUNT_PAGE_ROUTES: Routes = [
         loadComponent: () =>
           import('../components/account-profile/account-profile').then((m) => m.AccountProfile),
       },
-
-      { path: '**', redirectTo: 'login' },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('../components/account-change-password/account-change-password').then(
+            (m) => m.AccountChangePassword,
+          ),
+      },
+      { path: '**', redirectTo: 'profile' },
     ],
   },
+  { path: '**', redirectTo: 'profile' },
 ];

@@ -1,10 +1,19 @@
-import { Component } from '@angular/core';
-import { AppFloatingConfigurator } from 'projects/admin-generator/src/app/themes/default/layout/component/app.floatingconfigurator';
-
+import { Component, Input } from '@angular/core';
+import { FluidModule } from 'primeng/fluid';
 @Component({
   selector: 'app-account-base',
-  imports: [AppFloatingConfigurator],
-  templateUrl: './account-base.html',
-  styleUrl: './account-base.scss',
+  imports: [FluidModule],
+  template: `<p-fluid>
+    <div class="flex flex-col md:flex-row gap-8">
+      <div class="md:w-1/2">
+        <div class="card flex flex-col gap-4">
+          <ng-content></ng-content>
+        </div>
+      </div>
+    </div>
+  </p-fluid>`,
+  styles: ``,
 })
-export class AccountBaseComponent {}
+export class AccountBaseComponent {
+  @Input() formTitle!: string;
+}

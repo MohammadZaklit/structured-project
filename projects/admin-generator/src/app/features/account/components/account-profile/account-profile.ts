@@ -1,12 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {
-  NzProfile,
-  NzProfileComponent,
-  NzUpdatePasswordPayload,
-} from '@zak-lib/ui-library/account';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { NzProfile, NzProfileComponent } from '@zak-lib/ui-library/account/profile';
 import { AccountBaseComponent } from '../account-base/account-base';
-import { NzFormControl, NzFormGroup } from '@zak-lib/ui-library/shared';
-import { FormGroup } from '@angular/forms';
+import { NzFormGroup } from '@zak-lib/ui-library/shared';
 @Component({
   selector: 'profile',
   standalone: true,
@@ -15,7 +10,7 @@ import { FormGroup } from '@angular/forms';
   styleUrls: ['./account-profile.scss'],
 })
 export class AccountProfile implements OnInit {
-  @Output() Login = new EventEmitter<void>();
+  @Output() login = new EventEmitter<void>();
   accountProfileConfig!: NzProfile;
   form = new NzFormGroup({});
   ngOnInit(): void {
@@ -24,9 +19,9 @@ export class AccountProfile implements OnInit {
     };
   }
   gotoLogin() {
-    this.Login.emit();
+    this.login.emit();
   }
   applyUpdatePassword(): void {
-    this.Login.emit;
+    this.login.emit;
   }
 }

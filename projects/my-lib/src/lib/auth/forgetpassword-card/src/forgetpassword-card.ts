@@ -62,6 +62,8 @@ export class NzForgetPasswordComponent implements OnInit {
         message: response.message || 'Password reset link sent to your email',
       });
 
+      this.config.form.reset();
+      this.forgotPassword.emit();
       // ❌ DO NOT emit user
       // ❌ DO NOT store token
     } catch (error: any) {

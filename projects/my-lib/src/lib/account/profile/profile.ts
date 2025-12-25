@@ -1,6 +1,5 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormsModule, Validators } from '@angular/forms';
-import { NzPassword, NzPasswordComponent } from '@zak-lib/ui-library/components/password';
 import {
   NzStandardButton,
   NzStandardButtonComponent,
@@ -9,106 +8,96 @@ import { NzProfile } from './profile.interface';
 import { NzFormControl } from '@zak-lib/ui-library/shared';
 import { NzHeading, NzHeadingComponent } from '@zak-lib/ui-library/components/heading';
 import { NzAlertDialogService } from '@zak-lib/ui-library/elements/ui/alert-dialog';
-import { NzProfileService } from '../services/profile-services';
-import { NzPasswordComplexityValidator } from '@zak-lib/ui-library/shared';
-import { take } from 'rxjs';
-import { MatchPasswordValidator } from '@zak-lib/ui-library/shared/src/classes/NzControlMatchValidator';
+import { NzAccountService } from '../services/account.service';
+import { firstValueFrom } from 'rxjs';
+import { NzName, NzNameComponent } from '@zak-lib/ui-library/components/name';
+import { NzEmail, NzEmailComponent } from '@zak-lib/ui-library/components/email';
 
 @Component({
   selector: 'nz-profile',
   standalone: true,
   styles: ``,
-  imports: [FormsModule, NzHeadingComponent, NzPasswordComponent, NzStandardButtonComponent],
+  imports: [
+    FormsModule,
+    NzHeadingComponent,
+    NzNameComponent,
+    NzEmailComponent,
+    NzStandardButtonComponent,
+  ],
   templateUrl: './profile.html',
 })
 export class NzProfileComponent implements OnInit {
   @Input() config!: NzProfile;
-  private profileService = inject(NzProfileService);
+  private accountService = inject(NzAccountService);
   public headingConfig!: NzHeading;
-  public oldPasswordConfig!: NzPassword;
-  public newPasswordConfig!: NzPassword;
-  public confirmPasswordConfig!: NzPassword;
-  public changePasswordConfig!: NzStandardButton;
+  public nameconfig!: NzName;
+  public emailconfig!: NzEmail;
+  public saveConfig!: NzStandardButton;
   private alertService = inject(NzAlertDialogService);
-  @Output() successUpdatePassword = new EventEmitter<boolean>();
+  @Output() success = new EventEmitter<boolean>();
 
   constructor() {}
 
   ngOnInit(): void {
-    this.config.form.addControl('oldPassword', new NzFormControl(null, [Validators.required]));
+    this.config.form.addControl('name', new NzFormControl(null, [Validators.required]));
     this.config.form.addControl(
-      'newPassword',
-      new NzFormControl(null, [
-        Validators.required,
-        NzPasswordComplexityValidator({
-          minLength: 10,
-          requireSpecialChar: true,
-        }),
-      ]),
+      'email',
+      new NzFormControl(null, [Validators.required, Validators.email]),
     );
-    this.config.form.addControl(
-      'confirmPassword',
-      new NzFormControl(null, [
-        Validators.required,
-        MatchPasswordValidator({ matchControlName: 'newPassword' }),
-      ]),
-    ); //NzcontrolMatchValidator
+
     this.headingConfig = {
       id: 'headingconfig',
-      label: 'Change your Password',
+      label: 'Update Your Profile',
       style: 'h1',
     };
-    this.oldPasswordConfig = {
-      name: 'Old password',
-      label: 'Old Password',
-      control: this.config.form.get('oldPassword') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
+    this.nameconfig = {
+      name: 'name',
+      label: 'Full Name',
+      settings: {
+        placeholder: 'Enter your full name',
+      },
+      control: this.config.form.get('name') as NzFormControl,
       form: this.config.form,
     };
-    this.newPasswordConfig = {
-      name: 'New password',
-      label: 'New Password',
-      control: this.config.form.get('newPassword') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
+    this.emailconfig = {
+      name: 'email',
+      label: 'Email',
+      settings: {
+        placeholder: 'Enter your email address',
+      },
+      control: this.config.form.get('email') as NzFormControl,
       form: this.config.form,
     };
-    this.confirmPasswordConfig = {
-      name: 'Confirm password',
-      label: 'Confirm Password',
-      control: this.config.form.get('confirmPassword') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
-      form: this.config.form,
-    };
-    this.changePasswordConfig = {
+
+    this.saveConfig = {
       id: 'gotoregister',
-      label: 'Create Account',
+      label: 'Update Profile',
       onclick: () => {
-        this.UpdateUser();
+        this.save();
       },
     };
   }
 
-  UpdateUser(): void {
-    // Call service to update password
-    const payload = this.config.form.getRawValue();
-    this.profileService
-      .updatePassword(payload)
-      .pipe(take(1))
-      .subscribe({
-        next: () => {
-          this.alertService.openDialog({
-            type: 'success',
-            title: 'Success',
-            message: 'Password updated successfully!',
-          });
-          this.successUpdatePassword.emit(true);
-          this.config.form.reset(); // Clear form fields
-        },
-        error: (err) => {
-          this.alertService.openDialog({
-            type: 'error',
-            title: 'Error',
-            message: err?.error?.message || 'Failed to update password',
-          });
-          this.successUpdatePassword.emit(false);
-        },
+  async save(): Promise<void> {
+    const data = this.config.form.getRawValue();
+
+    try {
+      const response = await firstValueFrom(this.accountService.updateProfile(data));
+      if (response) {
+        // Emit success dialog config
+        this.success.emit();
+        this.alertService.openDialog({
+          type: 'success',
+          title: 'Success',
+          message: 'Your profile is updated successfully.',
+        });
+      }
+    } catch (err: any) {
+      this.alertService.openDialog({
+        type: 'error',
+        title: 'Error',
+        message: err?.error?.message || 'Failed to update password',
       });
+    }
   }
 }

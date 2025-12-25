@@ -1,25 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { NzAlertDialog } from './alert-dialog.interface';
 import { CommonModule } from '@angular/common';
-import { MessageModule } from 'primeng/message';
 import { DialogService as PrimeDialogService } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { NzButton, NzButtonComponent } from '@zak-lib/ui-library/elements/button';
+import { NzTypography, NzTypographyComponent } from '@zak-lib/ui-library/elements/typography';
 
 @Component({
   selector: 'nz-alert-dialog',
-  imports: [CommonModule, MessageModule, NzButtonComponent],
+  imports: [CommonModule, NzTypographyComponent, NzButtonComponent],
   providers: [PrimeDialogService],
-  template: `<p-message
-      [icon]="icon"
-      [severity]="severity"
-      [text]="dialogConfig.message"
-    ></p-message
-    ><nz-button [config]="okButtonConfig"></nz-button>`,
+  template: `<div class="mb-4"><nz-typography [config]="messageConfig"></nz-typography></div>
+    <div class="flex justify-center">
+      <nz-button [config]="okButtonConfig"></nz-button>
+    </div>`,
   styleUrl: './alert-dialog.css',
 })
 export class NzAlertDialogComponent implements OnInit {
   dialogConfig!: NzAlertDialog;
+  messageConfig!: NzTypography;
   okButtonConfig!: NzButton;
   get severity() {
     return this.dialogConfig.type === 'success'
@@ -44,7 +43,6 @@ export class NzAlertDialogComponent implements OnInit {
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
   ) {
-    console.warn('config: ', this.config);
     this.dialogConfig = this.config.data;
   }
 
@@ -56,8 +54,12 @@ export class NzAlertDialogComponent implements OnInit {
         this.close(true);
       },
     };
-    console.warn('config1: ', this.config);
-    console.warn('dialogConfig: ', this.dialogConfig);
+
+    this.messageConfig = {
+      id: 'dialog-' + this.dialogConfig.type,
+      label: this.dialogConfig.message,
+      style: 'p',
+    };
   }
 
   close(result: boolean) {

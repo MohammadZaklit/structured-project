@@ -111,10 +111,11 @@ import { NzAuthService } from '@zak-lib/ui-library/auth';
             <!-- Dropdown Menu -->
             <div class="profile-dropdown-menu" *ngIf="dropdownVisible">
               @if (isLoggedIn) {
+                <button (click)="goToEditProfile()">Edit Profile</button>
+                <button (click)="goToChangePassword()">Change Password</button>
+
                 <button (click)="logout()">Logout</button>
               }
-
-              <button (click)="gotoEditProfile()">edit profile</button>
             </div>
           </div>
         </div>
@@ -181,7 +182,10 @@ export class AppTopbar {
     await this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
-  gotoEditProfile() {
-    this.router.navigate(['account']);
+  goToEditProfile() {
+    this.router.navigate(['/account/profile']);
+  }
+  goToChangePassword() {
+    this.router.navigate(['/account/change-password']);
   }
 }
