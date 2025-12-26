@@ -3,5 +3,5 @@
  */
 
 //Composed Component
-export * from './profile';
-export * from './profile.interface';
+export * from './src/profile';
+export * from './src/profile.interface';

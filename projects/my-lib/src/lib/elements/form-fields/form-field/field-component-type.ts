@@ -8,7 +8,8 @@ import { NzColorPicker } from '@zak-lib/ui-library/elements/form-fields/color-pi
 import { NzMultiSelect } from '@zak-lib/ui-library/elements/form-fields/multiselect';
 import { NzPickList } from '@zak-lib/ui-library/elements/form-fields/picklist';
 import { NzRadioButton } from '@zak-lib/ui-library/elements/form-fields/radiobutton';
-import { NzListboxComponent } from '@zak-lib/ui-library/elements/form-fields/listbox';
+import { NzListBox } from '@zak-lib/ui-library/elements/form-fields/listbox';
+import { NzSlider } from '@zak-lib/ui-library/elements/form-fields/slider';
 
 export type NzFieldComponentType =
   | NzAutoComplete
@@ -21,7 +22,8 @@ export type NzFieldComponentType =
   | NzMultiSelect
   | NzPickList
   | NzRadioButton
-  | NzListboxComponent;
+  | NzListBox
+  | NzSlider;
 
 export type NzFieldType =
   | NzFieldTypeEnum.AutoComplete

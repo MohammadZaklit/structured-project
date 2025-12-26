@@ -3,4 +3,4 @@
  */
 
 //Composed Component
-export * from './change-password';
+export * from './src/change-password';
