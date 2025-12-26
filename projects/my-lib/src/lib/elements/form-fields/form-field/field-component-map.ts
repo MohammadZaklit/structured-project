@@ -10,4 +10,5 @@ export const NzFormFieldComponents: Record<string, () => Promise<any>> = {
   PickList: () => import('../picklist').then((m) => m.NzPickListComponent),
   FileUploader: () => import('../fileuploader').then((m) => m.NzUploadFileComponent),
   RadioButton: () => import('../radiobutton').then((m) => m.NzRadioButtonComponent),
+  listbox: () => import('../listbox').then((m) => m.NzListboxComponent),
 };
