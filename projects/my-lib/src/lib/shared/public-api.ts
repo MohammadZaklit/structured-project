@@ -3,7 +3,6 @@
  */
 //interceptors
 export * from './src/interceptor/http-loader-interceptor';
-export * from './src/interceptor/error-handler-interceptor';
 
 // constants
 export * from './src/constants/components';

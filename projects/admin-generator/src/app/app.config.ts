@@ -13,11 +13,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import {
-  NzErrorHandlerInterceptor,
-  NzhttpLoaderInterceptor,
-  provideNzBaseConfig,
-} from '@zak-lib/ui-library/shared';
+import { NzhttpLoaderInterceptor, provideNzBaseConfig } from '@zak-lib/ui-library/shared';
 import { environment } from './environments/environment';
 import { DialogService } from 'primeng/dynamicdialog';
 import { NzAuthInterceptor } from '@zak-lib/ui-library/auth';
@@ -38,10 +34,7 @@ export const appConfig: ApplicationConfig = {
         options: { darkModeSelector: '.app-dark' },
       },
     }),
-    provideHttpClient(
-      withFetch(),
-      withInterceptors([NzAuthInterceptor, NzhttpLoaderInterceptor, NzErrorHandlerInterceptor]),
-    ),
+    provideHttpClient(withFetch(), withInterceptors([NzAuthInterceptor, NzhttpLoaderInterceptor])),
     provideNzBaseConfig({
       apiBaseUrl: environment.apiUrl,
     }),
