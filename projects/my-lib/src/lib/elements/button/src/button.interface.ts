@@ -8,6 +8,5 @@ export interface NzButton {
   tooltip?: string;
   icon?: string;
   isFullWidth?: boolean;
-  disabled?: (rowData: any) => boolean; // Dynamic disable based on row data
-  visible?: (rowData: any) => boolean; // Dynamic visibility based on row data
+  disabled?: () => boolean; // Dynamic disable based on row data
 }

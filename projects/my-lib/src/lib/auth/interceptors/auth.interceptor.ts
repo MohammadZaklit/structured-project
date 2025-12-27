@@ -1,22 +1,31 @@
-import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { HttpInterceptorFn } from '@angular/common/http';
 import { NzAuthService } from '../services/auth.service';
-// Automatically attaches a JWT token to every outgoing HTTP request
-@Injectable()
-export class NzAuthInterceptor implements HttpInterceptor {
-  constructor(private auth: NzAuthService) {}
+import { SKIP_AUTH } from '../tokens/auth.token';
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
-    const token = this.auth.getToken();
+export const NzAuthInterceptor: HttpInterceptorFn = (req, next) => {
+  const auth = inject(NzAuthService);
 
-    if (!token) return next.handle(req);
+  if (req.context.get(SKIP_AUTH)) {
+    /**
+     * this.http.get('/public', {
+     *     context: new HttpContext().set(SKIP_AUTH, true),
+     *  });
+     */
+    return next(req);
+  }
 
-    const authReq = req.clone({
+  const token = auth.getToken();
+
+  if (!token) {
+    return next(req);
+  }
+
+  return next(
+    req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,
       },
-    });
-
-    return next.handle(authReq);
-  }
-}
+    }),
+  );
+};

@@ -1,7 +1,9 @@
 /*
  * Public API Surface of zls-users
  */
-//components
+//interceptors
+export * from './src/interceptor/http-loader-interceptor';
+export * from './src/interceptor/error-handler-interceptor';
 
 // constants
 export * from './src/constants/components';
@@ -14,6 +16,7 @@ export * from './src/interfaces/CommonConfig.interface';
 export * from './src/services/http.service';
 export * from './src/services/storage.service';
 export * from './src/services/dialog.service';
+export * from './src/services/loader.service';
 
 // classes
 export * from './src/classes/NzFormControl';

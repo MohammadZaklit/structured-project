@@ -2,6 +2,7 @@
   class="{{ buttonstyle }}"
   [styleClass]="config.isFullWidth ? 'w-full' : ''"
   [type]="config.type || 'button'"
+  [disabled]="config.disabled?.() || false"
   (click)="config.onclick()"
 >
   {{ config.label || 'Click' }}
