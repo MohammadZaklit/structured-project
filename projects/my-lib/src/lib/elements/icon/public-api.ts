@@ -4,4 +4,4 @@
 //components
 
 //elements
-export * from './src/upload-file';
+export * from './icon';

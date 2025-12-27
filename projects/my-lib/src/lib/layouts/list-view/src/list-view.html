@@ -47,8 +47,8 @@
             [styleClass]="button.styleClass"
             [pTooltip]="button.tooltip"
             tooltipPosition="bottom"
-            [disabled]="button.disabled && button.disabled(null)"
-            [style]="button.visible && !button.visible(null) ? { display: 'none' } : {}"
+            [disabled]="button.disabled && button.disabled()"
+            [style]="button.visible && !button.visible() ? { display: 'none' } : {}"
           ></p-button>
         }
         @if (config()?.exportToExcel) {

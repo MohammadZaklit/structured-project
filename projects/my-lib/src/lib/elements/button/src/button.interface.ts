@@ -9,4 +9,5 @@ export interface NzButton {
   icon?: string;
   isFullWidth?: boolean;
   disabled?: () => boolean; // Dynamic disable based on row data
+  visible?: () => boolean;
 }

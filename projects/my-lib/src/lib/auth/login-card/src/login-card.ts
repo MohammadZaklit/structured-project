@@ -27,7 +27,6 @@ import { CheckboxModule } from 'primeng/checkbox';
     CheckboxModule,
   ],
   templateUrl: './login-card.html',
-  styles: ``,
   standalone: true,
 })
 export class NzLoginCardComponent implements OnInit {
