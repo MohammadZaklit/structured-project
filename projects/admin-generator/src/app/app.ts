@@ -7,21 +7,18 @@ import { NzSpinnerComponent } from '@zak-lib/ui-library/elements/ui/spinner';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, NzSpinnerComponent],
-  template: `<router-outlet></router-outlet><nz-spinner></nz-spinner>`,
+  template: `<nz-spinner></nz-spinner><router-outlet></router-outlet>`,
 })
 export class App {
   private themeService = inject(ThemeService);
   private router = inject(Router);
   changeTheme(theme: string) {
     this.themeService.setCurrentTheme(theme);
-
+    const themeLoader = THEMES[theme] ?? THEMES['default'];
     this.router.resetConfig([
       {
         path: '',
-        loadChildren: async () => {
-          const themeRoutesModule = await THEMES[theme];
-          return themeRoutesModule.routes;
-        },
+        loadChildren: themeLoader,
       },
     ]);
   }

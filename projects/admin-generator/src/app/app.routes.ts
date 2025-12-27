@@ -1,19 +1,15 @@
 import { Routes } from '@angular/router';
-import { inject } from '@angular/core';
-import { ThemeService } from './shared/services/theme.service';
+import { getResolvedTheme } from './themes/init/theme.initializer';
 import { THEMES } from './shared/constants/themes';
 
-export const routes: Routes = [
-  {
-    path: '',
-    loadChildren: async () => {
-      // Get current theme dynamically
-      const themeService = inject(ThemeService);
-      const theme = themeService.getCurrentTheme(); // e.g. 'default' | 'dark'
-
-      const themeRoutesModule = await (THEMES[theme] || THEMES['default']);
-      return themeRoutesModule.routes;
+export function createRoutes(): Routes {
+  const theme = getResolvedTheme();
+  const themeLoader = THEMES[theme] ?? THEMES['default'];
+  return [
+    {
+      path: '',
+      loadChildren: themeLoader,
     },
-  },
-  { path: '**', redirectTo: 'auth' },
-];
+    { path: '**', redirectTo: 'auth' },
+  ];
+}

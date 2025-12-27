@@ -4,11 +4,12 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import {
+  PreloadAllModules,
   provideRouter,
-  withEnabledBlockingInitialNavigation,
   withInMemoryScrolling,
+  withPreloading,
 } from '@angular/router';
-import { routes } from './app.routes';
+import { createRoutes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
@@ -26,11 +27,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(
-      routes,
-      withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
-      withEnabledBlockingInitialNavigation(),
-    ),
+    provideRouter(createRoutes(), withPreloading(PreloadAllModules)),
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
