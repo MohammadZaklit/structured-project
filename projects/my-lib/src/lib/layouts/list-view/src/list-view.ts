@@ -59,7 +59,6 @@ export class NzListViewComponent implements OnInit, OnDestroy {
   private isEditMode = false;
   private loading = false;
   private displayDialog = false;
-
   public quickSearchValue: string = '';
   private httpService = inject(NzHttpService);
   private searchParameters$ = new BehaviorSubject<NzSearchParameters>({});

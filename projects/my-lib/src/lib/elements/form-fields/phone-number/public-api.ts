@@ -4,4 +4,4 @@
 //components
 
 //elements
-export * from './src/textarea';
+export * from './phone-number';

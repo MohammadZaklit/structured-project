@@ -153,7 +153,7 @@
               ></p-button>
             }
             @for (action of dynamicActions(); track action.label) {
-              @if (!action.visible || action.visible(rowData)) {
+              @if (!action.visible || action.visible()) {
                 <p-button
                   [icon]="action.icon || ''"
                   [label]="action.label"
@@ -161,7 +161,7 @@
                   [styleClass]="'p-button-sm ' + (action.styleClass || '')"
                   [pTooltip]="action.tooltip || action.label"
                   tooltipPosition="bottom"
-                  [disabled]="action.disabled && action.disabled(rowData)"
+                  [disabled]="action.disabled && action.disabled()"
                 ></p-button>
               }
             }
