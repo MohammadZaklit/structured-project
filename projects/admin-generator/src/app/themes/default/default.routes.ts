@@ -12,7 +12,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    canActivate: [NzAuthGuard],
+    // canActivate: [NzAuthGuard],
     component: AppLayout,
     children: [
       { path: 'dashboard', component: Dashboard },
@@ -38,7 +38,7 @@ export const routes: Routes = [
   { path: 'landing', component: Landing }, // for landing page
   {
     path: 'auth',
-    canActivate: [NzGuestGuard],
+    //canActivate: [NzGuestGuard],
     loadChildren: () =>
       import('../../features/auth/shell/auth-shell-routing').then((m) => m.AUTH_PAGE_ROUTES),
   },

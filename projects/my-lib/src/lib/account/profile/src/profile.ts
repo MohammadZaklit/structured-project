@@ -8,7 +8,7 @@ import { NzProfile } from './profile.interface';
 import { NzFormControl } from '@zak-lib/ui-library/shared';
 import { NzHeading, NzHeadingComponent } from '@zak-lib/ui-library/components/heading';
 import { NzAlertDialogService } from '@zak-lib/ui-library/elements/ui/alert-dialog';
-import { NzAccountService } from '../services/account.service';
+import { NzAccountService } from '../../services/account.service';
 import { firstValueFrom } from 'rxjs';
 import { NzName, NzNameComponent } from '@zak-lib/ui-library/components/name';
 import { NzEmail, NzEmailComponent } from '@zak-lib/ui-library/components/email';
