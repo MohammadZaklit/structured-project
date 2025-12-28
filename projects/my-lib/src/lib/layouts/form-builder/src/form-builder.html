@@ -3,8 +3,11 @@
     <nz-typography [config]="leftHeading"></nz-typography>
     <div
       class="form-field-palette space-y-2"
-      [dragula]="bagFieldsName"
-      [dragulaModel]="availableFields"
+      cdkDropList
+      #toolbox="cdkDropList"
+      [cdkDropListData]="toolbox"
+      [cdkDropListConnectedTo]="connectedDropLists"
+      cdkDropListSortingDisabled
     >
       @for (field of availableFields; track field) {
         <div
@@ -27,8 +30,11 @@
       }}"
       [class.border-blue-400]="isDragging"
       [class.bg-blue-50]="isDragging"
-      [dragula]="bagFieldsName"
-      [dragulaModel]="droppedRows"
+      cdkDropList
+      [cdkDropListData]="droppedRows"
+      (cdkDropListDropped)="dropItem($event)"
+      #rowsList="cdkDropList"
+      [cdkDropListConnectedTo]="[]"
     >
       @if (droppedRows.length === 0) {
         <div class="text-gray-400 text-center">Drag a **Row** here to begin!</div>
@@ -42,8 +48,9 @@
             [attr.data-component-id]="component.id"
             [attr.data-component-type]="component.type"
             [attr.data-component-index]="rIndex"
+            cdkDrag
           >
-            <div class="drag-handle cursor-move">⇅</div>
+            <div class="drag-handle cursor-move" cdkDragHandle>⇅</div>
             <div class="flex items-center justify-between px-3 py-2">
               <span class="font-medium">{{ component.label }}</span>
               <!-- <i
@@ -70,8 +77,10 @@
                 [attr.data-component-id]="component.id"
                 [attr.data-component-type]="component.type"
                 [attr.data-component-index]="rIndex"
-                [dragula]="bagFieldsName"
-                [dragulaModel]="component.childComponents"
+                cdkDropList
+                [cdkDropListData]="component.childComponents"
+                (cdkDropListDropped)="dropItem($event, component)"
+                cdkDropListOrientation="horizontal"
                 [ngClass]="{
                   'align-center justify-center': component.childComponents.length === 0,
                 }"
