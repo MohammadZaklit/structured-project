@@ -17,7 +17,7 @@ export interface NzIcon {
 }
 
 @Component({
-  selector: 'lib-icon-field',
+  selector: 'nz-icon-field',
   standalone: true,
   imports: [ReactiveFormsModule, InputTextModule, CommonModule, IconFieldModule, InputIconModule],
   template: `

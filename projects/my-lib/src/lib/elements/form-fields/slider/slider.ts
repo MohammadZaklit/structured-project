@@ -16,7 +16,7 @@ export interface NzSlider extends NzFormField {
 }
 
 @Component({
-  selector: 'lib-slider',
+  selector: 'nz-slider',
   standalone: true,
   imports: [Slider, NzFormFieldModule],
   template: `
