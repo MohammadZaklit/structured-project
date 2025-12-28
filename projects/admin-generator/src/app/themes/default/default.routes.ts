@@ -15,6 +15,11 @@ export const routes: Routes = [
     canActivate: [NzAuthGuard],
     component: AppLayout,
     children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
       { path: 'dashboard', component: Dashboard },
       {
         path: 'admin',
