@@ -4,13 +4,15 @@
     <div
       class="form-field-palette space-y-2"
       cdkDropList
+      [id]="toolBoxContainerId"
       #toolbox="cdkDropList"
-      [cdkDropListData]="toolbox"
-      [cdkDropListConnectedTo]="connectedDropLists"
-      cdkDropListSortingDisabled
+      [cdkDropListConnectedTo]="connectedList"
+      [cdkDropListData]="availableFields"
     >
-      @for (field of availableFields; track field) {
+      @for (field of availableFields; track field.type) {
         <div
+          cdkDrag
+          [cdkDragData]="field"
           class="flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-move hover:bg-gray-100 hover:shadow-sm transition component-item draggable-field is-draggable main-field"
           [attr.data-component-type]="field.type"
         >
@@ -23,91 +25,78 @@
 
   <main class="flex-auto overflow-auto">
     <nz-typography [config]="middleHeading"></nz-typography>
-    <!-- <button class="btn btn-success mb-3 ml-2" (click)="submitForm()">Submit Form</button> -->
-    <div
-      class="max-w-3xl min-h-[500px] bg-white border-2 border-dashed border-gray-300 rounded-xl transition is-droppable {{
-        mainDroppableAreaName
-      }}"
-      [class.border-blue-400]="isDragging"
-      [class.bg-blue-50]="isDragging"
-      cdkDropList
-      [cdkDropListData]="droppedRows"
-      (cdkDropListDropped)="dropItem($event)"
-      #rowsList="cdkDropList"
-      [cdkDropListConnectedTo]="[]"
+    <ng-template
+      #renderRowTemplate
+      let-canvascomponents="canvascomponents"
+      let-parentitem="parentitem"
     >
-      @if (droppedRows.length === 0) {
-        <div class="text-gray-400 text-center">Drag a **Row** here to begin!</div>
-      }
-
-      <ng-template #renderRowTemplate let-components="components">
-        @for (component of components; track component.id; let rIndex = $index) {
+      <div
+        class="max-w-3xl bg-white border-2 border-dashed border-gray-300 rounded-xl transition"
+        [class.border-blue-400]="isDragging"
+        [class.bg-blue-50]="isDragging"
+        [ngClass]="!parentitem ? 'min-h-[500px]' : ''"
+        cdkDropList
+        [cdkDropListData]="canvascomponents"
+        (cdkDropListDropped)="dropItem($event)"
+        [cdkDropListConnectedTo]="connectedList"
+        [id]="parentitem ? parentitem.rowid : canvasContainerId"
+      >
+        @for (component of canvascomponents; track component.rowid; let rIndex = $index) {
           <div
             class="p-2 m-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition is-draggable component-item"
-            id="{{ component.type }}-{{ component.id }}"
-            [attr.data-component-id]="component.id"
-            [attr.data-component-type]="component.type"
-            [attr.data-component-index]="rIndex"
-            cdkDrag
           >
-            <div class="drag-handle cursor-move" cdkDragHandle>⇅</div>
-            <div class="flex items-center justify-between px-3 py-2">
-              <span class="font-medium">{{ component.label }}</span>
-              <!-- <i
-                class="pi pi-ellipsis-v text-gray-400 drag-handle cursor-move"
-                
-              ></i> -->
-            </div>
-            @if (component.childComponents.length > 0) {
-              <ng-container
-                *ngTemplateOutlet="
-                  renderRowTemplate;
-                  context: {
-                    components: component.childComponents,
-                  }
-                "
-              ></ng-container>
-            }
-            @if (
-              component.type === componentTypeEnum.Row ||
-              component.type === componentTypeEnum.Column
-            ) {
-              <div
-                class="is-droppable min-h-10 flex flex-col"
-                [attr.data-component-id]="component.id"
-                [attr.data-component-type]="component.type"
-                [attr.data-component-index]="rIndex"
-                cdkDropList
-                [cdkDropListData]="component.childComponents"
-                (cdkDropListDropped)="dropItem($event, component)"
-                cdkDropListOrientation="horizontal"
-                [ngClass]="{
-                  'align-center justify-center': component.childComponents.length === 0,
-                }"
-              >
-                <!-- @if (
-                  component.type === componentTypeEnum.Row && component.childComponents.length === 0
-                ) {
-                  <span class="text-gray-400">
-                    Drag a **Column** from the left side components.
-                  </span>
-                } @else if (
-                  component.type === componentTypeEnum.Column &&
-                  component.childComponents.length === 0
-                ) {
-                  <span class="text-gray-400">
-                    Drag a **Field** or **Row** from the left side components.
-                  </span>
-                } -->
+            <div
+              [id]="component.rowid"
+              [attr.data-component-id]="component.rowid"
+              [attr.data-component-type]="component.type"
+              [attr.data-component-index]="rIndex"
+              cdkDrag
+              [cdkDragData]="component"
+            >
+              <i cdkDragHandle class="pi pi-ellipsis-v text-gray-400 cursor-move"></i>
+              <div class="flex items-center justify-between px-3 py-2">
+                <span class="font-medium">{{ component.label }} - {{ component.rowid }}</span>
+                <a (click)="selectField(component)">edit</a>
+                <a (click)="removeComponent(component)">X</a>
               </div>
-            }
+            </div>
+
+            <div
+              class="is-droppable min-h-10 flex flex-col"
+              [attr.data-component-id]="component.rowid"
+              [attr.data-component-type]="component.type"
+              [attr.data-component-index]="rIndex"
+              cdkDropList
+              [id]="component.rowid"
+              [cdkDropListData]="component.childComponents"
+              [cdkDropListConnectedTo]="connectedListsIds(component.rowid)"
+              (cdkDropListDropped)="dropItem($event)"
+              [ngClass]="{
+                'align-center justify-center': component.childComponents.length === 0,
+              }"
+            >
+              @if (component.childComponents.length > 0) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    renderRowTemplate;
+                    context: {
+                      parentitem: component,
+                      canvascomponents: component.childComponents,
+                    }
+                  "
+                ></ng-container>
+              }
+            </div>
           </div>
         }
-      </ng-template>
-      <ng-container
-        *ngTemplateOutlet="renderRowTemplate; context: { components: droppedRows }"
-      ></ng-container>
-    </div>
+      </div>
+    </ng-template>
+    <ng-container
+      *ngTemplateOutlet="
+        renderRowTemplate;
+        context: { parentitem: undefined, canvascomponents: droppedRows }
+      "
+    ></ng-container>
   </main>
 
   <aside

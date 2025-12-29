@@ -13,6 +13,11 @@ export interface NzComponentConfig extends NzComponentConfiguration {
   childComponents: NzComponentConfig[];
 }
 
+export interface FormBuilderComponent extends NzComponentConfig {
+  rowid: string;
+  childComponents: FormBuilderComponent[];
+}
+
 const NzUiTypeConst = { ...NzUiTypeEnum } as const;
 const NzFieldTypeConst = { ...NzFieldTypeEnum } as const;
 export const NzComponentTypeEnum = { ...NzUiTypeConst, ...NzFieldTypeConst };

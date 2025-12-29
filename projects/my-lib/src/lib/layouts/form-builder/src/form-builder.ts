@@ -6,6 +6,7 @@ import {
   Input,
   Output,
   signal,
+  ViewChild,
 } from '@angular/core';
 import {
   NzConfigurationComponent,
@@ -15,10 +16,16 @@ import {
 import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { NzFormFieldModule } from '@zak-lib/ui-library/elements/form-fields/form-field/form-field-module';
 import { COMPONENTS } from '@zak-lib/ui-library/shared';
-import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  DragDropModule,
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+  CdkDropList,
+} from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import { NzComponentConfig, NzComponentTypeEnum, NzFormBuilder } from './form-builder.interface';
+import { FormBuilderComponent, NzComponentTypeEnum, NzFormBuilder } from './form-builder.interface';
 import { ButtonModule } from 'primeng/button';
 import { NzTypography, NzTypographyComponent } from '@zak-lib/ui-library/elements/typography';
 
@@ -62,19 +69,22 @@ export class NzFormBuilderComponent {
   public bagFormBuilderName!: string;
   public mainDroppableAreaName = 'main-droppable-area';
 
-  connectedDropLists = ['toolbox'];
   private subs = new Subscription();
 
   componentTypeEnum = NzComponentTypeEnum;
 
-  availableFields: NzComponentConfig[] = [];
+  availableFields: FormBuilderComponent[] = [];
 
-  droppedRows: NzComponentConfig[] = [];
-  selectedField: NzComponentConfig | undefined = undefined;
+  droppedRows: FormBuilderComponent[] = [];
+  selectedField: FormBuilderComponent | undefined = undefined;
   private cd = inject(ChangeDetectorRef);
 
   @Output() save = new EventEmitter<Record<string, any>>();
+  @ViewChild('toolbox', { static: true }) toolbox!: CdkDropList;
 
+  toolBoxContainerId = 'toolbox-components';
+  canvasContainerId = 'canvas-container';
+  connectedList = [this.canvasContainerId, this.toolBoxContainerId];
   constructor() {}
 
   ngOnInit(): void {
@@ -85,6 +95,7 @@ export class NzFormBuilderComponent {
     COMPONENTS.forEach((component) => {
       this.availableFields.push({
         id: 0,
+        rowid: '',
         type: component.componentName as NzComponentType,
         label: component.label,
         isNew: true,
@@ -98,119 +109,117 @@ export class NzFormBuilderComponent {
     }
   }
 
-  public dropItem(event: CdkDragDrop<NzComponentConfig[]>, items?: NzComponentConfig): void {
-    console.warn('event: ', event);
-    //  if (event.previousIndex === event.currentIndex) return;
+  dropItem(event: CdkDragDrop<FormBuilderComponent[]>) {
+    const dragged = event.item.data;
 
-    // moveItemInArray(
-    //   this.rows,
-    //   event.previousIndex,
-    //   event.currentIndex
-    // );
-    //     transferArrayItem(
-    //   sourceArray,
-    //   targetArray,
-    //   fromIndex,
-    //   toIndex
-    // );
-  }
-
-  private handleDrop(target: HTMLElement, draggedItem: NzComponentConfig) {
-    const targetComponentId = Number(target.getAttribute('data-component-id'));
-
-    const targetContainer = this.findComponentById(this.droppedRows, targetComponentId);
-
-    if (!targetContainer || !draggedItem) return;
-
-    if (draggedItem.id === 0) {
-      this.cloneFromPalette(targetContainer, draggedItem);
-    } else {
-      this.moveBetweenContainers(targetContainer, draggedItem);
+    if (!this.canBeDropped(event)) {
+      return;
     }
 
-    this.cd.detectChanges();
+    // ✅ FROM TOOLBOX → CLONE
+    if (event.previousContainer.id === this.toolbox.id) {
+      const addedComponent = this.cloneComponent(dragged);
+      event.container.data.splice(event.currentIndex, 0, addedComponent);
+
+      // Example: push its droplist id into connectedList
+      if (
+        addedComponent.rowid &&
+        (addedComponent.type === this.componentTypeEnum.Row ||
+          addedComponent.type === this.componentTypeEnum.Column)
+      ) {
+        this.connectedList.unshift(addedComponent.rowid);
+      }
+      return;
+    }
+
+    // SAME CONTAINER → SORT
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      return;
+    }
+
+    // DIFFERENT CONTAINER → MOVE
+    transferArrayItem(
+      event.previousContainer.data,
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex,
+    );
   }
 
-  private cloneFromPalette(targetComponent: NzComponentConfig, item: NzComponentConfig) {
-    targetComponent.childComponents.push({
-      ...item,
-      id: this._rowUUID(),
+  private canBeDropped(event: CdkDragDrop<FormBuilderComponent[]>): boolean {
+    if (
+      this.isComponent(event.item.data.type) &&
+      event.container.element.nativeElement.dataset['componentType'] !==
+        this.componentTypeEnum.Column
+    ) {
+      return false;
+    }
+
+    if (
+      event.item.data.type === this.componentTypeEnum.Column &&
+      event.container.element.nativeElement.dataset['componentType'] !== this.componentTypeEnum.Row
+    ) {
+      return false;
+    }
+
+    if (
+      event.item.data.type === this.componentTypeEnum.Row &&
+      event.container.element.nativeElement.dataset['componentType'] !==
+        this.componentTypeEnum.Column &&
+      event.container.id !== this.canvasContainerId
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private isComponent(type: NzComponentType): boolean {
+    if (type === this.componentTypeEnum.Row || type == this.componentTypeEnum.Column) {
+      return false;
+    }
+    return true;
+  }
+
+  public connectedListsIds(rowid: string): string[] {
+    return this.connectedList.filter((id) => id !== rowid);
+  }
+
+  cloneComponent(comp: FormBuilderComponent): FormBuilderComponent {
+    return {
+      ...comp,
+      rowid: this._rowUUID(),
       childComponents: [],
-    });
+    };
   }
 
-  private moveBetweenContainers(target: NzComponentConfig, item: NzComponentConfig) {
-    const parent = this.findParentComponent(this.droppedRows, item.id);
-
-    if (!parent || parent === target) return;
-
-    const removed = this.removeComponentById(this.droppedRows, item.id);
-
-    if (!removed) return;
-
-    parent.childComponents = parent.childComponents.filter((c) => c.id !== item.id);
-
-    target.childComponents.push(item);
+  cdkDragStarted() {
+    this.isDragging = true;
   }
 
-  private findComponentById(components: NzComponentConfig[], id: number): NzComponentConfig | null {
-    for (const component of components) {
-      if (component.id === id) return component;
-
-      const found = this.findComponentById(component.childComponents, id);
-
-      if (found) return found;
-    }
-    return null;
+  cdkDragEnded() {
+    this.isDragging = false;
   }
 
-  private findParentComponent(
-    components: NzComponentConfig[],
-    childId: number,
-  ): NzComponentConfig | null {
-    for (const component of components) {
-      if (component.childComponents.some((c) => c.id === childId)) {
-        return component;
-      }
-
-      const found = this.findParentComponent(component.childComponents, childId);
-
-      if (found) return found;
-    }
-    return null;
-  }
-
-  private removeComponentById(components: NzComponentConfig[], id: number): boolean {
-    for (const component of components) {
-      const index = component.childComponents.findIndex((c) => c.id === id);
-
-      if (index !== -1) {
-        component.childComponents.splice(index, 1);
-        return true;
-      }
-
-      if (this.removeComponentById(component.childComponents, id)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private _rowUUID(): number {
-    return Number(`${Date.now()}${Math.floor(Math.random() * 1000)}`);
+  private _rowUUID(): string {
+    return `${Date.now()}${Math.floor(Math.random() * 1000)}`;
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
 
-  selectField(e: Event, component: NzComponentConfig): void {
-    e.stopPropagation();
+  selectField(component: FormBuilderComponent): void {
     this.selectedField = component;
     this.buildComponentConfiguration(component);
   }
 
-  private buildComponentConfiguration(field: NzComponentConfig): void {
+  removeComponent(component: FormBuilderComponent): void {
+    alert(component.rowid);
+  }
+
+  private buildComponentConfiguration(field: FormBuilderComponent): void {
     this.componentConfig = {
       type: field.type as NzFieldType,
       configuration: field.configuration,
