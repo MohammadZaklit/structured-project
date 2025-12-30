@@ -11,7 +11,7 @@ export interface NzPassword extends NzFormField, NzBaseInput {}
   template: `<nz-form-field [baseConfig]="config">
     <p-password
       [toggleMask]="true"
-      [placeholder]="config.settings?.placeholder"
+      [placeholder]="config.settings?.placeholder || ''"
       [formControl]="config.control"
       fluid
       [invalid]="config.control.invalid && (config.control.dirty || config.control.touched)"
