@@ -6,7 +6,10 @@ import {
 } from '@zak-lib/ui-library/components/standardbutton';
 import { NzHeadingComponent } from '@zak-lib/ui-library/components/heading';
 import { NzEmail, NzEmailComponent } from '@zak-lib/ui-library/components/email';
-import { NzPasswordComponent, NzPassword } from '@zak-lib/ui-library/components/password';
+import {
+  NzStandardPasswordComponent,
+  NzStandardPassword,
+} from '@zak-lib/ui-library/components/StandardPasswordComponent';
 import { NzNameComponent, NzName } from '@zak-lib/ui-library/components/name';
 import { NzFormControl } from '@zak-lib/ui-library/shared';
 import { NzRegisterCard } from './register-card.interface';
@@ -25,7 +28,7 @@ import { NzLink, NzLinkComponent } from '@zak-lib/ui-library/elements/link';
     NzHeadingComponent,
     NzEmailComponent,
     NzParagraphComponent,
-    NzPasswordComponent,
+    NzStandardPasswordComponent,
     NzNameComponent,
     NzLinkComponent,
   ],
@@ -37,7 +40,7 @@ export class NzRegisterCardComponent {
   public nameconfig!: NzName;
   public emailconfig!: NzEmail;
   public paragraphconfig!: NzParagraph;
-  public passwordconfig!: NzPassword;
+  public passwordconfig!: NzStandardPassword;
   public registerconfig!: NzStandardButton;
   public headingconfig!: NzParagraph;
   public backtologinconfig!: NzLink;

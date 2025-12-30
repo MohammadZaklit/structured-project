@@ -7,7 +7,7 @@ export interface NzListBox extends NzFormField {
 }
 
 @Component({
-  selector: 'lib-listbox',
+  selector: 'nz-listbox',
   standalone: true,
   imports: [Listbox, NzFormFieldModule],
   template: `

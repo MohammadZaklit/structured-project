@@ -4,7 +4,6 @@ import {
   NzStandardButtonComponent,
 } from '@zak-lib/ui-library/components/standardbutton';
 import { NzEmailComponent, NzEmail } from '@zak-lib/ui-library/components/email';
-import { NzPassword, NzPasswordComponent } from '@zak-lib/ui-library/components/password';
 import { NzHeading, NzHeadingComponent } from '@zak-lib/ui-library/components/heading';
 import { NzParagraph, NzParagraphComponent } from '@zak-lib/ui-library/components/paragraph';
 import { NzForgetPassword } from './forgetpassword.interface';
@@ -31,7 +30,6 @@ export class NzForgetPasswordComponent implements OnInit {
   @Input() config!: NzForgetPassword;
   public headingConfig!: NzHeading;
   public emailConfig!: NzEmail;
-  public passwordConfig!: NzPassword;
   public confirmEmailConfig!: NzStandardButton;
   public paragraphConfig!: NzParagraph;
   public goToLoginConfig!: NzLink;

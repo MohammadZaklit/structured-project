@@ -1,5 +1,8 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { NzPassword, NzPasswordComponent } from '@zak-lib/ui-library/components/password';
+import {
+  NzStandardPassword,
+  NzStandardPasswordComponent,
+} from '@zak-lib/ui-library/components/StandardPasswordComponent';
 import {
   NzFormControl,
   NzFormGroup,
@@ -24,7 +27,7 @@ export interface NzChangePassword {
 
 @Component({
   selector: 'nz-change-password',
-  imports: [NzHeadingComponent, NzPasswordComponent, NzStandardButtonComponent],
+  imports: [NzHeadingComponent, NzStandardPasswordComponent, NzStandardButtonComponent],
   templateUrl: './change-password.html',
   styles: ``,
 })
@@ -32,9 +35,9 @@ export class NzChangePasswordComponent {
   @Input() config!: NzChangePassword;
   private accountService = inject(NzAccountService);
   public headingConfig!: NzHeading;
-  public oldPasswordConfig!: NzPassword;
-  public newPasswordConfig!: NzPassword;
-  public confirmPasswordConfig!: NzPassword;
+  public oldPasswordConfig!: NzStandardPassword;
+  public newPasswordConfig!: NzStandardPassword;
+  public confirmPasswordConfig!: NzStandardPassword;
   public saveConfig!: NzStandardButton;
   private alertService = inject(NzAlertDialogService);
   @Output() success = new EventEmitter<void>();
@@ -80,12 +83,18 @@ export class NzChangePasswordComponent {
     this.newPasswordConfig = {
       name: 'New password',
       label: 'New Password',
+      settings: {
+        placeholder: 'Enter new password',
+      },
       control: this.config.form.get('newPassword') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
       form: this.config.form,
     };
     this.confirmPasswordConfig = {
       name: 'Confirm password',
       label: 'Confirm Password',
+      settings: {
+        placeholder: 'Enter confirm password',
+      },
       control: this.config.form.get('confirmPassword') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
       form: this.config.form,
     };
@@ -162,6 +171,9 @@ export class NzChangePasswordComponent {
     this.oldPasswordConfig = {
       name: 'Old password',
       label: 'Old Password',
+      settings: {
+        placeholder: 'Enter old password',
+      },
       control: this.config.form.get('oldPassword') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
       form: this.config.form,
     };

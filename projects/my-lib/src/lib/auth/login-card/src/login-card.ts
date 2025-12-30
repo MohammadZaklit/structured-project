@@ -4,7 +4,10 @@ import {
   NzStandardButtonComponent,
 } from '@zak-lib/ui-library/components/standardbutton';
 import { NzEmailComponent, NzEmail } from '@zak-lib/ui-library/components/email';
-import { NzPassword, NzPasswordComponent } from '@zak-lib/ui-library/components/password';
+import {
+  NzStandardPassword,
+  NzStandardPasswordComponent,
+} from '@zak-lib/ui-library/components/StandardPasswordComponent';
 import { NzHeading, NzHeadingComponent } from '@zak-lib/ui-library/components/heading';
 import { NzParagraph, NzParagraphComponent } from '@zak-lib/ui-library/components/paragraph';
 import { NzLoginCard } from './login-card.interface';
@@ -22,7 +25,7 @@ import { CheckboxModule } from 'primeng/checkbox';
     NzParagraphComponent,
     NzHeadingComponent,
     NzParagraphComponent,
-    NzPasswordComponent,
+    NzStandardPasswordComponent,
     NzLinkComponent,
     CheckboxModule,
   ],
@@ -34,7 +37,7 @@ export class NzLoginCardComponent implements OnInit {
   public forgotPasswordLinkConfig!: NzLink;
   public headingConfig!: NzHeading;
   public emailConfig!: NzEmail;
-  public passwordConfig!: NzPassword;
+  public passwordConfig!: NzStandardPassword;
   public loginConfig!: NzStandardButton;
   public paragraphConfig!: NzParagraph;
   public gotoRegisterConfig!: NzLink;
