@@ -102,7 +102,7 @@ import { NzAuthService } from '@zak-lib/ui-library/auth';
             <i class="pi pi-inbox"></i>
             <span>Messages</span>
           </button>
-          <div class="profile-dropdown-container" #dropdown>
+          <div class="profile-dropdown-container">
             <button type="button" class="layout-topbar-action" (click)="toggleDropdown()">
               <i class="pi pi-user"></i>
               <span>Profile</span>
@@ -160,7 +160,6 @@ import { NzAuthService } from '@zak-lib/ui-library/auth';
 export class AppTopbar {
   items!: MenuItem[];
   dropdownVisible = false;
-  @ViewChild('dropdown') dropdown!: ElementRef;
   constructor(
     public layoutService: LayoutService,
     private router: Router,
@@ -174,24 +173,22 @@ export class AppTopbar {
   toggleDropdown() {
     this.dropdownVisible = !this.dropdownVisible;
   }
-  @HostListener('document:click', ['$event'])
-  onClick(event: Event) {
-    if (!this.dropdown.nativeElement.contains(event.target)) {
-      this.dropdownVisible = false;
-    }
-  }
+
   toggleDarkMode() {
     this.layoutService.layoutConfig.update((state) => ({ ...state, darkTheme: !state.darkTheme })); // spread operater => when you update only darkTheme, you don’t lose the other properties.
   } // !state.darkTheme => changes true to false, and false to true.
 
   async logout() {
+    this.toggleDropdown();
     await this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
   goToEditProfile() {
+    this.toggleDropdown();
     this.router.navigate(['/account/profile']);
   }
   goToChangePassword() {
+    this.toggleDropdown();
     this.router.navigate(['/account/change-password']);
   }
 }
