@@ -14,16 +14,23 @@ import {
 } from '@zak-lib/ui-library/composed/component-configuration';
 import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { NzFormFieldModule } from '@zak-lib/ui-library/elements/form-fields/form-field/form-field-module';
-import { COMPONENTS, NzUiType, NzUiTypeEnum } from '@zak-lib/ui-library/shared';
+import { COMPONENTS } from '@zak-lib/ui-library/shared';
 import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { NzComponentConfig, NzComponentTypeEnum, NzFormBuilder } from './form-builder.interface';
 import { ButtonModule } from 'primeng/button';
+import { NzTypography, NzTypographyComponent } from '@zak-lib/ui-library/elements/typography';
 
 @Component({
   selector: 'nz-form-builder',
-  imports: [NzFormFieldModule, DragulaModule, NzConfigurationComponent, ButtonModule], // ✅ Directly import DragulaModule
+  imports: [
+    NzFormFieldModule,
+    DragulaModule,
+    NzConfigurationComponent,
+    ButtonModule,
+    NzTypographyComponent,
+  ], // ✅ Directly import DragulaModule
   providers: [DragulaService], // ✅ Service provider
   templateUrl: './form-builder.html',
   styleUrl: './form-builder.scss',
@@ -33,6 +40,24 @@ export class NzFormBuilderComponent {
   @Input() public config!: NzFormBuilder;
   protected readonly title = signal('form-builder');
   public componentConfig!: NzComponentConfiguration | undefined;
+  public isDragging = false;
+  public leftHeading: NzTypography = {
+    id: 'form-builder-components-heading',
+    label: 'Components',
+    style: 'h3',
+  };
+
+  public middleHeading: NzTypography = {
+    id: 'form-builder-droppable-container-heading',
+    label: 'Droppable Area',
+    style: 'h3',
+  };
+
+  public customizeHeading: NzTypography = {
+    id: 'form-builder-customizable-container-heading',
+    label: 'Component Settings',
+    style: 'h3',
+  };
 
   public bagFieldsName!: string;
   public bagFormBuilderName!: string;
@@ -77,21 +102,22 @@ export class NzFormBuilderComponent {
     // create one bag only
     this.dragulaService.createGroup(this.bagFieldsName, {
       moves: (_el?: Element, _container?: Element, _handle?: Element) => {
-        // must click on drag handler
-        if (!!_handle?.classList.contains('main-field')) return true;
-
-        if (!_handle?.closest('.drag-handler')) return false;
-
-        // find the draggable item related to THIS container
-        const draggable = _handle?.closest('.component-item');
-        console.error(_container, _el, _handle, draggable);
-        // only allow dragging if this draggable is a direct child of the source container
-        return draggable !== null;
+        const res1 = !!_handle?.closest('drag-handle');
+        const res = !!_el?.classList.contains('main-field');
+        return res || res1;
       },
-      copy: (_el?: Element, source?: Element) =>
-        source?.classList.contains('form-field-palette') ?? false,
+      revertOnSpill: true,
+      copy: (_el?: Element, source?: Element) => {
+        return source?.classList.contains('form-field-palette') ?? false;
+      },
       copyItem: (item: any) => JSON.parse(JSON.stringify(item)),
       accepts: (el?: Element, target?: Element, _source?: Element) => {
+        return (
+          target?.classList.contains(this.mainDroppableAreaName) ||
+          target?.classList.contains('is-droppable') ||
+          false
+        );
+
         const draggedComponentType = el?.getAttribute('data-component-type');
         const res =
           (target?.classList.contains('is-droppable') &&
@@ -112,14 +138,37 @@ export class NzFormBuilderComponent {
     this.subs.add(
       this.dragulaService
         .dropModel(this.bagFieldsName)
-        .subscribe(({ target, _source, item }: any) => {
-          if (target.classList.contains(this.mainDroppableAreaName)) {
+        .subscribe(({ target, source, item }: any) => {
+          if (
+            target.classList.contains(this.mainDroppableAreaName) &&
+            source?.classList.contains('form-field-palette')
+          ) {
             this.droppedRows.push({ ...item, ...{ id: this._rowUUID() } });
             this.cd.detectChanges();
           } else {
             this.handleDrop(target, item);
           }
         }),
+    );
+
+    // DRAG START
+    this.subs.add(
+      this.dragulaService.drag(this.bagFieldsName).subscribe(() => {
+        this.isDragging = true;
+      }),
+    );
+
+    // DRAG END
+    this.subs.add(
+      this.dragulaService.drop(this.bagFieldsName).subscribe(() => {
+        this.isDragging = false;
+      }),
+    );
+
+    this.subs.add(
+      this.dragulaService.cancel(this.bagFieldsName).subscribe(() => {
+        this.isDragging = false;
+      }),
     );
   }
 
@@ -130,7 +179,7 @@ export class NzFormBuilderComponent {
 
     if (!targetContainer || !draggedItem) return;
 
-    if (draggedItem.isNew) {
+    if (draggedItem.id === 0) {
       this.cloneFromPalette(targetContainer, draggedItem);
     } else {
       this.moveBetweenContainers(targetContainer, draggedItem);
@@ -143,7 +192,6 @@ export class NzFormBuilderComponent {
     target.childComponents.push({
       ...item,
       id: this._rowUUID(),
-      isNew: false,
       childComponents: [],
     });
   }
@@ -297,7 +345,7 @@ export class NzFormBuilderComponent {
       // Clear selection if the selected field was in this row
       if (this.selectedField) {
         // A simple way to clear selection after deletion: if selectedField is no longer in model
-        this.selectField(this.selectedField); // Tries to re-select, which should fail if deleted
+        //this.selectField(this.selectedField); // Tries to re-select, which should fail if deleted
       }
       this.cd.detectChanges();
     }
@@ -360,9 +408,10 @@ export class NzFormBuilderComponent {
     return null;
   }
 
-  selectField(field: NzComponentConfig): void {
-    this.selectedField = field;
-    this.buildComponentConfiguration(field);
+  selectField(e: Event, component: NzComponentConfig): void {
+    e.stopPropagation();
+    this.selectedField = component;
+    this.buildComponentConfiguration(component);
   }
 
   private buildComponentConfiguration(field: NzComponentConfig): void {
@@ -420,5 +469,9 @@ export class NzFormBuilderComponent {
   submitForm(): void {
     const outputFormData = JSON.parse(JSON.stringify(this.droppedRows));
     this.save.emit(outputFormData);
+  }
+
+  get middleFlex(): number {
+    return this.selectedField ? 3 : 2;
   }
 }
