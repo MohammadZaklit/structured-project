@@ -80,21 +80,11 @@ export class NzChangePasswordComponent {
       style: 'h1',
     };
 
-    this.oldPasswordConfig = {
-      name: 'Old password',
-      label: 'Old Password',
-      settings: {
-        placeholder: 'Old Password',
-      },
-      control: this.config.form.get('oldPassword') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
-      form: this.config.form,
-    };
-
     this.newPasswordConfig = {
       name: 'New password',
       label: 'New Password',
       settings: {
-        placeholder: 'New Password',
+        placeholder: 'Enter new password',
       },
       control: this.config.form.get('newPassword') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
       form: this.config.form,
@@ -103,7 +93,7 @@ export class NzChangePasswordComponent {
       name: 'Confirm password',
       label: 'Confirm Password',
       settings: {
-        placeholder: 'Confirm Password',
+        placeholder: 'Enter confirm password',
       },
       control: this.config.form.get('confirmPassword') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
       form: this.config.form,
@@ -181,6 +171,9 @@ export class NzChangePasswordComponent {
     this.oldPasswordConfig = {
       name: 'Old password',
       label: 'Old Password',
+      settings: {
+        placeholder: 'Enter old password',
+      },
       control: this.config.form.get('oldPassword') as NzFormControl, //It takes the password form control from your form and tells Angular: “Use this form control for this input field.”
       form: this.config.form,
     };
