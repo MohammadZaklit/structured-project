@@ -1,108 +1,119 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-3 bg-light p-3 border-right">
-      <h4>Form Components</h4>
-      <div class="form-field-palette" [dragula]="bagFieldsName" [dragulaModel]="availableFields">
-        @for (field of availableFields; track field.id) {
-          <div
-            class="card mb-2 p-2 draggable-field is-draggable main-field"
-            [attr.data-component-type]="field.type"
-          >
-            {{ field.label }}
-          </div>
-        }
-      </div>
-    </div>
-
-    <div class="col-md-6 p-3 border-right">
-      <h4>Form Builder</h4>
-      <button class="btn btn-success mb-3 ml-2" (click)="submitForm()">Submit Form</button>
-
-      <div
-        class="form-preview-area is-droppable {{ mainDroppableAreaName }}"
-        [dragula]="bagFieldsName"
-        [dragulaModel]="droppedRows"
-      >
-        @if (droppedRows.length === 0) {
-          <div class="alert alert-info">Drag a **Row** here to begin!</div>
-        }
-        <ng-template #renderRowTemplate let-components="components">
-          @for (component of components; track component.id; let rIndex = $index) {
-            <div
-              class="mb-3 p-2 border rounded bg-white is-draggable component-item"
-              [attr.data-component-id]="component.id"
-              [attr.data-component-type]="component.type"
-              [attr.data-component-index]="rIndex"
-            >
-              <div>
-                {{ component.label }}
-                <i class="pi pi-arrows-alt text-2xl text-muted-color drag-handler"></i>
-              </div>
-
-              @if (component.childComponents.length > 0) {
-                <ng-container
-                  *ngTemplateOutlet="
-                    renderRowTemplate;
-                    context: {
-                      components: component.childComponents,
-                    }
-                  "
-                ></ng-container>
-              }
-
-              @if (
-                component.type === componentTypeEnum.Row ||
-                component.type === componentTypeEnum.Column
-              ) {
-                <div
-                  class="is-droppable"
-                  [attr.data-component-id]="component.id"
-                  [attr.data-component-type]="component.type"
-                  [attr.data-component-index]="rIndex"
-                  [dragula]="bagFieldsName"
-                  [dragulaModel]="component.childComponents"
-                >
-                  @if (
-                    component.type === componentTypeEnum.Row &&
-                    component.childComponents.length === 0
-                  ) {
-                    <div class="alert alert-warning text-center">
-                      <p class="mb-0">Drag a **Column** from the left side components.</p>
-                    </div>
-                  } @else if (
-                    component.type === componentTypeEnum.Column &&
-                    component.childComponents.length === 0
-                  ) {
-                    <div class="alert alert-warning text-center">
-                      <p class="mb-0">Drag a **Field** or **Row** from the left side components.</p>
-                    </div>
-                  }
-                </div>
-              }
-            </div>
-          }
-        </ng-template>
-        <ng-container
-          *ngTemplateOutlet="renderRowTemplate; context: { components: droppedRows }"
-        ></ng-container>
-      </div>
-    </div>
-
-    <div class="col-md-3 bg-light p-3 border-left">
-      <h4>Field Settings</h4>
-      @if (componentConfig) {
-        <div class="customization-pane p-3 bg-white border rounded">
-          <!-- <h5>Edit: {{ selectedField!.label }}</h5> -->
-
-          <nz-component-configuration
-            (cancel)="closeSettings()"
-            (save)="saveField($event)"
-            [config]="componentConfig"
-          ></nz-component-configuration>
+<div class="h-screen flex bg-gray-100 text-sm gap-4">
+  <aside class="w-72 bg-white border-r border-gray-200 p-4 overflow-y-auto">
+    <nz-typography [config]="leftHeading"></nz-typography>
+    <div
+      class="form-field-palette space-y-2"
+      [dragula]="bagFieldsName"
+      [dragulaModel]="availableFields"
+    >
+      @for (field of availableFields; track field) {
+        <div
+          class="flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-move hover:bg-gray-100 hover:shadow-sm transition component-item draggable-field is-draggable main-field"
+          [attr.data-component-type]="field.type"
+        >
+          <i class="pi pi-bars mr-2 text-gray-400"></i>
+          <span class="font-medium">{{ field.label }}</span>
         </div>
-      } @else {
-        <div class="alert alert-info">Select a field from the middle container to customize.</div>
       }
     </div>
-  </div>
+  </aside>
+
+  <main class="flex-auto overflow-auto">
+    <nz-typography [config]="middleHeading"></nz-typography>
+    <!-- <button class="btn btn-success mb-3 ml-2" (click)="submitForm()">Submit Form</button> -->
+    <div
+      class="max-w-3xl min-h-[500px] bg-white border-2 border-dashed border-gray-300 rounded-xl transition is-droppable {{
+        mainDroppableAreaName
+      }}"
+      [class.border-blue-400]="isDragging"
+      [class.bg-blue-50]="isDragging"
+      [dragula]="bagFieldsName"
+      [dragulaModel]="droppedRows"
+    >
+      @if (droppedRows.length === 0) {
+        <div class="text-gray-400 text-center">Drag a **Row** here to begin!</div>
+      }
+
+      <ng-template #renderRowTemplate let-components="components">
+        @for (component of components; track component.id; let rIndex = $index) {
+          <div
+            class="p-2 m-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition is-draggable component-item"
+            id="{{ component.type }}-{{ component.id }}"
+            [attr.data-component-id]="component.id"
+            [attr.data-component-type]="component.type"
+            [attr.data-component-index]="rIndex"
+          >
+            <div class="drag-handle cursor-move">⇅</div>
+            <div class="flex items-center justify-between px-3 py-2">
+              <span class="font-medium">{{ component.label }}</span>
+              <!-- <i
+                class="pi pi-ellipsis-v text-gray-400 drag-handle cursor-move"
+                
+              ></i> -->
+            </div>
+            @if (component.childComponents.length > 0) {
+              <ng-container
+                *ngTemplateOutlet="
+                  renderRowTemplate;
+                  context: {
+                    components: component.childComponents,
+                  }
+                "
+              ></ng-container>
+            }
+            @if (
+              component.type === componentTypeEnum.Row ||
+              component.type === componentTypeEnum.Column
+            ) {
+              <div
+                class="is-droppable min-h-10 flex flex-col"
+                [attr.data-component-id]="component.id"
+                [attr.data-component-type]="component.type"
+                [attr.data-component-index]="rIndex"
+                [dragula]="bagFieldsName"
+                [dragulaModel]="component.childComponents"
+                [ngClass]="{
+                  'align-center justify-center': component.childComponents.length === 0,
+                }"
+              >
+                <!-- @if (
+                  component.type === componentTypeEnum.Row && component.childComponents.length === 0
+                ) {
+                  <span class="text-gray-400">
+                    Drag a **Column** from the left side components.
+                  </span>
+                } @else if (
+                  component.type === componentTypeEnum.Column &&
+                  component.childComponents.length === 0
+                ) {
+                  <span class="text-gray-400">
+                    Drag a **Field** or **Row** from the left side components.
+                  </span>
+                } -->
+              </div>
+            }
+          </div>
+        }
+      </ng-template>
+      <ng-container
+        *ngTemplateOutlet="renderRowTemplate; context: { components: droppedRows }"
+      ></ng-container>
+    </div>
+  </main>
+
+  <aside
+    class="right-sidebar w-80 bg-white border-l border-gray-200 p-4 overflow-y-auto"
+    [hidden]="!componentConfig"
+  >
+    <nz-typography [config]="customizeHeading"></nz-typography>
+    @if (componentConfig) {
+      <div class="text-gray-400 text-center mt-20">
+        <nz-component-configuration
+          (cancel)="closeSettings()"
+          (save)="saveField($event)"
+          [config]="componentConfig"
+        ></nz-component-configuration>
+      </div>
+    }
+  </aside>
 </div>

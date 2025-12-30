@@ -33,6 +33,7 @@ export const routes: Routes = [
             (m) => m.ACCOUNT_PAGE_ROUTES,
           ),
       },
+      { path: '**', redirectTo: '/dashboard' },
     ],
   },
   { path: 'landing', component: Landing }, // for landing page

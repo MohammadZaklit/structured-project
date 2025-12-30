@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 const styles = {
   h1: 'text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4 ',
   h2: '',
-  h3: '',
+  h3: 'text-xs font-semibold text-gray-500 uppercase mb-3',
   h4: '',
   h5: '',
   h6: '',
