@@ -103,14 +103,14 @@
       pButton
       label="Submit"
       icon="pi pi-check"
-      (click)="onCreate($event)"
+      (click)="save($event)"
       *ngIf="activeStep === steps.length - 1 && !isEdit"
     ></button>
     <button
       pButton
       label="Update"
       icon="pi pi-check"
-      (click)="onUpdate($event)"
+      (click)="save($event)"
       *ngIf="activeStep === steps.length - 1 && !!isEdit"
     ></button>
     @if (stepperConfig.backBtn && stepperConfig.backBtn.position === 'inline') {
@@ -124,4 +124,3 @@
     }
   </div>
 </ng-template>
-<nz-confirm-dialog [config]="SubmitConfirmDialogConfig"></nz-confirm-dialog>

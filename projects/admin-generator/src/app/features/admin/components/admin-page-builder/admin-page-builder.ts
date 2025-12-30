@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { NzStepperConfig } from '@zak-lib/ui-library/layouts/form-wizard';
 import {
+  FormBuilderComponent,
   NzComponentConfig,
   NzFormBuilder,
   NzFormBuilderComponent,
@@ -16,10 +17,11 @@ import {
 } from '@zak-lib/ui-library/shared';
 import { COMPONENTS } from '@zak-lib/ui-library/shared';
 import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
-import { firstValueFrom } from 'rxjs';
-import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field/field-component-type';
+import { firstValueFrom, take } from 'rxjs';
 import { NzComponentType } from '@zak-lib/ui-library/composed/component-configuration';
-
+interface NzModuleFieldPayload extends NzModuleFieldConfig {
+  children: NzModuleFieldPayload[];
+}
 @Component({
   selector: 'app-admin-page-builder',
   imports: [CommonModule, NzFormBuilderComponent],
@@ -51,18 +53,28 @@ export class AdminPageBuilder implements OnInit {
   ngOnInit(): void {
     this.module = this.moduleSettings.module() as NzModuleConfig;
 
-    this.moduleSettings.fields().forEach((field: NzModuleFieldConfig) => {
-      this.dbFields.push(this.mapFieldConfig(field));
-    });
+    const mapDbFields = (fields: NzModuleFieldConfig[]): NzComponentConfig[] => {
+      const mappedFields: NzComponentConfig[] = [];
 
+      fields.forEach((field: NzModuleFieldConfig) => {
+        const newMappedField = this.mapFieldConfig(field);
+        const filteredFields = this.moduleSettings
+          .fields()
+          .filter((fld) => fld.parentFieldId === field.id);
+        if (filteredFields.length > 0) {
+          newMappedField.childComponents = mapDbFields(filteredFields);
+        }
+        mappedFields.push(newMappedField);
+      });
+      return mappedFields;
+    };
+
+    const topLevelFields = this.moduleSettings.fields().filter((fld) => !fld.parentFieldId);
+    this.dbFields = mapDbFields(topLevelFields);
     this.formBuilderConfig = {
       module: this.module,
       components: this.dbFields,
     };
-
-    if (this.id) {
-      this.getData(this.id);
-    }
   }
 
   private mapFieldConfig(field: NzModuleFieldConfig): NzComponentConfig {
@@ -70,12 +82,11 @@ export class AdminPageBuilder implements OnInit {
       COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
       'InputText';
 
-    const newControl = new NzFormControl(null);
-    this.form.addControl(field.name, newControl);
-
     return {
       id: field.id,
       isNew: false,
+      isDeleted: false,
+      isFormField: field.isFormField,
       label: field.label,
       childComponents: [],
       configuration: {
@@ -88,11 +99,36 @@ export class AdminPageBuilder implements OnInit {
     };
   }
 
-  private async getData(id: number): Promise<void> {
-    this.data = await firstValueFrom(this.httpService.getById(this.module.name, id));
+  public saveData(data: FormBuilderComponent[]): void {
+    const payload = this.mapData(data);
+    this.httpService
+      .post('builder/save-fields', payload)
+      .pipe(take(1))
+      .subscribe((response) => {
+        console.warn('response: ', response);
+      });
   }
 
-  public saveData(data: any): void {
-    console.warn('data :', data);
+  private mapData(data: FormBuilderComponent[], parentId?: number): NzModuleFieldPayload[] {
+    const newFields: NzModuleFieldPayload[] = [];
+    data.forEach((row, index) => {
+      const component = COMPONENTS.find((component) => component.componentName === row.type);
+      newFields.push({
+        id: row.isDeleted ? -1 : row.id || null,
+        sortOrder: index,
+        moduleId: this.module.id,
+        componentId: component?.id || 10,
+        referenceModuleId: undefined,
+        parentFieldId: parentId,
+        isDefault: false,
+        isFormField: row.isFormField,
+        name: row.configuration['name'] || component?.componentName || '',
+        label: row.configuration['label'] || component?.label || '',
+        hint: row.configuration['hint'],
+        configuration: row.configuration['settings'],
+        children: this.mapData(row.childComponents, row.id || undefined),
+      });
+    });
+    return newFields;
   }
 }

@@ -5,13 +5,14 @@ export interface NzModuleConfig {
   url?: string;
 }
 export interface NzModuleFieldConfig extends NzFormFieldInfo {
-  id: number;
+  id: number | null;
   sortOrder: number;
   moduleId: number;
   componentId: number;
   referenceModuleId?: number;
   parentFieldId?: number;
-  isDefault: number;
+  isDefault: boolean;
+  isFormField: boolean;
   configuration: NzFormFieldSettings;
 }
 

@@ -15,7 +15,7 @@ import {
 } from '@zak-lib/ui-library/composed/component-configuration';
 import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { NzFormFieldModule } from '@zak-lib/ui-library/elements/form-fields/form-field/form-field-module';
-import { COMPONENTS } from '@zak-lib/ui-library/shared';
+import { COMPONENTS, DIALOG_MESSAGES } from '@zak-lib/ui-library/shared';
 import {
   DragDropModule,
   CdkDragDrop,
@@ -25,16 +25,25 @@ import {
 } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import { FormBuilderComponent, NzComponentTypeEnum, NzFormBuilder } from './form-builder.interface';
-import { ButtonModule } from 'primeng/button';
+import {
+  FormBuilderComponent,
+  NzComponentConfig,
+  NzComponentTypeEnum,
+  NzFormBuilder,
+} from './form-builder.interface';
 import { NzTypography, NzTypographyComponent } from '@zak-lib/ui-library/elements/typography';
+import {
+  NzStandardButton,
+  NzStandardButtonComponent,
+} from '@zak-lib/ui-library/components/standardbutton';
+import { NzConfirmDialogService } from '@zak-lib/ui-library/elements/ui/confirm-dialog';
 
 @Component({
   selector: 'nz-form-builder',
   imports: [
     NzFormFieldModule,
     NzConfigurationComponent,
-    ButtonModule,
+    NzStandardButtonComponent,
     NzTypographyComponent,
     DragDropModule,
   ],
@@ -47,6 +56,7 @@ export class NzFormBuilderComponent {
   protected readonly title = signal('form-builder');
   public componentConfig!: NzComponentConfiguration | undefined;
   public isDragging = false;
+  public saveBtn!: NzStandardButton;
   public leftHeading: NzTypography = {
     id: 'form-builder-components-heading',
     label: 'Components',
@@ -77,36 +87,67 @@ export class NzFormBuilderComponent {
 
   droppedRows: FormBuilderComponent[] = [];
   selectedField: FormBuilderComponent | undefined = undefined;
-  private cd = inject(ChangeDetectorRef);
 
-  @Output() save = new EventEmitter<Record<string, any>>();
+  @Output() save = new EventEmitter<FormBuilderComponent[]>();
   @ViewChild('toolbox', { static: true }) toolbox!: CdkDropList;
 
   toolBoxContainerId = 'toolbox-components';
   canvasContainerId = 'canvas-container';
   connectedList = [this.canvasContainerId, this.toolBoxContainerId];
+
+  private confirmDialogService = inject(NzConfirmDialogService);
   constructor() {}
 
   ngOnInit(): void {
+    this.saveBtn = {
+      onclick: (event: Event) => {
+        this.submitForm(event);
+      },
+      label: 'Submit',
+      type: 'button',
+    };
     const instanceId = uuidv4();
     this.bagFieldsName = `BAG_FIELDS_${instanceId}`;
     this.bagFormBuilderName = `BAG_FORM_BUILDER_${instanceId}`;
 
     COMPONENTS.forEach((component) => {
       this.availableFields.push({
-        id: 0,
+        id: null,
         rowid: '',
         type: component.componentName as NzComponentType,
         label: component.label,
         isNew: true,
+        isDeleted: false,
+        isFormField: this.isComponent(component.componentName as NzComponentType),
         configuration: {},
         childComponents: [],
       });
     });
 
     if (this.config.components) {
-      // this.droppedRows = [...this.config.components];
+      this.droppedRows = [...this.mapComponents(this.config.components)];
     }
+  }
+
+  private mapComponents(components: NzComponentConfig[]): FormBuilderComponent[] {
+    if (components.length === 0) {
+      return [];
+    }
+
+    const newComps: FormBuilderComponent[] = [];
+    components.forEach((comp) => {
+      const newComp = {
+        ...comp,
+        ...{
+          rowid: this._rowUUID(),
+          childComponents: this.mapComponents(comp.childComponents),
+        },
+      };
+      this.addComponentTOconnectedList(newComp);
+      newComps.push(newComp);
+    });
+
+    return newComps;
   }
 
   dropItem(event: CdkDragDrop<FormBuilderComponent[]>) {
@@ -122,13 +163,7 @@ export class NzFormBuilderComponent {
       event.container.data.splice(event.currentIndex, 0, addedComponent);
 
       // Example: push its droplist id into connectedList
-      if (
-        addedComponent.rowid &&
-        (addedComponent.type === this.componentTypeEnum.Row ||
-          addedComponent.type === this.componentTypeEnum.Column)
-      ) {
-        this.connectedList.unshift(addedComponent.rowid);
-      }
+      this.addComponentTOconnectedList(addedComponent);
       return;
     }
 
@@ -145,6 +180,16 @@ export class NzFormBuilderComponent {
       event.previousIndex,
       event.currentIndex,
     );
+  }
+
+  private addComponentTOconnectedList(addedComponent: FormBuilderComponent): void {
+    if (
+      addedComponent.rowid &&
+      (addedComponent.type === this.componentTypeEnum.Row ||
+        addedComponent.type === this.componentTypeEnum.Column)
+    ) {
+      this.connectedList.unshift(addedComponent.rowid);
+    }
   }
 
   private canBeDropped(event: CdkDragDrop<FormBuilderComponent[]>): boolean {
@@ -216,7 +261,11 @@ export class NzFormBuilderComponent {
   }
 
   removeComponent(component: FormBuilderComponent): void {
-    alert(component.rowid);
+    if (component.isNew) {
+      //TODO: remove from list + remove isNew = true children and set isNew = false to isDeleted = true
+    } else {
+      component.isDeleted = true;
+    }
   }
 
   private buildComponentConfiguration(field: FormBuilderComponent): void {
@@ -240,9 +289,17 @@ export class NzFormBuilderComponent {
     this.destroyComponentConfiguration();
   }
 
-  submitForm(): void {
-    const outputFormData = JSON.parse(JSON.stringify(this.droppedRows));
-    this.save.emit(outputFormData);
+  submitForm(event: Event): void {
+    this.confirmDialogService.open(event, {
+      title: DIALOG_MESSAGES.CONFIRM.TITLE,
+      message: DIALOG_MESSAGES.CONFIRM.MESSAGE,
+      accept: () => {
+        this.save.emit(this.droppedRows);
+      },
+      cancel: () => {
+        return;
+      },
+    });
   }
 
   get middleFlex(): number {

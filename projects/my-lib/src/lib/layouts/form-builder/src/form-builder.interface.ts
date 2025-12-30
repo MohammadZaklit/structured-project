@@ -7,9 +7,11 @@ export interface NzFormBuilder {
   components: NzComponentConfig[];
 }
 export interface NzComponentConfig extends NzComponentConfiguration {
-  id: number;
+  id: number | null;
   label: string;
   isNew: boolean;
+  isDeleted: boolean;
+  isFormField: boolean;
   childComponents: NzComponentConfig[];
 }
 

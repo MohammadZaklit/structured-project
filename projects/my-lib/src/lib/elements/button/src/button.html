@@ -3,7 +3,7 @@
   [styleClass]="config.isFullWidth ? 'w-full' : ''"
   [type]="config.type || 'button'"
   [disabled]="config.disabled?.() || false"
-  (click)="config.onclick()"
+  (click)="config.onclick($event)"
 >
   {{ config.label || 'Click' }}
 </p-button>
