@@ -109,7 +109,7 @@ import { NzAuthService } from '@zak-lib/ui-library/auth';
             </button>
 
             <!-- Dropdown Menu -->
-            <div class="profile-dropdown-menu" *ngIf="dropdownVisible">
+            <div class="profile-dropdown-menu " *ngIf="dropdownVisible">
               @if (isLoggedIn) {
                 <button (click)="goToEditProfile()">Edit Profile</button>
                 <button (click)="goToChangePassword()">Change Password</button>
@@ -146,9 +146,13 @@ import { NzAuthService } from '@zak-lib/ui-library/auth';
       padding: 10px;
       text-decoration: none;
       color: #333;
+      text-align: start;
+      width: 100%;
+      cursor: pointer;
     }
 
-    .profile-dropdown-menu a:hover {
+    .profile-dropdown-menu a,
+    button:hover {
       background-color: #f1f1f1;
     }
 
