@@ -164,7 +164,6 @@ import { NzAuthService } from '@zak-lib/ui-library/auth';
 export class AppTopbar {
   items!: MenuItem[];
   dropdownVisible = false;
-
   constructor(
     public layoutService: LayoutService,
     private router: Router,
@@ -178,18 +177,22 @@ export class AppTopbar {
   toggleDropdown() {
     this.dropdownVisible = !this.dropdownVisible;
   }
+
   toggleDarkMode() {
     this.layoutService.layoutConfig.update((state) => ({ ...state, darkTheme: !state.darkTheme })); // spread operater => when you update only darkTheme, you don’t lose the other properties.
   } // !state.darkTheme => changes true to false, and false to true.
 
   async logout() {
+    this.toggleDropdown();
     await this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
   goToEditProfile() {
+    this.toggleDropdown();
     this.router.navigate(['/account/profile']);
   }
   goToChangePassword() {
+    this.toggleDropdown();
     this.router.navigate(['/account/change-password']);
   }
 }
