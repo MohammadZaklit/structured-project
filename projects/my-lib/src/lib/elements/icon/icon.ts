@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 
-export interface NzIconProps {
+interface NzIconProps {
   placeholder?: string;
   icon?: string; // PrimeIcons class e.g. 'pi pi-user'
   iconPosition?: 'left' | 'right';

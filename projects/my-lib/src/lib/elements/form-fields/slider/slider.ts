@@ -3,7 +3,7 @@ import { Slider } from 'primeng/slider';
 import { NzFormField, NzFormFieldComponent } from '../form-field/form-field';
 import { NzFormFieldModule } from '../form-field/form-field-module';
 
-export interface NzSliderProps {
+interface NzSliderProps {
   min?: number;
   max?: number;
   step?: number;
