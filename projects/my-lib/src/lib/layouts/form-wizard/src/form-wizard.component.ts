@@ -12,11 +12,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { StepperModule } from 'primeng/stepper';
 import { NzStepperConfig, NzWizardFormFieldConfig } from './form-wizard.interface';
-import { NzGenericRecord, NzHttpService, NzModuleConfig } from '@zak-lib/ui-library/shared';
 import {
-  NzConfirmDialogComponent,
-  NzConfirmDialog,
-} from '@zak-lib/ui-library/elements/ui/confirm-dialog';
+  DIALOG_MESSAGES,
+  NzGenericRecord,
+  NzHttpService,
+  NzModuleConfig,
+} from '@zak-lib/ui-library/shared';
+import { NzConfirmDialogService } from '@zak-lib/ui-library/elements/ui/confirm-dialog';
 import { FluidModule } from 'primeng/fluid';
 import { NzFormFieldRendererComponent } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { take } from 'rxjs';
@@ -28,7 +30,6 @@ import { take } from 'rxjs';
     CommonModule,
     StepperModule,
     ReactiveFormsModule,
-    NzConfirmDialogComponent,
     FluidModule,
     NzFormFieldRendererComponent,
   ],
@@ -42,14 +43,14 @@ export class NzFormWizardComponent implements OnInit, OnChanges {
   @Input() public data?: NzGenericRecord;
   @Output() successSubmit = new EventEmitter<any>();
   private httpService = inject(NzHttpService);
+  private confirmDialogService = inject(NzConfirmDialogService);
+  private fb = inject(FormBuilder);
   form!: FormGroup;
   steps: any[] = [];
   activeStep = 0;
   public isEdit = false;
 
-  public SubmitConfirmDialogConfig!: NzConfirmDialog;
-
-  constructor(private fb: FormBuilder) {}
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('data' in changes && changes['data']) {
@@ -66,11 +67,6 @@ export class NzFormWizardComponent implements OnInit, OnChanges {
     this.steps = this.stepperConfig?.steps || [{ label: 'Form' }];
     this.buildForm();
     //this.handleDynamicLogic();
-
-    this.SubmitConfirmDialogConfig = {
-      title: 'Submit Confirmation',
-      message: 'Are you sure you want to submit your information?',
-    };
   }
 
   private fillForm(data: NzGenericRecord): void {
@@ -124,40 +120,25 @@ export class NzFormWizardComponent implements OnInit, OnChanges {
     return this.fields;
   }
 
-  onCreate(event: Event): void {
+  save(event: Event): void {
     if (this.form.valid) {
-      this.SubmitConfirmDialogConfig.accept = () => {
-        this.httpService
-          .post(this.module.name, this.form.getRawValue())
-          .pipe(take(1))
-          .subscribe((response) => {
-            this.successSubmit.emit(this.form.value);
-          });
-      };
-      this.SubmitConfirmDialogConfig.cancel = () => {
-        return;
-      };
-      this.SubmitConfirmDialogConfig.confirm?.(event);
-    }
-  }
-
-  onUpdate(event: Event): void {
-    if (this.form.valid) {
-      this.SubmitConfirmDialogConfig.accept = () => {
-        if (this.data && this.data.id) {
-          this.httpService
-            .put(this.module.name, this.data.id, this.form.getRawValue())
-            .pipe(take(1))
-            .subscribe((_response) => {
-              this.successSubmit.emit(this.form.value);
-            });
-        }
-      };
-      this.SubmitConfirmDialogConfig.cancel = () => {
-        return;
-      };
-
-      this.SubmitConfirmDialogConfig.confirm?.(event);
+      this.confirmDialogService.open(event, {
+        title: DIALOG_MESSAGES.CONFIRM.TITLE,
+        message: DIALOG_MESSAGES.CONFIRM.MESSAGE,
+        accept: () => {
+          if (this.data && this.data.id) {
+            this.httpService
+              .put(this.module.name, this.data.id, this.form.getRawValue())
+              .pipe(take(1))
+              .subscribe((_response) => {
+                this.successSubmit.emit(this.form.value);
+              });
+          }
+        },
+        cancel: () => {
+          return;
+        },
+      });
     }
   }
 }

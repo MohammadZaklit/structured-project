@@ -6,6 +6,7 @@ import {
   Input,
   Output,
   signal,
+  ViewChild,
 } from '@angular/core';
 import {
   NzConfigurationComponent,
@@ -14,24 +15,38 @@ import {
 } from '@zak-lib/ui-library/composed/component-configuration';
 import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { NzFormFieldModule } from '@zak-lib/ui-library/elements/form-fields/form-field/form-field-module';
-import { COMPONENTS } from '@zak-lib/ui-library/shared';
-import { DragulaModule, DragulaService } from 'ng2-dragula';
+import { COMPONENTS, DIALOG_MESSAGES } from '@zak-lib/ui-library/shared';
+import {
+  DragDropModule,
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+  CdkDropList,
+} from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import { NzComponentConfig, NzComponentTypeEnum, NzFormBuilder } from './form-builder.interface';
-import { ButtonModule } from 'primeng/button';
+import {
+  FormBuilderComponent,
+  NzComponentConfig,
+  NzComponentTypeEnum,
+  NzFormBuilder,
+} from './form-builder.interface';
 import { NzTypography, NzTypographyComponent } from '@zak-lib/ui-library/elements/typography';
+import {
+  NzStandardButton,
+  NzStandardButtonComponent,
+} from '@zak-lib/ui-library/components/standardbutton';
+import { NzConfirmDialogService } from '@zak-lib/ui-library/elements/ui/confirm-dialog';
 
 @Component({
   selector: 'nz-form-builder',
   imports: [
     NzFormFieldModule,
-    DragulaModule,
     NzConfigurationComponent,
-    ButtonModule,
+    NzStandardButtonComponent,
     NzTypographyComponent,
-  ], // ✅ Directly import DragulaModule
-  providers: [DragulaService], // ✅ Service provider
+    DragDropModule,
+  ],
   templateUrl: './form-builder.html',
   styleUrl: './form-builder.scss',
   standalone: true,
@@ -41,6 +56,7 @@ export class NzFormBuilderComponent {
   protected readonly title = signal('form-builder');
   public componentConfig!: NzComponentConfiguration | undefined;
   public isDragging = false;
+  public saveBtn!: NzStandardButton;
   public leftHeading: NzTypography = {
     id: 'form-builder-components-heading',
     label: 'Components',
@@ -67,354 +83,192 @@ export class NzFormBuilderComponent {
 
   componentTypeEnum = NzComponentTypeEnum;
 
-  availableFields: NzComponentConfig[] = [];
+  availableFields: FormBuilderComponent[] = [];
 
-  droppedRows: NzComponentConfig[] = [];
-  selectedField: NzComponentConfig | undefined = undefined;
+  droppedRows: FormBuilderComponent[] = [];
+  selectedField: FormBuilderComponent | undefined = undefined;
 
-  private dragulaService = inject(DragulaService);
-  private cd = inject(ChangeDetectorRef);
+  @Output() save = new EventEmitter<FormBuilderComponent[]>();
+  @ViewChild('toolbox', { static: true }) toolbox!: CdkDropList;
 
-  @Output() save = new EventEmitter<Record<string, any>>();
+  toolBoxContainerId = 'toolbox-components';
+  canvasContainerId = 'canvas-container';
+  connectedList = [this.canvasContainerId, this.toolBoxContainerId];
 
+  private confirmDialogService = inject(NzConfirmDialogService);
   constructor() {}
 
   ngOnInit(): void {
+    this.saveBtn = {
+      onclick: (event: Event) => {
+        this.submitForm(event);
+      },
+      label: 'Submit',
+      type: 'button',
+    };
     const instanceId = uuidv4();
     this.bagFieldsName = `BAG_FIELDS_${instanceId}`;
     this.bagFormBuilderName = `BAG_FORM_BUILDER_${instanceId}`;
 
     COMPONENTS.forEach((component) => {
       this.availableFields.push({
-        id: 0,
+        id: null,
+        rowid: '',
         type: component.componentName as NzComponentType,
         label: component.label,
         isNew: true,
+        isDeleted: false,
+        isFormField: this.isComponent(component.componentName as NzComponentType),
         configuration: {},
         childComponents: [],
       });
     });
 
     if (this.config.components) {
-      // this.droppedRows = [...this.config.components];
+      this.droppedRows = [...this.mapComponents(this.config.components)];
+    }
+  }
+
+  private mapComponents(components: NzComponentConfig[]): FormBuilderComponent[] {
+    if (components.length === 0) {
+      return [];
     }
 
-    // create one bag only
-    this.dragulaService.createGroup(this.bagFieldsName, {
-      moves: (_el?: Element, _container?: Element, _handle?: Element) => {
-        const res1 = !!_handle?.closest('drag-handle');
-        const res = !!_el?.classList.contains('main-field');
-        return res || res1;
-      },
-      revertOnSpill: true,
-      copy: (_el?: Element, source?: Element) => {
-        return source?.classList.contains('form-field-palette') ?? false;
-      },
-      copyItem: (item: any) => JSON.parse(JSON.stringify(item)),
-      accepts: (el?: Element, target?: Element, _source?: Element) => {
-        return (
-          target?.classList.contains(this.mainDroppableAreaName) ||
-          target?.classList.contains('is-droppable') ||
-          false
-        );
-
-        const draggedComponentType = el?.getAttribute('data-component-type');
-        const res =
-          (target?.classList.contains('is-droppable') &&
-            ((draggedComponentType === this.componentTypeEnum.Row &&
-              (target?.classList.contains(this.mainDroppableAreaName) ||
-                target?.getAttribute('data-component-type') === this.componentTypeEnum.Column)) ||
-              (draggedComponentType === this.componentTypeEnum.Column &&
-                target?.getAttribute('data-component-type') === this.componentTypeEnum.Row))) ||
-          (draggedComponentType !== this.componentTypeEnum.Row &&
-            draggedComponentType !== this.componentTypeEnum.Column &&
-            target?.getAttribute('data-component-type') === this.componentTypeEnum.Column) ||
-          false;
-        return res;
-      },
+    const newComps: FormBuilderComponent[] = [];
+    components.forEach((comp) => {
+      const newComp = {
+        ...comp,
+        ...{
+          rowid: this._rowUUID(),
+          childComponents: this.mapComponents(comp.childComponents),
+        },
+      };
+      this.addComponentTOconnectedList(newComp);
+      newComps.push(newComp);
     });
 
-    // dropModel for the same bag
-    this.subs.add(
-      this.dragulaService
-        .dropModel(this.bagFieldsName)
-        .subscribe(({ target, source, item }: any) => {
-          if (
-            target.classList.contains(this.mainDroppableAreaName) &&
-            source?.classList.contains('form-field-palette')
-          ) {
-            this.droppedRows.push({ ...item, ...{ id: this._rowUUID() } });
-            this.cd.detectChanges();
-          } else {
-            this.handleDrop(target, item);
-          }
-        }),
-    );
-
-    // DRAG START
-    this.subs.add(
-      this.dragulaService.drag(this.bagFieldsName).subscribe(() => {
-        this.isDragging = true;
-      }),
-    );
-
-    // DRAG END
-    this.subs.add(
-      this.dragulaService.drop(this.bagFieldsName).subscribe(() => {
-        this.isDragging = false;
-      }),
-    );
-
-    this.subs.add(
-      this.dragulaService.cancel(this.bagFieldsName).subscribe(() => {
-        this.isDragging = false;
-      }),
-    );
+    return newComps;
   }
 
-  private handleDrop(target: HTMLElement, draggedItem: NzComponentConfig) {
-    const targetComponentId = Number(target.getAttribute('data-component-id'));
+  dropItem(event: CdkDragDrop<FormBuilderComponent[]>) {
+    const dragged = event.item.data;
 
-    const targetContainer = this.findComponentById(this.droppedRows, targetComponentId);
-
-    if (!targetContainer || !draggedItem) return;
-
-    if (draggedItem.id === 0) {
-      this.cloneFromPalette(targetContainer, draggedItem);
-    } else {
-      this.moveBetweenContainers(targetContainer, draggedItem);
+    if (!this.canBeDropped(event)) {
+      return;
     }
 
-    this.cd.detectChanges();
+    // ✅ FROM TOOLBOX → CLONE
+    if (event.previousContainer.id === this.toolbox.id) {
+      const addedComponent = this.cloneComponent(dragged);
+      event.container.data.splice(event.currentIndex, 0, addedComponent);
+
+      // Example: push its droplist id into connectedList
+      this.addComponentTOconnectedList(addedComponent);
+      return;
+    }
+
+    // SAME CONTAINER → SORT
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      return;
+    }
+
+    // DIFFERENT CONTAINER → MOVE
+    transferArrayItem(
+      event.previousContainer.data,
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex,
+    );
   }
 
-  private cloneFromPalette(target: NzComponentConfig, item: NzComponentConfig) {
-    target.childComponents.push({
-      ...item,
-      id: this._rowUUID(),
+  private addComponentTOconnectedList(addedComponent: FormBuilderComponent): void {
+    if (
+      addedComponent.rowid &&
+      (addedComponent.type === this.componentTypeEnum.Row ||
+        addedComponent.type === this.componentTypeEnum.Column)
+    ) {
+      this.connectedList.unshift(addedComponent.rowid);
+    }
+  }
+
+  private canBeDropped(event: CdkDragDrop<FormBuilderComponent[]>): boolean {
+    if (
+      this.isComponent(event.item.data.type) &&
+      event.container.element.nativeElement.dataset['componentType'] !==
+        this.componentTypeEnum.Column
+    ) {
+      return false;
+    }
+
+    if (
+      event.item.data.type === this.componentTypeEnum.Column &&
+      event.container.element.nativeElement.dataset['componentType'] !== this.componentTypeEnum.Row
+    ) {
+      return false;
+    }
+
+    if (
+      event.item.data.type === this.componentTypeEnum.Row &&
+      event.container.element.nativeElement.dataset['componentType'] !==
+        this.componentTypeEnum.Column &&
+      event.container.id !== this.canvasContainerId
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private isComponent(type: NzComponentType): boolean {
+    if (type === this.componentTypeEnum.Row || type == this.componentTypeEnum.Column) {
+      return false;
+    }
+    return true;
+  }
+
+  public connectedListsIds(rowid: string): string[] {
+    return this.connectedList.filter((id) => id !== rowid);
+  }
+
+  cloneComponent(comp: FormBuilderComponent): FormBuilderComponent {
+    return {
+      ...comp,
+      rowid: this._rowUUID(),
       childComponents: [],
-    });
+    };
   }
 
-  private moveBetweenContainers(target: NzComponentConfig, item: NzComponentConfig) {
-    const parent = this.findParentComponent(this.droppedRows, item.id);
-
-    if (!parent || parent === target) return;
-
-    const removed = this.removeComponentById(this.droppedRows, item.id);
-
-    if (!removed) return;
-
-    parent.childComponents = parent.childComponents.filter((c) => c.id !== item.id);
-
-    target.childComponents.push(item);
+  cdkDragStarted() {
+    this.isDragging = true;
   }
 
-  private findComponentById(components: NzComponentConfig[], id: number): NzComponentConfig | null {
-    for (const component of components) {
-      if (component.id === id) return component;
-
-      const found = this.findComponentById(component.childComponents, id);
-
-      if (found) return found;
-    }
-    return null;
+  cdkDragEnded() {
+    this.isDragging = false;
   }
 
-  private findParentComponent(
-    components: NzComponentConfig[],
-    childId: number,
-  ): NzComponentConfig | null {
-    for (const component of components) {
-      if (component.childComponents.some((c) => c.id === childId)) {
-        return component;
-      }
-
-      const found = this.findParentComponent(component.childComponents, childId);
-
-      if (found) return found;
-    }
-    return null;
-  }
-
-  private removeComponentById(components: NzComponentConfig[], id: number): boolean {
-    for (const component of components) {
-      const index = component.childComponents.findIndex((c) => c.id === id);
-
-      if (index !== -1) {
-        component.childComponents.splice(index, 1);
-        return true;
-      }
-
-      if (this.removeComponentById(component.childComponents, id)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private _rowUUID(): number {
-    return Number(`${Date.now()}${Math.floor(Math.random() * 1000)}`);
+  private _rowUUID(): string {
+    return `${Date.now()}${Math.floor(Math.random() * 1000)}`;
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
-    this.dragulaService.destroy(this.bagFieldsName);
-    this.dragulaService.destroy(this.bagFormBuilderName);
   }
 
-  /**
-   * @deprecated
-   * @returns
-   */
-  private findRowById(rows: NzComponentConfig[], rowId: number): NzComponentConfig | undefined {
-    for (const row of rows) {
-      if (row.id === rowId) return row;
-      // Check for nested rows inside columns
-      for (const col of row.childComponents) {
-        for (const field of col.childComponents) {
-          if (field.childComponents) {
-            const found = this.findRowById(field.childComponents, rowId);
-            if (found) return found;
-          }
-        }
-      }
-    }
-    return undefined;
-  }
-
-  /**
-   * @deprecated
-   * @returns
-   */
-  private findParentColumnOfField(
-    rows: NzComponentConfig[],
-    fieldToFind: NzComponentConfig,
-  ): NzComponentConfig | null {
-    for (const row of rows) {
-      for (const col of row.childComponents) {
-        if (col.childComponents.includes(fieldToFind)) {
-          return col;
-        }
-        // Check for nested rows
-        for (const field of col.childComponents) {
-          if (field.childComponents) {
-            const parent = this.findParentColumnOfField(field.childComponents, fieldToFind);
-            if (parent) return parent;
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  // --- Layout Manipulation Methods ---
-
-  /**
-   * @deprecated
-   * @returns
-   */
-  removeRow(rowId: number): void {
-    const deleteRecursive = (rows: NzComponentConfig[]): boolean => {
-      const initialLength = rows.length;
-      // Remove from the current array
-      const newRows = rows.filter((row) => row.id !== rowId);
-      if (newRows.length < initialLength) {
-        // If we found and deleted it at this level, update the array
-        rows.splice(0, rows.length, ...newRows); // Replace content of the array
-        return true;
-      }
-
-      // If not found, check nested rows
-      for (const row of rows) {
-        for (const col of row.childComponents) {
-          for (const field of col.childComponents) {
-            if (field.childComponents) {
-              if (deleteRecursive(field.childComponents)) {
-                return true;
-              }
-            }
-          }
-        }
-      }
-      return false;
-    };
-
-    if (confirm('Are you sure you want to delete this row and all its contents?')) {
-      deleteRecursive(this.droppedRows);
-      // Clear selection if the selected field was in this row
-      if (this.selectedField) {
-        // A simple way to clear selection after deletion: if selectedField is no longer in model
-        //this.selectField(this.selectedField); // Tries to re-select, which should fail if deleted
-      }
-      this.cd.detectChanges();
-    }
-  }
-
-  /**
-   * @deprecated
-   * @returns
-   */
-  removeColumn(parentRowId: number, columnId: number): void {
-    if (confirm('Are you sure you want to delete this column and all its contents?')) {
-      const row = this.findRowById(this.droppedRows, parentRowId);
-
-      if (row) {
-        // Find the column by ID and remove it
-        const initialLength = row.childComponents.length;
-        row.childComponents = row.childComponents.filter((col) => col.id !== columnId);
-
-        if (row.childComponents.length < initialLength) {
-          // Deletion occurred
-          // Clear selection if the selected field was in this column
-          if (this.selectedField) {
-            const parentCol = this.findParentColumnOfField(this.droppedRows, this.selectedField);
-            if (!parentCol || parentCol.id === columnId) {
-              // If the selected field's parent column was the one deleted
-              this.selectedField = undefined;
-            }
-          }
-          this.cd.detectChanges();
-        } else {
-          console.error(`Column with ID ${columnId} not found in row ${parentRowId}`);
-        }
-      } else {
-        console.error(`Row with ID ${parentRowId} not found.`);
-      }
-    }
-  }
-
-  // --- Selection and Deletion Methods ---
-
-  // Recursive function to find the field and its parent column
-  private findFieldAndParentColumn(
-    rows: NzComponentConfig[],
-    fieldToFind: NzComponentConfig,
-  ): { field: NzComponentConfig; parentColumn: NzComponentConfig } | null {
-    for (const row of rows) {
-      for (const col of row.childComponents) {
-        for (const field of col.childComponents) {
-          if (field === fieldToFind) {
-            return { field: field, parentColumn: col };
-          }
-          // Check nested rows
-          if (field.childComponents) {
-            const result = this.findFieldAndParentColumn(field.childComponents, fieldToFind);
-            if (result) return result;
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  selectField(e: Event, component: NzComponentConfig): void {
-    e.stopPropagation();
+  selectField(component: FormBuilderComponent): void {
     this.selectedField = component;
     this.buildComponentConfiguration(component);
   }
 
-  private buildComponentConfiguration(field: NzComponentConfig): void {
+  removeComponent(component: FormBuilderComponent): void {
+    if (component.isNew) {
+      //TODO: remove from list + remove isNew = true children and set isNew = false to isDeleted = true
+    } else {
+      component.isDeleted = true;
+    }
+  }
+
+  private buildComponentConfiguration(field: FormBuilderComponent): void {
     this.componentConfig = {
       type: field.type as NzFieldType,
       configuration: field.configuration,
@@ -429,46 +283,23 @@ export class NzFormBuilderComponent {
     this.destroyComponentConfiguration();
   }
 
-  /**
-   * @deprecated
-   * @returns
-   */
-  deleteSelectedField(): void {
-    // Stop if nothing is selected
-    if (!this.selectedField) return;
-
-    const field = { ...this.selectedField };
-
-    // Use the recursive finder to get the field's actual parent column
-    const location = this.findFieldAndParentColumn(this.droppedRows, field);
-
-    if (!location) {
-      console.error('Could not find the parent column for the selected field.');
-      this.selectedField = undefined;
-      return;
-    }
-
-    if (confirm(`Are you sure you want to delete "${field.label}"?`)) {
-      const parentCol = location.parentColumn;
-
-      // Remove the field using filter
-      parentCol.childComponents = parentCol.childComponents.filter((f) => f.id !== field.id);
-
-      // Clear selection
-      this.selectedField = undefined;
-      this.cd.detectChanges();
-    }
-  }
-
   saveField(data: Record<string, any>): void {
     this.selectedField!.configuration = data;
     this.selectedField!.label = data['label'];
     this.destroyComponentConfiguration();
   }
 
-  submitForm(): void {
-    const outputFormData = JSON.parse(JSON.stringify(this.droppedRows));
-    this.save.emit(outputFormData);
+  submitForm(event: Event): void {
+    this.confirmDialogService.open(event, {
+      title: DIALOG_MESSAGES.CONFIRM.TITLE,
+      message: DIALOG_MESSAGES.CONFIRM.MESSAGE,
+      accept: () => {
+        this.save.emit(this.droppedRows);
+      },
+      cancel: () => {
+        return;
+      },
+    });
   }
 
   get middleFlex(): number {

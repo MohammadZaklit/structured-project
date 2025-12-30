@@ -11,3 +11,12 @@
 .gu-transit {
   opacity: 0.4;
 }
+
+.cdk-drag {
+  transition: transform 0.25s ease;
+}
+
+.cdk-drop-list.cdk-drop-list-dragging {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}

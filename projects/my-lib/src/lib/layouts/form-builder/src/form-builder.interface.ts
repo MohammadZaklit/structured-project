@@ -7,10 +7,17 @@ export interface NzFormBuilder {
   components: NzComponentConfig[];
 }
 export interface NzComponentConfig extends NzComponentConfiguration {
-  id: number;
+  id: number | null;
   label: string;
   isNew: boolean;
+  isDeleted: boolean;
+  isFormField: boolean;
   childComponents: NzComponentConfig[];
+}
+
+export interface FormBuilderComponent extends NzComponentConfig {
+  rowid: string;
+  childComponents: FormBuilderComponent[];
 }
 
 const NzUiTypeConst = { ...NzUiTypeEnum } as const;

@@ -7,6 +7,7 @@ export * from './src/interceptor/error-handler.interceptor';
 
 // constants
 export * from './src/constants/components';
+export * from './src/constants/dialog';
 
 //interfaces
 export * from './src/interfaces/GenericRecord.interface';

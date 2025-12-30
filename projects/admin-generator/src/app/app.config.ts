@@ -22,6 +22,7 @@ import {
 import { environment } from './environments/environment';
 import { DialogService } from 'primeng/dynamicdialog';
 import { NzAuthInterceptor } from '@zak-lib/ui-library/auth';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -43,5 +44,7 @@ export const appConfig: ApplicationConfig = {
       apiBaseUrl: environment.apiUrl,
     }),
     DialogService,
+    MessageService,
+    ConfirmationService,
   ],
 };

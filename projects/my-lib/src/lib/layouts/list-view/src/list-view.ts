@@ -15,14 +15,13 @@ import {
   NzTableSorting,
 } from '@zak-lib/ui-library/elements/ui/table-grid';
 import { NzListView, NzSearchParameters } from './list-view.interface';
-import { NzGenericRecord, NzHttpService } from '@zak-lib/ui-library/shared';
+import { DIALOG_MESSAGES, NzGenericRecord, NzHttpService } from '@zak-lib/ui-library/shared';
 import {
   BehaviorSubject,
   combineLatest,
   debounceTime,
   distinctUntilChanged,
   firstValueFrom,
-  of,
   startWith,
   Subject,
   switchMap,
@@ -31,21 +30,11 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { FormsModule } from '@angular/forms';
-import {
-  NzConfirmPopupComponent,
-  NzConfirmPopup,
-} from '@zak-lib/ui-library/elements/ui/confirm-popup';
 import { ToolbarModule } from 'primeng/toolbar';
+import { NzConfirmDialogService } from '@zak-lib/ui-library/elements/ui/confirm-dialog';
 @Component({
   selector: 'nz-list-view',
-  imports: [
-    NzTableGridComponent,
-    ButtonModule,
-    TooltipModule,
-    FormsModule,
-    ToolbarModule,
-    NzConfirmPopupComponent,
-  ],
+  imports: [NzTableGridComponent, ButtonModule, TooltipModule, FormsModule, ToolbarModule],
   templateUrl: './list-view.html',
   styleUrl: './list-view.css',
 })
@@ -56,15 +45,14 @@ export class NzListViewComponent implements OnInit, OnDestroy {
   @Output() addBtnClick = new EventEmitter<void>();
   @Output() editBtnClick = new EventEmitter<any>();
   @Output() deleteBtnClick = new EventEmitter<any>();
+  public quickSearchValue: string = '';
+  private httpService = inject(NzHttpService);
+  private confirmDialogService = inject(NzConfirmDialogService);
+  private searchParameters$ = new BehaviorSubject<NzSearchParameters>({});
+  private reload$ = new Subject<void>();
   private isEditMode = false;
   private loading = false;
   private displayDialog = false;
-  public quickSearchValue: string = '';
-  private httpService = inject(NzHttpService);
-  private searchParameters$ = new BehaviorSubject<NzSearchParameters>({});
-  private reload$ = new Subject<void>();
-
-  public DeleteConfirmPopupConfig!: NzConfirmPopup;
 
   constructor() {}
 
@@ -75,11 +63,6 @@ export class NzListViewComponent implements OnInit, OnDestroy {
     ]).pipe(switchMap(([terms, _isTriggered]) => this.httpService.getAll(this.moduleName, terms)));
 
     this.tableConfig.set(this.config()?.table);
-
-    this.DeleteConfirmPopupConfig = {
-      title: 'Delete Confirmation',
-      message: 'Are you sure you want to delete this row?',
-    };
   }
 
   exportExcel() {
@@ -139,14 +122,16 @@ export class NzListViewComponent implements OnInit, OnDestroy {
   }
 
   public deleteRowCallback(event: { event: Event; rowData: NzGenericRecord }): void {
-    this.DeleteConfirmPopupConfig.accept = () => {
-      this.deleteRow(event.rowData);
-    };
-    this.DeleteConfirmPopupConfig.cancel = () => {
-      // do nothing
-      return;
-    };
-    this.DeleteConfirmPopupConfig.confirm?.(event.event);
+    this.confirmDialogService.open(event.event, {
+      title: DIALOG_MESSAGES.DELETE.TITLE,
+      message: DIALOG_MESSAGES.DELETE.MESSAGE,
+      accept: () => {
+        this.deleteRow(event.rowData);
+      },
+      cancel: () => {
+        return;
+      },
+    });
   }
 
   private async deleteRow(rowData: NzGenericRecord): Promise<void> {
