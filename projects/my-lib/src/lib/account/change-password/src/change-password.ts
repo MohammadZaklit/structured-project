@@ -1,5 +1,8 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { NzPassword, NzPasswordComponent } from '@zak-lib/ui-library/components/password';
+import {
+  NzStandardPassword,
+  NzStandardPasswordComponent,
+} from '@zak-lib/ui-library/components/StandardPasswordComponent';
 import {
   NzFormControl,
   NzFormGroup,
@@ -24,7 +27,7 @@ export interface NzChangePassword {
 
 @Component({
   selector: 'nz-change-password',
-  imports: [NzHeadingComponent, NzPasswordComponent, NzStandardButtonComponent],
+  imports: [NzHeadingComponent, NzStandardPasswordComponent, NzStandardButtonComponent],
   templateUrl: './change-password.html',
   styles: ``,
 })
@@ -32,9 +35,9 @@ export class NzChangePasswordComponent {
   @Input() config!: NzChangePassword;
   private accountService = inject(NzAccountService);
   public headingConfig!: NzHeading;
-  public oldPasswordConfig!: NzPassword;
-  public newPasswordConfig!: NzPassword;
-  public confirmPasswordConfig!: NzPassword;
+  public oldPasswordConfig!: NzStandardPassword;
+  public newPasswordConfig!: NzStandardPassword;
+  public confirmPasswordConfig!: NzStandardPassword;
   public saveConfig!: NzStandardButton;
   private alertService = inject(NzAlertDialogService);
   @Output() success = new EventEmitter<void>();
@@ -76,6 +79,7 @@ export class NzChangePasswordComponent {
       label: 'Change Your Password',
       style: 'h1',
     };
+
     this.newPasswordConfig = {
       name: 'New password',
       label: 'New Password',
