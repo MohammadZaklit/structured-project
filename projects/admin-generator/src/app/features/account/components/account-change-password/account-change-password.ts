@@ -11,6 +11,7 @@ import { NzFormGroup } from '@zak-lib/ui-library/shared';
   imports: [NzChangePasswordComponent, AccountBaseComponent],
   templateUrl: './account-change-password.html',
   styles: ``,
+  standalone: true,
 })
 export class AccountChangePassword implements OnInit {
   config!: NzChangePassword;

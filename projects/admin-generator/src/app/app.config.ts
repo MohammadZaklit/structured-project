@@ -28,7 +28,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(createRoutes(), withPreloading(PreloadAllModules)),
+    provideRouter(createRoutes()),
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {

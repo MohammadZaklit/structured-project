@@ -1,12 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'auth-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [RouterOutlet],
   template: `<router-outlet (activate)="onChildActivate($event)" />`,
 })
 export class AuthLayoutComponent {

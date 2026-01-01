@@ -13,6 +13,7 @@ import { FluidModule } from 'primeng/fluid';
     </div>
   </p-fluid>`,
   styles: ``,
+  standalone: true,
 })
 export class AccountBaseComponent {
   @Input() formTitle!: string;

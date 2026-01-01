@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { ConfirmationService } from 'primeng/api';
-import { ConfirmDialog } from 'primeng/confirmdialog';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'nz-confirm-dialog',
-  imports: [ConfirmDialog, ButtonModule],
+  imports: [ConfirmDialogModule, ButtonModule],
   providers: [],
   template: `<p-confirmdialog />`,
   styles: ``,

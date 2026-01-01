@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 @Component({
