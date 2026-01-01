@@ -8,21 +8,23 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { StepperModule } from 'primeng/stepper';
-import { NzStepperConfig, NzWizardFormFieldConfig } from './form-wizard.interface';
+import { NzStepConfig, NzStepperConfig } from './form-wizard.interface';
 import {
   DIALOG_MESSAGES,
+  NzFormGroup,
   NzGenericRecord,
   NzHttpService,
   NzModuleConfig,
+  NzUiTypeEnum,
 } from '@zak-lib/ui-library/shared';
 import { NzConfirmDialogService } from '@zak-lib/ui-library/elements/ui/confirm-dialog';
 import { FluidModule } from 'primeng/fluid';
 import { NzFormFieldRendererComponent } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { take } from 'rxjs';
-
+import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'nz-form-wizard',
   standalone: true,
@@ -31,24 +33,23 @@ import { take } from 'rxjs';
     StepperModule,
     ReactiveFormsModule,
     FluidModule,
+    ButtonModule,
     NzFormFieldRendererComponent,
   ],
   templateUrl: './form-wizard.component.html',
   styleUrls: ['./form-wizard.component.scss'],
 })
 export class NzFormWizardComponent implements OnInit, OnChanges {
-  @Input() fields: NzWizardFormFieldConfig[] = [];
-  @Input() stepperConfig!: NzStepperConfig;
-  @Input() module!: NzModuleConfig;
+  @Input({ required: true }) form!: NzFormGroup;
+  @Input({ required: true }) stepperConfig!: NzStepperConfig;
+  @Input({ required: true }) module!: NzModuleConfig;
   @Input() public data?: NzGenericRecord;
   @Output() successSubmit = new EventEmitter<any>();
   private httpService = inject(NzHttpService);
   private confirmDialogService = inject(NzConfirmDialogService);
-  private fb = inject(FormBuilder);
-  form!: FormGroup;
-  steps: any[] = [];
   activeStep = 0;
   public isEdit = false;
+  uiTypes = NzUiTypeEnum;
 
   constructor() {}
 
@@ -64,9 +65,12 @@ export class NzFormWizardComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.steps = this.stepperConfig?.steps || [{ label: 'Form' }];
     this.buildForm();
     //this.handleDynamicLogic();
+  }
+
+  get steps(): NzStepConfig[] {
+    return this.stepperConfig?.steps;
   }
 
   private fillForm(data: NzGenericRecord): void {
@@ -74,13 +78,13 @@ export class NzFormWizardComponent implements OnInit, OnChanges {
   }
 
   buildForm() {
-    const group: any = {};
+    //const group: any = {};
     // this.fields.forEach((f) => {
     //   group[f.name] = [{ value: f.value ?? '', disabled: false }, []];
     //   if (typeof f.required === 'boolean' && f.required) group[f.name][1].push(Validators.required);
     //   if (f.pattern) group[f.name][1].push(Validators.pattern(f.pattern));
     // });
-    this.form = this.fb.group(group);
+    // this.form = this.fb.group(group);
   }
 
   // handleDynamicLogic() {
@@ -117,7 +121,7 @@ export class NzFormWizardComponent implements OnInit, OnChanges {
 
   getFieldsForStep(stepIndex: number) {
     //return this.fields.filter((f) => f.step === stepIndex && f.visible !== false);
-    return this.fields;
+    return this.steps[stepIndex].components;
   }
 
   save(event: Event): void {

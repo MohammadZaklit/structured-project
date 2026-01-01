@@ -6,17 +6,14 @@ import {
   NzWizardFormFieldConfig,
 } from '@zak-lib/ui-library/layouts/form-wizard';
 import {
-  NzFormControl,
   NzFormGroup,
   NzGenericRecord,
   NzHttpService,
   NzModuleConfig,
-  NzModuleFieldConfig,
 } from '@zak-lib/ui-library/shared';
-import { COMPONENTS } from '../../../../../../../my-lib/src/lib/shared/src/constants/components';
-import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
+import { ModuleSettingsService } from '../../../../shared/services/module-settings.service';
 import { firstValueFrom } from 'rxjs';
-import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field/field-component-type';
+import { AdminFieldsMapperService } from '../../services/fields-mapper.service';
 
 @Component({
   selector: 'app-admin-page-form',
@@ -31,8 +28,17 @@ export class AdminPageForm implements OnInit {
   public data?: NzGenericRecord;
   private moduleSettings = inject(ModuleSettingsService);
   private httpService = inject(NzHttpService);
+  private fieldsMapperService = inject(AdminFieldsMapperService);
   public stepConfig: NzStepperConfig = {
-    steps: [{ id: 1, label: 'Form', name: 'singleForm', icon: 'pi pi-user' }],
+    steps: [
+      {
+        id: 1,
+        label: 'Form',
+        name: 'singleForm',
+        icon: 'pi pi-user',
+        components: [],
+      },
+    ],
   };
 
   public form = new NzFormGroup({});
@@ -46,10 +52,11 @@ export class AdminPageForm implements OnInit {
 
   ngOnInit(): void {
     this.module = this.moduleSettings.module() as NzModuleConfig;
-
-    this.moduleSettings.fields().forEach((field: NzModuleFieldConfig) => {
-      this.dbFields.push(this.mapFieldConfig(field));
-    });
+    const topLevelFields = this.moduleSettings.fields().filter((fld) => !fld.parentFieldId);
+    this.stepConfig.steps[0].components = this.fieldsMapperService.mapDbFieldsToWizard(
+      topLevelFields,
+      this.form,
+    );
 
     this.stepConfig.backBtn = {
       position: 'inline',
@@ -64,28 +71,6 @@ export class AdminPageForm implements OnInit {
     if (this.id) {
       this.getData(this.id);
     }
-  }
-
-  private mapFieldConfig(field: NzModuleFieldConfig): NzWizardFormFieldConfig {
-    const fieldType =
-      COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
-      'InputText';
-
-    const newControl = new NzFormControl(null);
-    this.form.addControl(field.name, newControl);
-
-    return {
-      type: fieldType as NzFieldType,
-      step: 1,
-      fieldConfig: {
-        control: newControl,
-        form: this.form,
-        name: field.name,
-        label: field.label,
-        hint: field.hint || undefined,
-        settings: field?.configuration,
-      },
-    };
   }
 
   private async getData(id: number): Promise<void> {

@@ -11,18 +11,16 @@
       <div class="flex">
         <div class="card flex flex-col gap-6 w-full">
           <div class="font-semibold text-xl">{{ stepLabel }}</div>
-          <div class="flex flex-col gap-6">
+          <div class="flex flex-col gap-2">
             @for (field of stepFields; track field) {
               @if (field.visible !== false) {
-                <div class="flex flex-col gap-2 w-full">
-                  <ng-container
-                    [ngTemplateOutlet]="FormField"
-                    [ngTemplateOutletContext]="{
-                      field: field,
-                      stepForm: stepForm,
-                    }"
-                  ></ng-container>
-                </div>
+                <ng-container
+                  [ngTemplateOutlet]="ComponentRender"
+                  [ngTemplateOutletContext]="{
+                    field: field,
+                    stepForm: stepForm,
+                  }"
+                ></ng-container>
               }
             }
           </div>
@@ -73,13 +71,42 @@
     }"
   ></ng-container>
 }
-<ng-template #FormField let-field="field" let-stepForm="stepForm">
-  <nz-form-field-renderer
-    [config]="{ type: field.type, fieldConfig: field.fieldConfig }"
-  ></nz-form-field-renderer>
-  <small class="p-error" *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched">
-    Invalid {{ field.label }}
-  </small>
+<ng-template #ComponentRender let-field="field" let-stepForm="stepForm">
+  @if (field?.fieldConfig) {
+    <nz-form-field-renderer
+      [config]="{ type: field.type, fieldConfig: field.fieldConfig }"
+    ></nz-form-field-renderer>
+  } @else {
+    @if (field.type === uiTypes.Row) {
+      <!-- //TODO: pass row styling here -->
+      <div class="flex flex-col gap-2">
+        @for (subField of field.children; track $index) {
+          <ng-container
+            [ngTemplateOutlet]="ComponentRender"
+            [ngTemplateOutletContext]="{
+              field: subField,
+              stepForm: stepForm,
+            }"
+          ></ng-container>
+        }
+      </div>
+    } @else if (field.type === uiTypes.Column) {
+      <!-- //TODO: pass column styling here -->
+      <div class="flex flex-col gap-2">
+        @for (subField of field.children; track $index) {
+          <ng-container
+            [ngTemplateOutlet]="ComponentRender"
+            [ngTemplateOutletContext]="{
+              field: subField,
+              stepForm: stepForm,
+            }"
+          ></ng-container>
+        }
+      </div>
+    } @else {
+      <!-- //TODO: render new components here -->
+    }
+  }
 </ng-template>
 
 <ng-template #FormButtons>

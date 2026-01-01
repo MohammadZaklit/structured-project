@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
 import { AdminPageResolver } from './admin-page.resolver';
 import { ModuleSettingsService } from '../../../shared/services/module-settings.service';
+import { AdminFieldsMapperService } from '../services/fields-mapper.service';
 
 export const ADMIN_PAGE_ROUTES: Routes = [
   {
     path: ':module',
-    providers: [ModuleSettingsService],
+    providers: [ModuleSettingsService, AdminFieldsMapperService],
     resolve: { config: AdminPageResolver },
     loadComponent: () => import('../shell/admin-page.component').then((m) => m.AdminPageComponent),
     children: [

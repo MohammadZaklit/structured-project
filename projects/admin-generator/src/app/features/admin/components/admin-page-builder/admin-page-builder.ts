@@ -16,9 +16,10 @@ import {
   NzModuleFieldConfig,
 } from '@zak-lib/ui-library/shared';
 import { COMPONENTS } from '@zak-lib/ui-library/shared';
-import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
-import { firstValueFrom, take } from 'rxjs';
+import { ModuleSettingsService } from '../../../../shared/services/module-settings.service';
+import { take } from 'rxjs';
 import { NzComponentType } from '@zak-lib/ui-library/composed/component-configuration';
+import { AdminFieldsMapperService } from '../../services/fields-mapper.service';
 interface NzModuleFieldPayload extends NzModuleFieldConfig {
   children: NzModuleFieldPayload[];
 }
@@ -32,20 +33,11 @@ interface NzModuleFieldPayload extends NzModuleFieldConfig {
 export class AdminPageBuilder implements OnInit {
   public dbFields: NzComponentConfig[] = [];
   public module!: NzModuleConfig;
-  public data?: NzGenericRecord;
   private moduleSettings = inject(ModuleSettingsService);
   private httpService = inject(NzHttpService);
-  public stepConfig: NzStepperConfig = {
-    steps: [{ id: 1, label: 'Form', name: 'singleForm', icon: 'pi pi-user' }],
-  };
+  private fieldsMapperService = inject(AdminFieldsMapperService);
 
   public form = new NzFormGroup({});
-
-  @Input() public id?: number;
-  @Output() public cancelForm = new EventEmitter<void>();
-  @Output() public successForm = new EventEmitter<any>();
-  @Output() public backCallback = new EventEmitter<any>();
-
   public formBuilderConfig!: NzFormBuilder;
 
   constructor() {}
@@ -53,54 +45,16 @@ export class AdminPageBuilder implements OnInit {
   ngOnInit(): void {
     this.module = this.moduleSettings.module() as NzModuleConfig;
 
-    const mapDbFields = (fields: NzModuleFieldConfig[]): NzComponentConfig[] => {
-      const mappedFields: NzComponentConfig[] = [];
-
-      fields.forEach((field: NzModuleFieldConfig) => {
-        const newMappedField = this.mapFieldConfig(field);
-        const filteredFields = this.moduleSettings
-          .fields()
-          .filter((fld) => fld.parentFieldId === field.id);
-        if (filteredFields.length > 0) {
-          newMappedField.childComponents = mapDbFields(filteredFields);
-        }
-        mappedFields.push(newMappedField);
-      });
-      return mappedFields;
-    };
-
     const topLevelFields = this.moduleSettings.fields().filter((fld) => !fld.parentFieldId);
-    this.dbFields = mapDbFields(topLevelFields);
+    this.dbFields = this.fieldsMapperService.mapDbFieldsToBuilder(topLevelFields);
     this.formBuilderConfig = {
       module: this.module,
       components: this.dbFields,
     };
   }
 
-  private mapFieldConfig(field: NzModuleFieldConfig): NzComponentConfig {
-    const fieldType =
-      COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
-      'InputText';
-
-    return {
-      id: field.id,
-      isNew: false,
-      isDeleted: false,
-      isFormField: field.isFormField,
-      label: field.label,
-      childComponents: [],
-      configuration: {
-        name: field.name,
-        label: field.label,
-        hint: field.hint,
-        settings: field.configuration,
-      },
-      type: fieldType as NzComponentType,
-    };
-  }
-
   public saveData(data: FormBuilderComponent[]): void {
-    const payload = this.mapData(data);
+    const payload = this.mapDataToSave(data);
     this.httpService
       .post('builder/save-fields', payload)
       .pipe(take(1))
@@ -109,7 +63,7 @@ export class AdminPageBuilder implements OnInit {
       });
   }
 
-  private mapData(data: FormBuilderComponent[], parentId?: number): NzModuleFieldPayload[] {
+  private mapDataToSave(data: FormBuilderComponent[], parentId?: number): NzModuleFieldPayload[] {
     const newFields: NzModuleFieldPayload[] = [];
     data.forEach((row, index) => {
       const component = COMPONENTS.find((component) => component.componentName === row.type);
@@ -126,7 +80,7 @@ export class AdminPageBuilder implements OnInit {
         label: row.configuration['label'] || component?.label || '',
         hint: row.configuration['hint'],
         configuration: row.configuration['settings'],
-        children: this.mapData(row.childComponents, row.id || undefined),
+        children: this.mapDataToSave(row.childComponents, row.id || undefined),
       });
     });
     return newFields;

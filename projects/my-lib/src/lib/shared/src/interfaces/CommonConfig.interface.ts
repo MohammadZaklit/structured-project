@@ -38,3 +38,8 @@ export enum NzUiTypeEnum {
   Row = 'row',
   Column = 'column',
 }
+
+export interface NzComponentLoaderConfig {
+  type: NzUiType;
+  componentConfig: any;
+}
