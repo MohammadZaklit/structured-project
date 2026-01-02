@@ -20,6 +20,34 @@
           <nz-input [config]="extraPropsFieldConfig"></nz-input>
           <nz-input [config]="apiToValidateFieldConfig"></nz-input>
           <nz-autocomplete [config]="dataSourceDropdownConfig"></nz-autocomplete>
+          <div formArrayName="dataOptions">
+            @for (option of dataOptions.controls; track option; let i = $index) {
+              <div [formGroupName]="i" class="d-flex gap-2 align-items-center">
+                <nz-input
+                  [config]="{
+                    control: option.get('id'),
+                    label: 'Key',
+                    name: 'id',
+                    form: form,
+                  }"
+                />
+
+                <nz-input
+                  [config]="{
+                    control: option.get('label'),
+                    label: 'Value',
+                    name: 'label',
+                    form: form,
+                  }"
+                />
+
+                <button type="button" (click)="removeOption(i)">❌</button>
+              </div>
+            }
+          </div>
+
+          <button type="button" (click)="addOption()">➕ Add option</button>
+
           <nz-toggle-switch [config]="isRequiredFieldConfig"></nz-toggle-switch>
           <nz-toggle-switch [config]="isDisabledFieldConfig"></nz-toggle-switch>
           <nz-toggle-switch [config]="isVisibleFieldConfig"></nz-toggle-switch>

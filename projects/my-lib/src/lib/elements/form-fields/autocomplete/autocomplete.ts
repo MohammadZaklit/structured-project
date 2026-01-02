@@ -6,7 +6,10 @@ import { NzFormFieldModule } from '../form-field/form-field-module';
 import { NzHttpService } from '@zak-lib/ui-library/shared';
 import { firstValueFrom } from 'rxjs';
 
-export interface NzAutoComplete extends NzFormField, NzBaseSelect {}
+export interface NzAutoComplete extends NzFormField, NzBaseSelect {
+  optionValue?: string;
+  optionLabel?: string;
+}
 
 @Component({
   selector: 'nz-autocomplete',
@@ -16,6 +19,8 @@ export interface NzAutoComplete extends NzFormField, NzBaseSelect {}
       [formControl]="config.control"
       [dropdown]="true"
       [suggestions]="options()"
+      [optionLabel]="config.optionLabel || 'label'"
+      [optionValue]="config.optionValue || 'id'"
       [placeholder]="config.settings?.placeholder || ''"
       (completeMethod)="onSearch($event)"
       [invalid]="config.control.invalid && (config.control.dirty || config.control.touched)"
