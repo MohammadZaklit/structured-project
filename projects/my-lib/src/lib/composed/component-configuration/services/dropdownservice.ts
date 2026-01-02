@@ -1,7 +1,7 @@
 // src/app/services/dropdown.service.ts
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { NzGenericRecord, NzHttpService } from '@zak-lib/ui-library/shared';
 
 export interface ModuleOption {
   id: number; // adjust based on your API response
@@ -12,11 +12,11 @@ export interface ModuleOption {
   providedIn: 'root',
 })
 export class DropdownService {
-  private apiUrl = 'http://localhost:3000/api/modules';
+  private httpService = inject(NzHttpService);
 
-  constructor(private http: HttpClient) {}
+  constructor() {}
 
-  getDropdownList(): Observable<ModuleOption[]> {
-    return this.http.get<ModuleOption[]>(this.apiUrl);
+  getDropdownList(): Observable<NzGenericRecord[]> {
+    return this.httpService.getAll<NzGenericRecord[]>('modules');
   }
 }

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NzComponentConfiguration } from './component-configuration.interface';
-import { NzFormControl, NzFormGroup } from '@zak-lib/ui-library/shared';
+import { NzFormControl, NzFormGroup, NzGenericRecord } from '@zak-lib/ui-library/shared';
 import { NzInput, NzInputComponent } from '@zak-lib/ui-library/elements/form-fields/input';
 import {
   NzToggleSwitch,
@@ -185,18 +185,9 @@ export class NzConfigurationComponent implements OnInit {
       label: 'data Source Selection',
       name: 'dataSource',
       form: this.form,
-      options: [],
+      api: 'modules',
     };
 
-    this.dropdownService.getDropdownList().subscribe({
-      next: (res: ModuleOption[]) => {
-        this.dataSourceDropdownConfig.options = res.map((option) => ({
-          label: option.label,
-          id: option.id,
-        }));
-      },
-      error: (err) => console.error('Error loading dropdown options', err),
-    });
     this.extraPropsFieldConfig = {
       control: this.form.get('settings.extraProps') as NzFormControl,
       label: 'Extra Parameters',

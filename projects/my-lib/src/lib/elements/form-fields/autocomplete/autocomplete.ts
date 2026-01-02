@@ -11,15 +11,14 @@ export interface NzAutoComplete extends NzFormField, NzBaseSelect {}
 @Component({
   selector: 'nz-autocomplete',
   imports: [AutoCompleteModule, NzFormFieldModule],
-  template: `<nz-form-field [baseConfig]="config"
-    ><p-autoComplete
+  template: `<nz-form-field [baseConfig]="config">
+    <p-autoComplete
       [formControl]="config.control"
       [suggestions]="options()"
-      [dropdown]="true"
       [placeholder]="config.settings?.placeholder || ''"
       [invalid]="config.control.invalid && (config.control.dirty || config.control.touched)"
-    ></p-autoComplete
-  ></nz-form-field>`,
+    ></p-autoComplete>
+  </nz-form-field>`,
   styles: ``,
   standalone: true,
 })
@@ -27,6 +26,7 @@ export class NzAutocomplete extends NzFormFieldComponent implements OnInit {
   @Input() config!: NzAutoComplete;
 
   options = signal<NzOption[]>([]);
+  httpService = inject(NzHttpService);
 
   constructor() {
     super();
@@ -41,8 +41,7 @@ export class NzAutocomplete extends NzFormFieldComponent implements OnInit {
   }
 
   async getOptions(api: string): Promise<void> {
-    const httpService = inject(NzHttpService);
-    const data = await firstValueFrom(httpService.getAll(api));
+    const data = await firstValueFrom(this.httpService.getAll(api));
     const newOptions = data.flatMap((row) =>
       row.id
         ? [
