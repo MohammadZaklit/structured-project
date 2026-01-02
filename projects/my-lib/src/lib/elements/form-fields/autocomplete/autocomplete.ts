@@ -14,15 +14,17 @@ export interface NzAutoComplete extends NzFormField, NzBaseSelect {}
   template: `<nz-form-field [baseConfig]="config">
     <p-autoComplete
       [formControl]="config.control"
+      [dropdown]="true"
       [suggestions]="options()"
       [placeholder]="config.settings?.placeholder || ''"
+      (completeMethod)="onSearch($event)"
       [invalid]="config.control.invalid && (config.control.dirty || config.control.touched)"
     ></p-autoComplete>
   </nz-form-field>`,
   styles: ``,
   standalone: true,
 })
-export class NzAutocomplete extends NzFormFieldComponent implements OnInit {
+export class NzAutocompleteComponent extends NzFormFieldComponent implements OnInit {
   @Input() config!: NzAutoComplete;
 
   options = signal<NzOption[]>([]);
@@ -54,5 +56,11 @@ export class NzAutocomplete extends NzFormFieldComponent implements OnInit {
     );
 
     this.options.set(newOptions);
+    console.log('API DATA:', data);
+  }
+  onSearch(event: { query: string }) {
+    const query = event.query.toLowerCase();
+
+    this.options.set(this.options().filter((opt) => opt.label.toLowerCase().includes(query)));
   }
 }

@@ -13,7 +13,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { NzButton, NzButtonComponent } from '@zak-lib/ui-library/elements/button';
 import {
   NzAutoComplete,
-  NzAutocomplete,
+  NzAutocompleteComponent,
 } from '@zak-lib/ui-library/elements/form-fields/autocomplete';
 import { DropdownService, ModuleOption } from '../services/dropdownservice';
 
@@ -25,7 +25,7 @@ import { DropdownService, ModuleOption } from '../services/dropdownservice';
     NzToggleSwitchComponent,
     TabsModule,
     NzButtonComponent,
-    NzAutocomplete,
+    NzAutocompleteComponent,
   ],
   templateUrl: './component-configuration.html',
   styles: ``,
