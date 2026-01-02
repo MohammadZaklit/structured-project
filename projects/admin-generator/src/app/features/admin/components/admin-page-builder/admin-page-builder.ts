@@ -68,12 +68,13 @@ export class AdminPageBuilder implements OnInit {
     data.forEach((row, index) => {
       const component = COMPONENTS.find((component) => component.componentName === row.type);
       newFields.push({
-        id: row.isDeleted ? -1 : row.id || null,
+        id: row.id || null,
         sortOrder: index,
         moduleId: this.module.id,
         componentId: component?.id || 10,
         referenceModuleId: undefined,
         parentFieldId: parentId,
+        isDeleted: row.isDeleted,
         isDefault: false,
         isFormField: row.isFormField,
         name: row.configuration['name'] || component?.componentName || '',
