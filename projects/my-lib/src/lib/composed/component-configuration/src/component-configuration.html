@@ -6,19 +6,20 @@
     </p-tablist>
     <p-tabpanels>
       <p-tabpanel value="fieldInfo">
-        <div class="flex flex-column gap-2">
+        <div class="flex flex-col gap-2">
           <nz-input [config]="nameFieldConfig"></nz-input>
           <nz-input [config]="labelFieldConfig"></nz-input>
           <nz-input [config]="hintFieldConfig"></nz-input>
         </div>
       </p-tabpanel>
       <p-tabpanel value="settings">
-        <div formGroupName="settings" class="flex flex-column gap-2">
+        <div formGroupName="settings" class="flex flex-col gap-2">
           <nz-input [config]="valueFieldConfig"></nz-input>
           <nz-input [config]="placeholderFieldConfig"></nz-input>
           <nz-input [config]="patternFieldConfig"></nz-input>
           <nz-input [config]="extraPropsFieldConfig"></nz-input>
           <nz-input [config]="apiToValidateFieldConfig"></nz-input>
+          <nz-autocomplete [config]="dataSourceDropdownConfig"></nz-autocomplete>
           <nz-toggle-switch [config]="isRequiredFieldConfig"></nz-toggle-switch>
           <nz-toggle-switch [config]="isDisabledFieldConfig"></nz-toggle-switch>
           <nz-toggle-switch [config]="isVisibleFieldConfig"></nz-toggle-switch>
@@ -26,7 +27,7 @@
       </p-tabpanel>
     </p-tabpanels>
   </p-tabs>
-  <div class="flex justify-content-end gap-2">
+  <div class="flex gap-2">
     <nz-button [config]="cancelBtn"></nz-button>
     <nz-button [config]="saveBtn"></nz-button>
   </div>

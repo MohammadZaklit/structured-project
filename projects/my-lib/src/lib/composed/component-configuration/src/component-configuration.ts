@@ -9,8 +9,13 @@ import {
 import { NzFormFieldModule } from '@zak-lib/ui-library/elements/form-fields/form-field/form-field-module';
 import { NzFieldTypeEnum } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { TabsModule } from 'primeng/tabs';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { NzButton, NzButtonComponent } from '@zak-lib/ui-library/elements/button';
+import {
+  NzAutoComplete,
+  NzAutocomplete,
+} from '@zak-lib/ui-library/elements/form-fields/autocomplete';
+import { DropdownService, ModuleOption } from '../services/dropdownservice';
 
 @Component({
   selector: 'nz-component-configuration',
@@ -20,6 +25,7 @@ import { NzButton, NzButtonComponent } from '@zak-lib/ui-library/elements/button
     NzToggleSwitchComponent,
     TabsModule,
     NzButtonComponent,
+    NzAutocomplete,
   ],
   templateUrl: './component-configuration.html',
   styles: ``,
@@ -37,6 +43,7 @@ export class NzConfigurationComponent implements OnInit {
   apiToValidateFieldConfig!: NzInput;
   extraPropsFieldConfig!: NzInput;
   placeholderFieldConfig!: NzInput;
+  dataSourceDropdownConfig!: NzAutoComplete;
   patternFieldConfig!: NzInput;
 
   isRequiredFieldConfig!: NzToggleSwitch;
@@ -51,7 +58,10 @@ export class NzConfigurationComponent implements OnInit {
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<NzComponentConfiguration>();
 
-  constructor() {}
+  constructor(
+    private dropdownService: DropdownService,
+    private fb: FormBuilder,
+  ) {}
 
   ngOnInit(): void {
     this.form = new NzFormGroup({});
@@ -102,6 +112,10 @@ export class NzConfigurationComponent implements OnInit {
     settingsFormGroup.addControl(
       'apiValidate',
       new NzFormControl(this.config?.configuration?.['settings']?.apiValidate || null, []),
+    );
+    settingsFormGroup.addControl(
+      'dataSource',
+      new NzFormControl(this.config?.configuration?.['settings']?.dataSource || null, []),
     );
     settingsFormGroup.addControl(
       'extraProps',
@@ -166,7 +180,23 @@ export class NzConfigurationComponent implements OnInit {
       name: 'apiValidate',
       form: this.form,
     };
+    this.dataSourceDropdownConfig = {
+      control: this.form.get('settings.dataSource') as NzFormControl,
+      label: 'data Source Selection',
+      name: 'dataSource',
+      form: this.form,
+      options: [],
+    };
 
+    this.dropdownService.getDropdownList().subscribe({
+      next: (res: ModuleOption[]) => {
+        this.dataSourceDropdownConfig.options = res.map((option) => ({
+          label: option.label,
+          id: option.id,
+        }));
+      },
+      error: (err) => console.error('Error loading dropdown options', err),
+    });
     this.extraPropsFieldConfig = {
       control: this.form.get('settings.extraProps') as NzFormControl,
       label: 'Extra Parameters',
