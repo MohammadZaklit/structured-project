@@ -6,7 +6,7 @@ import {
   NzModuleFieldConfig,
 } from '@zak-lib/ui-library/shared';
 import { firstValueFrom } from 'rxjs';
-import { CONSTANTS } from '../constants/constants';
+import { CONSTANTS } from '../../../shared/constants/constants';
 
 @Injectable()
 export class ModuleSettingsService {
@@ -26,26 +26,38 @@ export class ModuleSettingsService {
     return config;
   }
 
-  public async getModuleByName(moduleName: string): Promise<NzModuleConfig | null> {
+  public async getModuleByName(
+    moduleName: string,
+    updateSettings = false,
+  ): Promise<NzModuleConfig | null> {
     const config = (await firstValueFrom(
       this.httpService.getAll(this.modulesTable, { name: moduleName }),
     )) as NzModuleConfig[];
 
     if (config.length > 0) {
-      this.module.set(config[0]);
+      if (updateSettings) {
+        this.module.set(config[0]);
+      }
+
       return config[0];
     }
 
     return null;
   }
 
-  public async getModuleFields(moduleId: number): Promise<NzModuleFieldConfig[]> {
+  public async getModuleFields(
+    moduleId: number,
+    updateSettings = false,
+  ): Promise<NzModuleFieldConfig[]> {
     const response = await firstValueFrom(
       this.httpService.getAll<NzModuleFieldConfig>(this.fieldsTable, {
         moduleId: moduleId,
       }),
     );
-    this.fields.set(response);
+    if (updateSettings) {
+      this.fields.set(response);
+    }
+
     return response;
   }
 

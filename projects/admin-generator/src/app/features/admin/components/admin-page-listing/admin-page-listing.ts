@@ -4,7 +4,7 @@ import { NzTableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
 import { NzListView, NzListViewComponent } from '@zak-lib/ui-library/layouts/list-view';
 import { NzModuleFieldConfig, NzGenericRecord, NzModuleConfig } from '@zak-lib/ui-library/shared';
 import { COMPONENTS } from '../../../../../../../my-lib/src/lib/shared/src/constants/components';
-import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
+import { ModuleSettingsService } from 'projects/admin-generator/src/app/features/admin/services/module-settings.service';
 
 @Component({
   selector: 'app-admin-page-listing',
@@ -19,6 +19,7 @@ export class AdminPageListing implements OnInit {
   @Output() public addRow = new EventEmitter<void>();
   @Output() public editRow = new EventEmitter<any>();
   @Output() public deleteRow = new EventEmitter<any>();
+  @Output() public buildModule = new EventEmitter<string>();
 
   constructor() {}
 
@@ -40,7 +41,15 @@ export class AdminPageListing implements OnInit {
           delete: true,
           view: false,
         },
-        dynamicActions: [],
+        dynamicActions: [
+          {
+            onclick: (data?: any) => {
+              this.buildModule.emit(data?.name);
+            },
+            label: 'Build',
+            type: 'button',
+          },
+        ],
         enableColumnSorting: true,
       },
 

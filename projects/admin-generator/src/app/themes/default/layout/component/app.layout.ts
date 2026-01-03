@@ -88,11 +88,6 @@ export class AppLayout {
                 icon: 'pi pi-fw pi-sign-in',
                 routerLink: ['/admin/' + item['name'] + '/form'],
               },
-              {
-                label: 'Build',
-                icon: 'pi pi-fw pi-sign-in',
-                routerLink: ['/admin/' + item['name'] + '/build'],
-              },
             ],
           };
         }),

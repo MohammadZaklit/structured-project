@@ -47,6 +47,11 @@ export class AdminPageComponent {
         this.router.navigate(['list'], { relativeTo: this.route });
       });
     }
+    if (component.buildModule) {
+      component.buildModule.pipe(takeUntil(this.onDestroy$)).subscribe((moduleName: string) => {
+        this.router.navigate(['build/' + moduleName], { relativeTo: this.route });
+      });
+    }
   }
 
   ngOnDestroy() {

@@ -11,9 +11,9 @@ import {
   NzHttpService,
   NzModuleConfig,
 } from '@zak-lib/ui-library/shared';
-import { ModuleSettingsService } from '../../../../shared/services/module-settings.service';
+import { ModuleSettingsService } from '../../services/module-settings.service';
 import { firstValueFrom } from 'rxjs';
-import { AdminFieldsMapperService } from '../../services/fields-mapper.service';
+import { WizardFieldsMapperService } from '../../services/wizard-fields-mapper.service';
 
 @Component({
   selector: 'app-admin-page-form',
@@ -28,7 +28,7 @@ export class AdminPageForm implements OnInit {
   public data?: NzGenericRecord;
   private moduleSettings = inject(ModuleSettingsService);
   private httpService = inject(NzHttpService);
-  private fieldsMapperService = inject(AdminFieldsMapperService);
+  private fieldsMapperService = inject(WizardFieldsMapperService);
   public stepConfig: NzStepperConfig = {
     steps: [
       {

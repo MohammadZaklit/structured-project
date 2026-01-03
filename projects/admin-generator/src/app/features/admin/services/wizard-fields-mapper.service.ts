@@ -1,6 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { NzComponentType } from '@zak-lib/ui-library/composed/component-configuration';
-import { NzComponentConfig } from '@zak-lib/ui-library/layouts/form-builder';
 import {
   COMPONENTS,
   NzFormControl,
@@ -9,30 +7,14 @@ import {
   NzModuleFieldConfig,
   NzUiType,
 } from '@zak-lib/ui-library/shared';
-import { ModuleSettingsService } from '../../../shared/services/module-settings.service';
+import { ModuleSettingsService } from '../services/module-settings.service';
 import { NzWizardFormFieldConfig } from '@zak-lib/ui-library/layouts/form-wizard';
 import { NzFieldType } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { ValidatorFn, Validators } from '@angular/forms';
 
 @Injectable()
-export class AdminFieldsMapperService {
+export class WizardFieldsMapperService {
   private moduleSettings = inject(ModuleSettingsService);
-
-  public mapDbFieldsToBuilder(fields: NzModuleFieldConfig[]): NzComponentConfig[] {
-    const mappedFields: NzComponentConfig[] = [];
-
-    fields.forEach((field: NzModuleFieldConfig) => {
-      const newMappedField = this._mapBuilderFieldConfig(field);
-      const filteredFields = this.moduleSettings
-        .fields()
-        .filter((fld) => fld.parentFieldId === field.id);
-      if (filteredFields.length > 0) {
-        newMappedField.childComponents = this.mapDbFieldsToBuilder(filteredFields);
-      }
-      mappedFields.push(newMappedField);
-    });
-    return mappedFields;
-  }
 
   public mapDbFieldsToWizard(
     fields: NzModuleFieldConfig[],
@@ -52,28 +34,6 @@ export class AdminFieldsMapperService {
       mappedFields.push(newMappedField);
     });
     return mappedFields;
-  }
-
-  private _mapBuilderFieldConfig(field: NzModuleFieldConfig): NzComponentConfig {
-    const fieldType =
-      COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
-      'InputText';
-
-    return {
-      id: field.id,
-      isNew: false,
-      isDeleted: false,
-      isFormField: field.isFormField,
-      label: field.label,
-      childComponents: [],
-      configuration: {
-        name: field.name,
-        label: field.label,
-        hint: field.hint,
-        settings: field.configuration,
-      },
-      type: fieldType as NzComponentType,
-    };
   }
 
   private _mapWizardFieldConfig(
