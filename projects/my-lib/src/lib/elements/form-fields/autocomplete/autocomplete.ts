@@ -6,27 +6,34 @@ import { NzFormFieldModule } from '../form-field/form-field-module';
 import { NzHttpService } from '@zak-lib/ui-library/shared';
 import { firstValueFrom } from 'rxjs';
 
-export interface NzAutoComplete extends NzFormField, NzBaseSelect {}
+export interface NzAutoComplete extends NzFormField, NzBaseSelect {
+  optionValue?: string;
+  optionLabel?: string;
+}
 
 @Component({
   selector: 'nz-autocomplete',
   imports: [AutoCompleteModule, NzFormFieldModule],
-  template: `<nz-form-field [baseConfig]="config"
-    ><p-autoComplete
+  template: `<nz-form-field [baseConfig]="config">
+    <p-autoComplete
       [formControl]="config.control"
-      [suggestions]="options()"
       [dropdown]="true"
+      [suggestions]="options()"
+      [optionLabel]="config.optionLabel || 'label'"
+      [optionValue]="config.optionValue || 'id'"
       [placeholder]="config.settings?.placeholder || ''"
+      (completeMethod)="onSearch($event)"
       [invalid]="config.control.invalid && (config.control.dirty || config.control.touched)"
-    ></p-autoComplete
-  ></nz-form-field>`,
+    ></p-autoComplete>
+  </nz-form-field>`,
   styles: ``,
   standalone: true,
 })
-export class NzAutocomplete extends NzFormFieldComponent implements OnInit {
+export class NzAutocompleteComponent extends NzFormFieldComponent implements OnInit {
   @Input() config!: NzAutoComplete;
 
   options = signal<NzOption[]>([]);
+  httpService = inject(NzHttpService);
 
   constructor() {
     super();
@@ -41,8 +48,7 @@ export class NzAutocomplete extends NzFormFieldComponent implements OnInit {
   }
 
   async getOptions(api: string): Promise<void> {
-    const httpService = inject(NzHttpService);
-    const data = await firstValueFrom(httpService.getAll(api));
+    const data = await firstValueFrom(this.httpService.getAll(api));
     const newOptions = data.flatMap((row) =>
       row.id
         ? [
@@ -55,5 +61,11 @@ export class NzAutocomplete extends NzFormFieldComponent implements OnInit {
     );
 
     this.options.set(newOptions);
+    console.log('API DATA:', data);
+  }
+  onSearch(event: { query: string }) {
+    const query = event.query.toLowerCase();
+
+    this.options.set(this.options().filter((opt) => opt.label.toLowerCase().includes(query)));
   }
 }

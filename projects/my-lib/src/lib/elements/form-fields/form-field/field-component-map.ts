@@ -1,5 +1,5 @@
 export const NzFormFieldComponents: Record<string, () => Promise<any>> = {
-  AutoComplete: () => import('../autocomplete').then((m) => m.NzAutocomplete),
+  AutoComplete: () => import('../autocomplete').then((m) => m.NzAutocompleteComponent),
   InputText: () => import('../input').then((m) => m.NzInputComponent),
   ToggleSwitch: () => import('../toggle-switch').then((m) => m.NzToggleSwitchComponent),
   MultiSelect: () => import('../multiselect').then((m) => m.NzMultiSelectComponent),

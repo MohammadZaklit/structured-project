@@ -1,6 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, computed, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NzComponentConfiguration } from './component-configuration.interface';
-import { NzFormControl, NzFormGroup } from '@zak-lib/ui-library/shared';
+import {
+  NzFormArray,
+  NzFormControl,
+  NzFormGroup,
+  NzGenericRecord,
+} from '@zak-lib/ui-library/shared';
 import { NzInput, NzInputComponent } from '@zak-lib/ui-library/elements/form-fields/input';
 import {
   NzToggleSwitch,
@@ -9,8 +14,13 @@ import {
 import { NzFormFieldModule } from '@zak-lib/ui-library/elements/form-fields/form-field/form-field-module';
 import { NzFieldTypeEnum } from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { TabsModule } from 'primeng/tabs';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { NzButton, NzButtonComponent } from '@zak-lib/ui-library/elements/button';
+import {
+  NzAutoComplete,
+  NzAutocompleteComponent,
+} from '@zak-lib/ui-library/elements/form-fields/autocomplete';
+import { DropdownService, ModuleOption } from '../services/dropdownservice';
 
 @Component({
   selector: 'nz-component-configuration',
@@ -20,6 +30,7 @@ import { NzButton, NzButtonComponent } from '@zak-lib/ui-library/elements/button
     NzToggleSwitchComponent,
     TabsModule,
     NzButtonComponent,
+    NzAutocompleteComponent,
   ],
   templateUrl: './component-configuration.html',
   styles: ``,
@@ -37,6 +48,8 @@ export class NzConfigurationComponent implements OnInit {
   apiToValidateFieldConfig!: NzInput;
   extraPropsFieldConfig!: NzInput;
   placeholderFieldConfig!: NzInput;
+  dataSourceDropdownConfig!: NzAutoComplete;
+
   patternFieldConfig!: NzInput;
 
   isRequiredFieldConfig!: NzToggleSwitch;
@@ -51,7 +64,7 @@ export class NzConfigurationComponent implements OnInit {
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<NzComponentConfiguration>();
 
-  constructor() {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.form = new NzFormGroup({});
@@ -79,6 +92,9 @@ export class NzConfigurationComponent implements OnInit {
 
     this.addFields();
     this.initConfig();
+    this.config.configuration['settings'].dataOptions.forEach((row: NzGenericRecord) => {
+      this.addOption(row);
+    });
   }
 
   private addFields(): void {
@@ -103,6 +119,11 @@ export class NzConfigurationComponent implements OnInit {
       'apiValidate',
       new NzFormControl(this.config?.configuration?.['settings']?.apiValidate || null, []),
     );
+    settingsFormGroup.addControl(
+      'dataSource',
+      new NzFormControl(this.config?.configuration?.['settings']?.dataSource || null, []),
+    );
+    settingsFormGroup.addControl('dataOptions', this.fb.array([]));
     settingsFormGroup.addControl(
       'extraProps',
       new NzFormControl(this.config?.configuration?.['settings']?.extraProps || null, []),
@@ -166,6 +187,13 @@ export class NzConfigurationComponent implements OnInit {
       name: 'apiValidate',
       form: this.form,
     };
+    this.dataSourceDropdownConfig = {
+      control: this.form.get('settings.dataSource') as NzFormControl,
+      label: 'data Source Selection',
+      name: 'dataSource',
+      form: this.form,
+      api: 'modules',
+    };
 
     this.extraPropsFieldConfig = {
       control: this.form.get('settings.extraProps') as NzFormControl,
@@ -208,5 +236,23 @@ export class NzConfigurationComponent implements OnInit {
       name: 'isVisible',
       form: this.form,
     };
+  }
+  get dataOptions() {
+    return this.form.get('settings.dataOptions') as any; // NzFormArray / FormArray
+  }
+  createOption(obj?: NzGenericRecord) {
+    const newOptionFormGroup = new NzFormGroup({});
+    newOptionFormGroup.addControl('id', new NzFormControl(obj?.id || '', [Validators.required]));
+    newOptionFormGroup.addControl(
+      'label',
+      new NzFormControl(obj?.['label'] || '', [Validators.required]),
+    );
+    return newOptionFormGroup;
+  }
+  addOption(obj?: NzGenericRecord) {
+    this.dataOptions.push(this.createOption(obj));
+  }
+  removeOption(index: number) {
+    this.dataOptions.removeAt(index);
   }
 }
