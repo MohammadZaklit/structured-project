@@ -30,6 +30,8 @@ export interface NzFormFieldSettings {
   extraProps?: any;
   placeholder?: string;
   pattern?: string;
+  dataSource?: [];
+  dataOptions?: [];
 }
 
 export type NzUiType = NzUiTypeEnum.Row | NzUiTypeEnum.Column;

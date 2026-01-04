@@ -38,10 +38,13 @@ export class NzAutocompleteComponent extends NzFormFieldComponent implements OnI
   }
 
   ngOnInit(): void {
-    if (this.config.api) {
-      this.getOptions(this.config.api);
-    } else if (this.config.options) {
-      this.options.set(this.config.options);
+    const settings = this.config.settings;
+    const api = this.config.api || '';
+    if (api) {
+      this.getOptions(api);
+    } else if (settings?.dataOptions) {
+      console.warn(settings?.dataOptions);
+      this.options.set(settings?.dataOptions);
     }
   }
 
