@@ -189,8 +189,8 @@ export class NzConfigurationComponent implements OnInit {
     };
     this.dataSourceDropdownConfig = {
       control: this.form.get('settings.dataSource') as NzFormControl,
-      label: 'data Source Selection',
-      name: 'dataSource',
+      label: 'Data Source Selection',
+      name: 'Data Source',
       form: this.form,
       api: 'modules',
     };
@@ -238,9 +238,9 @@ export class NzConfigurationComponent implements OnInit {
     };
   }
   get dataOptions() {
-    return this.form.get('settings.dataOptions') as any; // NzFormArray / FormArray
+    return this.form.get('settings.dataOptions') as NzFormArray; // NzFormArray / FormArray
   }
-  createOption(obj?: NzGenericRecord) {
+  createOption(obj?: NzGenericRecord): NzFormGroup {
     const newOptionFormGroup = new NzFormGroup({});
     newOptionFormGroup.addControl('id', new NzFormControl(obj?.id || '', [Validators.required]));
     newOptionFormGroup.addControl(
@@ -249,10 +249,10 @@ export class NzConfigurationComponent implements OnInit {
     );
     return newOptionFormGroup;
   }
-  addOption(obj?: NzGenericRecord) {
+  addOption(obj?: NzGenericRecord): void {
     this.dataOptions.push(this.createOption(obj));
   }
-  removeOption(index: number) {
+  removeOption(index: number): void {
     this.dataOptions.removeAt(index);
   }
 }
