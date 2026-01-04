@@ -20,7 +20,6 @@ export interface NzAutoComplete extends NzFormField, NzBaseSelect {
       [dropdown]="true"
       [suggestions]="options()"
       [optionLabel]="config.optionLabel || 'label'"
-      [optionValue]="config.optionValue || 'id'"
       [placeholder]="config.settings?.placeholder || ''"
       (completeMethod)="onSearch($event)"
       [invalid]="config.control.invalid && (config.control.dirty || config.control.touched)"
