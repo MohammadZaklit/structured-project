@@ -7,7 +7,6 @@ import { NzHttpService } from '@zak-lib/ui-library/shared';
 import { firstValueFrom } from 'rxjs';
 
 export interface NzAutoComplete extends NzFormField, NzBaseSelect {
-  optionValue?: string;
   optionLabel?: string;
 }
 
