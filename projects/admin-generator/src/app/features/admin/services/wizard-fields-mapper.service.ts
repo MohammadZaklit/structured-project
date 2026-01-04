@@ -28,7 +28,7 @@ export class WizardFieldsMapperService {
         .fields()
         .filter((fld) => fld.parentFieldId === field.id);
       if (filteredFields.length > 0) {
-        const newForm = new NzFormGroup({});
+        const newForm = field.isFormField ? new NzFormGroup({}) : form;
         newMappedField.children = this.mapDbFieldsToWizard(filteredFields, newForm);
       }
       mappedFields.push(newMappedField);
