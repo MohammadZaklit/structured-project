@@ -43,7 +43,6 @@ export class NzAutocompleteComponent extends NzFormFieldComponent implements OnI
     if (api) {
       this.getOptions(api);
     } else if (settings?.dataOptions) {
-      console.warn(settings?.dataOptions);
       this.options.set(settings?.dataOptions);
     }
   }
@@ -62,7 +61,6 @@ export class NzAutocompleteComponent extends NzFormFieldComponent implements OnI
     );
 
     this.options.set(newOptions);
-    console.log('API DATA:', data);
   }
   onSearch(event: { query: string }) {
     const query = event.query.toLowerCase();
