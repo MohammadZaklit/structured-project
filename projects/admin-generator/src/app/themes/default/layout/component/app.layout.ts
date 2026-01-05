@@ -68,29 +68,31 @@ export class AppLayout {
 
   async getMenuItems(): Promise<void> {
     const response = await firstValueFrom(this.appSettingsService.getMenuItems());
-
+    const menuItems: MenuItem[] = [...(DEFAULT_MENU_ITEMS as MenuItem[])];
     if (response) {
-      const menuItems: MenuItem[] = [...(DEFAULT_MENU_ITEMS as MenuItem[])];
-      menuItems.splice(1, 0, {
-        label: 'Modules',
-        items: response.map((item) => {
-          return {
-            label: item['label'],
-            icon: 'pi pi-fw pi-check-square',
-            items: [
-              {
-                label: 'Listing',
-                icon: 'pi pi-fw pi-sign-in',
-                routerLink: ['/admin/' + item['name'] + '/list'],
-              },
-              {
-                label: 'New',
-                icon: 'pi pi-fw pi-sign-in',
-                routerLink: ['/admin/' + item['name'] + '/form'],
-              },
-            ],
-          };
-        }),
+      const menuGroups = response.reverse();
+      menuGroups.forEach((menuGroup: any) => {
+        menuItems.splice(1, 0, {
+          label: menuGroup.label,
+          items: menuGroup['children'].map((item: any) => {
+            return {
+              label: item['label'],
+              icon: 'pi pi-fw pi-check-square',
+              items: [
+                {
+                  label: 'Listing',
+                  icon: 'pi pi-fw pi-sign-in',
+                  routerLink: ['/admin/' + item['name'] + '/list'],
+                },
+                {
+                  label: 'New',
+                  icon: 'pi pi-fw pi-sign-in',
+                  routerLink: ['/admin/' + item['name'] + '/form'],
+                },
+              ],
+            };
+          }),
+        });
       });
 
       this.menuItems.set(menuItems);

@@ -47,7 +47,7 @@ export class WizardFieldsMapperService {
     if (field.isFormField) {
       const control = new NzFormControl();
       const validators: ValidatorFn[] = [];
-      if (field.configuration.isRequired) {
+      if (field?.configuration?.isRequired) {
         validators.push(Validators.required);
       }
       if (validators.length > 0) {

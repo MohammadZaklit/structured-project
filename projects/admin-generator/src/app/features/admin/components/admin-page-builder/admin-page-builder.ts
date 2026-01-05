@@ -64,12 +64,14 @@ export class AdminPageBuilder implements OnInit {
     const newFields: NzModuleFieldPayload[] = [];
     data.forEach((row, index) => {
       const component = COMPONENTS.find((component) => component.componentName === row.type);
+
+      const referenceModuleId = row.configuration['settings'].dataSource || undefined;
       newFields.push({
         id: row.id || null,
         sortOrder: index,
         moduleId: this.module.id,
         componentId: component?.id || 10,
-        referenceModuleId: undefined,
+        referenceModuleId: referenceModuleId,
         parentFieldId: parentId,
         isDeleted: row.isDeleted,
         isDefault: false,
