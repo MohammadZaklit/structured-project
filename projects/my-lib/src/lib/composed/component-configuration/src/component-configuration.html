@@ -25,7 +25,7 @@
               <div [formGroupName]="i" class="d-flex gap-2 align-items-center">
                 <nz-input
                   [config]="{
-                    control: option.get('id'),
+                    control: $any(option.get('id')),
                     label: 'Key',
                     name: 'id',
                     form: form,
@@ -34,19 +34,19 @@
 
                 <nz-input
                   [config]="{
-                    control: option.get('label'),
+                    control: $any(option.get('id')),
                     label: 'Value',
                     name: 'label',
                     form: form,
                   }"
                 />
 
-                <button type="button" (click)="removeOption(i)">❌</button>
+                <nz-button type="button" (click)="removeOption(i)">❌</nz-button>
               </div>
             }
           </div>
 
-          <button type="button" (click)="addOption()">➕ Add option</button>
+          <nz-button type="button" (click)="addOption()">➕ Add option</nz-button>
 
           <nz-toggle-switch [config]="isRequiredFieldConfig"></nz-toggle-switch>
           <nz-toggle-switch [config]="isDisabledFieldConfig"></nz-toggle-switch>
