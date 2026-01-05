@@ -3,6 +3,10 @@ export const DIALOG_MESSAGES = {
     TITLE: 'Submit Confirmation',
     MESSAGE: 'Are you sure you want to submit your information?',
   },
+  MIGRATE: {
+    TITLE: 'Migrate Confirmation',
+    MESSAGE: 'Are you sure you want to migrate this module?',
+  },
   DELETE: {
     TITLE: 'Delete Confirmation',
     MESSAGE: 'Are you sure you want to delete this row?',

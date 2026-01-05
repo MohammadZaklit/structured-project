@@ -1,15 +1,15 @@
 import { ActivatedRouteSnapshot, ResolveFn, Router, RouterStateSnapshot } from '@angular/router';
-import { ModuleSettingsService } from '../services/module-settings.service';
 import { inject } from '@angular/core';
+import { BuilderSettingsService } from '../services/builder-settings.service';
 
-export const AdminPageResolver: ResolveFn<any> = async (
+export const AdminBuilderResolver: ResolveFn<any> = async (
   route: ActivatedRouteSnapshot,
   _state: RouterStateSnapshot,
 ) => {
-  const api = inject(ModuleSettingsService);
+  const api = inject(BuilderSettingsService);
   const router = inject(Router);
   try {
-    const moduleParam = route.paramMap.get('module');
+    const moduleParam = route.paramMap.get('moduleName');
     if (moduleParam) {
       const moduleConfig = await api.getModuleByName(moduleParam, true);
       if (moduleConfig) {

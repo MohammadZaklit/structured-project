@@ -2,9 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, OnInit, Output, signal } from '@angular/core';
 import { NzTableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
 import { NzListView, NzListViewComponent } from '@zak-lib/ui-library/layouts/list-view';
-import { NzModuleFieldConfig, NzGenericRecord, NzModuleConfig } from '@zak-lib/ui-library/shared';
-import { COMPONENTS } from '../../../../../../../my-lib/src/lib/shared/src/constants/components';
-import { ModuleSettingsService } from 'projects/admin-generator/src/app/shared/services/module-settings.service';
+import {
+  NzModuleFieldConfig,
+  NzGenericRecord,
+  NzModuleConfig,
+  COMPONENTS,
+} from '@zak-lib/ui-library/shared';
+import { ModuleSettingsService } from '../../../../features/admin/services/module-settings.service';
+import { CONSTANTS } from '../../../../shared/constants/constants';
+import { NzStandardButton } from '@zak-lib/ui-library/components/standardbutton';
 
 @Component({
   selector: 'app-admin-page-listing',
@@ -19,10 +25,22 @@ export class AdminPageListing implements OnInit {
   @Output() public addRow = new EventEmitter<void>();
   @Output() public editRow = new EventEmitter<any>();
   @Output() public deleteRow = new EventEmitter<any>();
+  @Output() public buildModule = new EventEmitter<string>();
 
   constructor() {}
 
   ngOnInit(): void {
+    const dynamicActions: NzStandardButton[] = [];
+    if (this.moduleSettings.module()?.name === CONSTANTS.MAIN_MODULE.NAME) {
+      dynamicActions.push({
+        onclick: (data?: any) => {
+          this.buildModule.emit(data?.name);
+        },
+        label: 'Configure',
+        type: 'button',
+      });
+    }
+
     this.ListViewConfig.set({
       module: this.moduleSettings.module() as NzModuleConfig,
       table: {
@@ -40,10 +58,9 @@ export class AdminPageListing implements OnInit {
           delete: true,
           view: false,
         },
-        dynamicActions: [],
+        dynamicActions: dynamicActions,
         enableColumnSorting: true,
       },
-
       showAddButton: true,
       dynamicHeaderButtons: [],
       exportToExcel: true,
@@ -53,15 +70,17 @@ export class AdminPageListing implements OnInit {
 
   private mapFieldsToColumns(fields: NzModuleFieldConfig[]): NzTableColumn[] {
     return (
-      fields.map((field) => {
-        return Object.assign(field, {
-          type:
-            COMPONENTS.find((component) => component.id === field['componentId'])?.componentName ??
-            'InputText',
-          isSortable: true,
-          enableFilter: true,
-        });
-      }) || []
+      fields
+        .filter((field) => field.isFormField)
+        .map((field) => {
+          return Object.assign(field, {
+            type:
+              COMPONENTS.find((component) => component.id === field['componentId'])
+                ?.componentName ?? 'InputText',
+            isSortable: true,
+            enableFilter: true,
+          });
+        }) || []
     );
   }
 

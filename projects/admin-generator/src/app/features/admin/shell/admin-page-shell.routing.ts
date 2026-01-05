@@ -1,12 +1,20 @@
 import { Routes } from '@angular/router';
 import { AdminPageResolver } from './admin-page.resolver';
-import { ModuleSettingsService } from '../../../shared/services/module-settings.service';
-import { AdminFieldsMapperService } from '../services/fields-mapper.service';
+import { ModuleSettingsService } from '../services/module-settings.service';
+import { BuilderFieldsMapperService } from '../services/builder-fields-mapper.service';
+import { WizardFieldsMapperService } from '../services/wizard-fields-mapper.service';
+import { AdminBuilderResolver } from './admin-builder.resolver';
+import { BuilderSettingsService } from '../services/builder-settings.service';
 
 export const ADMIN_PAGE_ROUTES: Routes = [
   {
     path: ':module',
-    providers: [ModuleSettingsService, AdminFieldsMapperService],
+    providers: [
+      ModuleSettingsService,
+      WizardFieldsMapperService,
+      BuilderSettingsService,
+      BuilderFieldsMapperService,
+    ],
     resolve: { config: AdminPageResolver },
     loadComponent: () => import('../shell/admin-page.component').then((m) => m.AdminPageComponent),
     children: [
@@ -23,11 +31,12 @@ export const ADMIN_PAGE_ROUTES: Routes = [
           import('../components/admin-page-form/admin-page-form').then((m) => m.AdminPageForm),
       },
       {
-        path: 'build',
+        path: 'build/:moduleName',
         loadComponent: () =>
           import('../components/admin-page-builder/admin-page-builder').then(
             (m) => m.AdminPageBuilder,
           ),
+        resolve: { config: AdminBuilderResolver },
       },
       {
         path: 'edit/:id',

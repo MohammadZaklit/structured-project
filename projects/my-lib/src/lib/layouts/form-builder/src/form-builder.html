@@ -25,8 +25,9 @@
 
   <main class="flex-auto overflow-auto">
     <nz-typography [config]="middleHeading"></nz-typography>
-    <div>
+    <div class="flex gap-2">
       <nz-standard-button [config]="saveBtn"></nz-standard-button>
+      <nz-standard-button [config]="migrateBtn"></nz-standard-button>
     </div>
     <ng-template
       #renderRowTemplate

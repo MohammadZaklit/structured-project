@@ -137,6 +137,13 @@ export class NzFormWizardComponent implements OnInit, OnChanges {
               .subscribe((_response) => {
                 this.successSubmit.emit(this.form.value);
               });
+          } else {
+            this.httpService
+              .post(this.module.name, this.form.getRawValue())
+              .pipe(take(1))
+              .subscribe((_response) => {
+                this.successSubmit.emit(this.form.value);
+              });
           }
         },
         cancel: () => {

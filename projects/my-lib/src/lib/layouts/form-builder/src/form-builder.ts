@@ -57,6 +57,7 @@ export class NzFormBuilderComponent {
   public componentConfig!: NzComponentConfiguration | undefined;
   public isDragging = false;
   public saveBtn!: NzStandardButton;
+  public migrateBtn!: NzStandardButton;
   public leftHeading: NzTypography = {
     id: 'form-builder-components-heading',
     label: 'Components',
@@ -89,6 +90,7 @@ export class NzFormBuilderComponent {
   selectedField: FormBuilderComponent | undefined = undefined;
 
   @Output() save = new EventEmitter<FormBuilderComponent[]>();
+  @Output() migrate = new EventEmitter<void>();
   @ViewChild('toolbox', { static: true }) toolbox!: CdkDropList;
 
   toolBoxContainerId = 'toolbox-components';
@@ -104,6 +106,13 @@ export class NzFormBuilderComponent {
         this.submitForm(event);
       },
       label: 'Submit',
+      type: 'button',
+    };
+    this.migrateBtn = {
+      onclick: (event: Event) => {
+        this.emitMigrateEvent(event);
+      },
+      label: 'Migrate',
       type: 'button',
     };
     const instanceId = uuidv4();
@@ -295,6 +304,19 @@ export class NzFormBuilderComponent {
       message: DIALOG_MESSAGES.CONFIRM.MESSAGE,
       accept: () => {
         this.save.emit(this.droppedRows);
+      },
+      cancel: () => {
+        return;
+      },
+    });
+  }
+
+  emitMigrateEvent(event: Event): void {
+    this.confirmDialogService.open(event, {
+      title: DIALOG_MESSAGES.MIGRATE.TITLE,
+      message: DIALOG_MESSAGES.MIGRATE.MESSAGE,
+      accept: () => {
+        this.migrate.emit();
       },
       cancel: () => {
         return;

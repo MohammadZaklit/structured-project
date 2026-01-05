@@ -12,6 +12,7 @@ export interface NzModuleFieldConfig extends NzFormFieldInfo {
   referenceModuleId?: number;
   parentFieldId?: number;
   isDefault: boolean;
+  isDeleted: boolean;
   isFormField: boolean;
   configuration: NzFormFieldSettings;
 }

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { NzStepperConfig } from '@zak-lib/ui-library/layouts/form-wizard';
+import { Component, inject, OnInit } from '@angular/core';
+
 import {
   FormBuilderComponent,
   NzComponentConfig,
@@ -8,18 +8,16 @@ import {
   NzFormBuilderComponent,
 } from '@zak-lib/ui-library/layouts/form-builder';
 import {
-  NzFormControl,
   NzFormGroup,
-  NzGenericRecord,
   NzHttpService,
   NzModuleConfig,
   NzModuleFieldConfig,
 } from '@zak-lib/ui-library/shared';
 import { COMPONENTS } from '@zak-lib/ui-library/shared';
-import { ModuleSettingsService } from '../../../../shared/services/module-settings.service';
 import { take } from 'rxjs';
-import { NzComponentType } from '@zak-lib/ui-library/composed/component-configuration';
-import { AdminFieldsMapperService } from '../../services/fields-mapper.service';
+
+import { BuilderFieldsMapperService } from '../../services/builder-fields-mapper.service';
+import { BuilderSettingsService } from '../../services/builder-settings.service';
 interface NzModuleFieldPayload extends NzModuleFieldConfig {
   children: NzModuleFieldPayload[];
 }
@@ -33,9 +31,9 @@ interface NzModuleFieldPayload extends NzModuleFieldConfig {
 export class AdminPageBuilder implements OnInit {
   public dbFields: NzComponentConfig[] = [];
   public module!: NzModuleConfig;
-  private moduleSettings = inject(ModuleSettingsService);
+  private builderSettings = inject(BuilderSettingsService);
   private httpService = inject(NzHttpService);
-  private fieldsMapperService = inject(AdminFieldsMapperService);
+  private fieldsMapperService = inject(BuilderFieldsMapperService);
 
   public form = new NzFormGroup({});
   public formBuilderConfig!: NzFormBuilder;
@@ -43,9 +41,8 @@ export class AdminPageBuilder implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    this.module = this.moduleSettings.module() as NzModuleConfig;
-
-    const topLevelFields = this.moduleSettings.fields().filter((fld) => !fld.parentFieldId);
+    this.module = this.builderSettings.module() as NzModuleConfig;
+    const topLevelFields = this.builderSettings.fields().filter((fld) => !fld.parentFieldId);
     this.dbFields = this.fieldsMapperService.mapDbFieldsToBuilder(topLevelFields);
     this.formBuilderConfig = {
       module: this.module,
@@ -67,13 +64,16 @@ export class AdminPageBuilder implements OnInit {
     const newFields: NzModuleFieldPayload[] = [];
     data.forEach((row, index) => {
       const component = COMPONENTS.find((component) => component.componentName === row.type);
+
+      const referenceModuleId = row.configuration['settings'].dataSource || undefined;
       newFields.push({
-        id: row.isDeleted ? -1 : row.id || null,
+        id: row.id || null,
         sortOrder: index,
         moduleId: this.module.id,
         componentId: component?.id || 10,
-        referenceModuleId: undefined,
+        referenceModuleId: referenceModuleId,
         parentFieldId: parentId,
+        isDeleted: row.isDeleted,
         isDefault: false,
         isFormField: row.isFormField,
         name: row.configuration['name'] || component?.componentName || '',
@@ -84,5 +84,14 @@ export class AdminPageBuilder implements OnInit {
       });
     });
     return newFields;
+  }
+
+  migrateModule(): void {
+    this.httpService
+      .post('builder/migrate', { module: this.module })
+      .pipe(take(1))
+      .subscribe((response) => {
+        console.warn('response: ', response);
+      });
   }
 }
