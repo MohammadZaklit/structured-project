@@ -12,15 +12,22 @@ import {
   NzToggleSwitchComponent,
 } from '@zak-lib/ui-library/elements/form-fields/toggle-switch';
 import { NzFormFieldModule } from '@zak-lib/ui-library/elements/form-fields/form-field/form-field-module';
-import { NzFieldTypeEnum } from '@zak-lib/ui-library/elements/form-fields/form-field';
+import {
+  isSelectComponent,
+  NzFieldType,
+  NzFieldTypeEnum,
+} from '@zak-lib/ui-library/elements/form-fields/form-field';
 import { TabsModule } from 'primeng/tabs';
 import { FormBuilder, Validators } from '@angular/forms';
-import { NzButton, NzButtonComponent } from '@zak-lib/ui-library/elements/button';
 import {
   NzAutoComplete,
   NzAutocompleteComponent,
 } from '@zak-lib/ui-library/elements/form-fields/autocomplete';
-import { DropdownService, ModuleOption } from '../services/dropdownservice';
+import {
+  NzStandardButton,
+  NzStandardButtonComponent,
+} from '@zak-lib/ui-library/components/standardbutton';
+import { NzIconDef } from '@zak-lib/ui-library/shared/src/constants/icons';
 
 @Component({
   selector: 'nz-component-configuration',
@@ -29,7 +36,7 @@ import { DropdownService, ModuleOption } from '../services/dropdownservice';
     NzInputComponent,
     NzToggleSwitchComponent,
     TabsModule,
-    NzButtonComponent,
+    NzStandardButtonComponent,
     NzAutocompleteComponent,
   ],
   templateUrl: './component-configuration.html',
@@ -58,16 +65,37 @@ export class NzConfigurationComponent implements OnInit {
 
   form!: NzFormGroup;
 
-  cancelBtn!: NzButton;
-  saveBtn!: NzButton;
+  cancelBtn!: NzStandardButton;
+  saveBtn!: NzStandardButton;
+  addOptionBtn!: NzStandardButton;
 
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<NzComponentConfiguration>();
 
   constructor(private fb: FormBuilder) {}
 
+  getRemoveOptionBtn(i: number): NzStandardButton {
+    return {
+      label: '',
+      icon: NzIconDef.DELETE,
+      type: 'button',
+      onclick: () => {
+        this.removeOption(i);
+      },
+    };
+  }
+
   ngOnInit(): void {
     this.form = new NzFormGroup({});
+
+    this.addOptionBtn = {
+      label: '',
+      icon: NzIconDef.ADD,
+      type: 'button',
+      onclick: () => {
+        this.addOption();
+      },
+    };
 
     this.cancelBtn = {
       label: 'Cancel',
@@ -92,9 +120,11 @@ export class NzConfigurationComponent implements OnInit {
 
     this.addFields();
     this.initConfig();
-    this.config.configuration['settings'].dataOptions.forEach((row: NzGenericRecord) => {
-      this.addOption(row);
-    });
+    if (isSelectComponent(this.config.type as NzFieldType)) {
+      this.config.configuration['settings']?.dataOptions.forEach((row: NzGenericRecord) => {
+        this.addOption(row);
+      });
+    }
   }
 
   private addFields(): void {
@@ -192,7 +222,10 @@ export class NzConfigurationComponent implements OnInit {
       label: 'Data Source Selection',
       name: 'Data Source',
       form: this.form,
-      api: 'modules',
+      settings: {
+        dataSource: 'modules',
+      },
+      optionValue: 'name',
     };
 
     this.extraPropsFieldConfig = {
@@ -249,7 +282,7 @@ export class NzConfigurationComponent implements OnInit {
     );
     return newOptionFormGroup;
   }
-  addOption(obj?: NzGenericRecord): void {
+  private addOption(obj?: NzGenericRecord): void {
     this.dataOptions.push(this.createOption(obj));
   }
   removeOption(index: number): void {

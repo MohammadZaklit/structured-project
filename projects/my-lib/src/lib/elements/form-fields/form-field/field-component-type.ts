@@ -101,3 +101,18 @@ export enum NzFieldTypeEnum {
   FormArray = 'FormArray',
   FormComponent = 'FormComponent',
 }
+
+export const isSelectComponent = (type: NzFieldType): boolean => {
+  return [
+    NzFieldTypeEnum.AutoComplete,
+    NzFieldTypeEnum.CascadeSelect,
+    NzFieldTypeEnum.Checkbox,
+    NzFieldTypeEnum.Listbox,
+    NzFieldTypeEnum.MultiSelect,
+    NzFieldTypeEnum.PickList,
+    NzFieldTypeEnum.TreeSelectDB,
+    NzFieldTypeEnum.TreeSelectOptions,
+    NzFieldTypeEnum.RadioButtonDB,
+    NzFieldTypeEnum.RadioButtonOptions,
+  ].includes(type);
+};

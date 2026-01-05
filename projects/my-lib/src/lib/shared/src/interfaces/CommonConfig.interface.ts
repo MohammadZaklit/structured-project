@@ -31,7 +31,7 @@ export interface NzFormFieldSettings {
   extraProps?: any;
   placeholder?: string;
   pattern?: string;
-  dataSource?: [];
+  dataSource?: string;
   dataOptions?: [];
 }
 

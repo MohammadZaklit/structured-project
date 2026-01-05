@@ -1,5 +1,6 @@
 import {
   Component,
+  effect,
   EventEmitter,
   inject,
   Input,
@@ -38,7 +39,7 @@ import { NzConfirmDialogService } from '@zak-lib/ui-library/elements/ui/confirm-
   templateUrl: './list-view.html',
   styleUrl: './list-view.css',
 })
-export class NzListViewComponent implements OnInit, OnDestroy {
+export class NzListViewComponent implements OnDestroy {
   @Input() public config: WritableSignal<NzListView | undefined> = signal(undefined);
   public tableConfig: WritableSignal<NzTableGrid | undefined> = signal(undefined);
   @Output() onAdvancedSearch = new EventEmitter<void>();
@@ -54,15 +55,23 @@ export class NzListViewComponent implements OnInit, OnDestroy {
   private loading = false;
   private displayDialog = false;
 
-  constructor() {}
+  constructor() {
+    effect(() => {
+      const config = this.config();
+      if (config) {
+        this.initConfig(config);
+        this.reload$.next();
+      }
+    });
+  }
 
-  ngOnInit(): void {
-    this.config()!.table.data = combineLatest([
+  initConfig(config: NzListView): void {
+    config!.table.data = combineLatest([
       this.searchParameters$.pipe(debounceTime(100), distinctUntilChanged()),
       this.reload$.pipe(startWith(null)),
     ]).pipe(switchMap(([terms, _isTriggered]) => this.httpService.getAll(this.moduleName, terms)));
 
-    this.tableConfig.set(this.config()?.table);
+    this.tableConfig.set(config?.table);
   }
 
   exportExcel() {

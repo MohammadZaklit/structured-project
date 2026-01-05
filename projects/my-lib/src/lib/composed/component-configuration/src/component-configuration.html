@@ -41,12 +41,11 @@
                   }"
                 />
 
-                <nz-button type="button" (click)="removeOption(i)">❌</nz-button>
+                <nz-standard-button [config]="getRemoveOptionBtn(i)"></nz-standard-button>
               </div>
             }
           </div>
-
-          <nz-button type="button" (click)="addOption()">➕ Add option</nz-button>
+          <nz-standard-button [config]="addOptionBtn"></nz-standard-button>
 
           <nz-toggle-switch [config]="isRequiredFieldConfig"></nz-toggle-switch>
           <nz-toggle-switch [config]="isDisabledFieldConfig"></nz-toggle-switch>
@@ -56,7 +55,7 @@
     </p-tabpanels>
   </p-tabs>
   <div class="flex gap-2">
-    <nz-button [config]="cancelBtn"></nz-button>
-    <nz-button [config]="saveBtn"></nz-button>
+    <nz-standard-button [config]="cancelBtn"></nz-standard-button>
+    <nz-standard-button [config]="saveBtn"></nz-standard-button>
   </div>
 </form>

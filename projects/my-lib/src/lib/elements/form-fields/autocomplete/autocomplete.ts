@@ -8,6 +8,7 @@ import { firstValueFrom } from 'rxjs';
 
 export interface NzAutoComplete extends NzFormField, NzBaseSelect {
   optionLabel?: string;
+  optionValue?: string;
 }
 
 @Component({
@@ -18,7 +19,8 @@ export interface NzAutoComplete extends NzFormField, NzBaseSelect {
       [formControl]="config.control"
       [dropdown]="true"
       [suggestions]="options()"
-      [optionLabel]="config.optionLabel || 'label'"
+      [optionLabel]="'label'"
+      [optionValue]="'id'"
       [placeholder]="config.settings?.placeholder || ''"
       (completeMethod)="onSearch($event)"
       [invalid]="config.control.invalid && (config.control.dirty || config.control.touched)"
@@ -39,9 +41,8 @@ export class NzAutocompleteComponent extends NzFormFieldComponent implements OnI
 
   ngOnInit(): void {
     const settings = this.config.settings;
-    const api = this.config.api || '';
-    if (api) {
-      this.getOptions(api);
+    if (settings?.dataSource) {
+      this.getOptions(settings?.dataSource);
     } else if (settings?.dataOptions) {
       this.options.set(settings?.dataOptions);
     }
@@ -53,8 +54,10 @@ export class NzAutocompleteComponent extends NzFormFieldComponent implements OnI
       row.id
         ? [
             {
-              id: row.id,
-              label: row['title'] || row['name'] || row['label'] || '',
+              id: this.config.optionValue ? row[this.config.optionValue] : row.id,
+              label: this.config.optionLabel
+                ? this.config.optionLabel
+                : row['title'] || row['name'] || row['label'] || '',
             },
           ]
         : [],
