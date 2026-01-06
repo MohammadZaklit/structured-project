@@ -68,7 +68,7 @@ export class NzConfigurationComponent implements OnInit {
   cancelBtn!: NzStandardButton;
   saveBtn!: NzStandardButton;
   addOptionBtn!: NzStandardButton;
-  showSelectFields = false;
+  HideSelectFields = true;
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<NzComponentConfiguration>();
 
@@ -121,7 +121,7 @@ export class NzConfigurationComponent implements OnInit {
     this.addFields();
     this.initConfig();
     if (isSelectComponent(this.config.type as NzFieldType)) {
-      this.showSelectFields = isSelectComponent(this.config.type as NzFieldType);
+      this.HideSelectFields = !isSelectComponent(this.config.type as NzFieldType);
       this.config.configuration['settings']?.dataOptions.forEach((row: NzGenericRecord) => {
         this.addOption(row);
       });

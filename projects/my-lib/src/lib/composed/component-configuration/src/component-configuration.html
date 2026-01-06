@@ -19,7 +19,7 @@
           <nz-input [config]="patternFieldConfig"></nz-input>
           <nz-input [config]="extraPropsFieldConfig"></nz-input>
           <nz-input [config]="apiToValidateFieldConfig"></nz-input>
-          <div [hidden]="!showSelectFields">
+          <div [hidden]="HideSelectFields">
             <nz-autocomplete [config]="dataSourceDropdownConfig"></nz-autocomplete>
             <div formArrayName="dataOptions">
               @for (option of dataOptions.controls; track option; let i = $index) {
