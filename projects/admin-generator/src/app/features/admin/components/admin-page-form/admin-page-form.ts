@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { Component, effect, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import {
   NzFormWizardComponent,
   NzStepperConfig,
@@ -22,7 +22,7 @@ import { WizardFieldsMapperService } from '../../services/wizard-fields-mapper.s
   styleUrl: './admin-page-form.scss',
   standalone: true,
 })
-export class AdminPageForm implements OnInit {
+export class AdminPageForm {
   public dbFields: NzWizardFormFieldConfig[] = [];
   public module!: NzModuleConfig;
   public data?: NzGenericRecord;
@@ -41,17 +41,25 @@ export class AdminPageForm implements OnInit {
     ],
   };
 
-  public form = new NzFormGroup({});
+  public form!: NzFormGroup;
 
   @Input() public id?: number;
   @Output() public cancelForm = new EventEmitter<void>();
   @Output() public successForm = new EventEmitter<any>();
   @Output() public backCallback = new EventEmitter<any>();
 
-  constructor() {}
+  constructor() {
+    effect(() => {
+      const module = this.moduleSettings.module();
+      if (module) {
+        this.initConfig(module);
+      }
+    });
+  }
 
-  ngOnInit(): void {
-    this.module = this.moduleSettings.module() as NzModuleConfig;
+  initConfig(module: NzModuleConfig): void {
+    this.form = new NzFormGroup({});
+    this.module = module;
     const topLevelFields = this.moduleSettings.fields().filter((fld) => !fld.parentFieldId);
     this.stepConfig.steps[0].components = this.fieldsMapperService.mapDbFieldsToWizard(
       topLevelFields,

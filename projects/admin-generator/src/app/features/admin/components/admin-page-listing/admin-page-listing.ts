@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, OnInit, Output, signal } from '@angular/core';
+import { Component, effect, EventEmitter, inject, Output, signal } from '@angular/core';
 import { NzTableColumn } from '@zak-lib/ui-library/elements/ui/table-grid';
 import { NzListView, NzListViewComponent } from '@zak-lib/ui-library/layouts/list-view';
 import {
@@ -11,6 +11,7 @@ import {
 import { ModuleSettingsService } from '../../../../features/admin/services/module-settings.service';
 import { CONSTANTS } from '../../../../shared/constants/constants';
 import { NzStandardButton } from '@zak-lib/ui-library/components/standardbutton';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-admin-page-listing',
@@ -19,7 +20,7 @@ import { NzStandardButton } from '@zak-lib/ui-library/components/standardbutton'
   styleUrl: './admin-page-listing.scss',
   standalone: true,
 })
-export class AdminPageListing implements OnInit {
+export class AdminPageListing {
   ListViewConfig = signal<NzListView | undefined>(undefined);
   private moduleSettings = inject(ModuleSettingsService);
   @Output() public addRow = new EventEmitter<void>();
@@ -27,11 +28,18 @@ export class AdminPageListing implements OnInit {
   @Output() public deleteRow = new EventEmitter<any>();
   @Output() public buildModule = new EventEmitter<string>();
 
-  constructor() {}
+  constructor() {
+    effect(() => {
+      const module = this.moduleSettings.module();
+      if (module) {
+        this.initConfig(module);
+      }
+    });
+  }
 
-  ngOnInit(): void {
+  initConfig(module: NzModuleConfig): void {
     const dynamicActions: NzStandardButton[] = [];
-    if (this.moduleSettings.module()?.name === CONSTANTS.MAIN_MODULE.NAME) {
+    if (module?.name === CONSTANTS.MAIN_MODULE.NAME) {
       dynamicActions.push({
         onclick: (data?: any) => {
           this.buildModule.emit(data?.name);
@@ -42,13 +50,14 @@ export class AdminPageListing implements OnInit {
     }
 
     this.ListViewConfig.set({
-      module: this.moduleSettings.module() as NzModuleConfig,
+      module: module,
       table: {
-        title: this.moduleSettings.module()?.label,
+        title: module?.label,
         showQuickSearch: true,
         columns: this.mapFieldsToColumns(this.moduleSettings.fields()),
         paginator: true,
         rows: 10,
+        data: of([]),
         showCurrentPageReport: true,
         rowsPerPageOptions: [10, 25, 50],
         sortableRows: true,

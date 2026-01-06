@@ -6,54 +6,68 @@ import { NzFormFieldModule } from '../form-field/form-field-module';
 import { NzHttpService } from '@zak-lib/ui-library/shared';
 import { firstValueFrom } from 'rxjs';
 
-export interface NzAutoComplete extends NzFormField, NzBaseSelect {}
+export interface NzAutoComplete extends NzFormField, NzBaseSelect {
+  optionLabel?: string;
+  optionValue?: string;
+}
 
 @Component({
   selector: 'nz-autocomplete',
   imports: [AutoCompleteModule, NzFormFieldModule],
-  template: `<nz-form-field [baseConfig]="config"
-    ><p-autoComplete
+  template: `<nz-form-field [baseConfig]="config">
+    <p-autoComplete
       [formControl]="config.control"
-      [suggestions]="options()"
       [dropdown]="true"
+      [suggestions]="options()"
+      [optionLabel]="'label'"
+      [optionValue]="'id'"
       [placeholder]="config.settings?.placeholder || ''"
+      (completeMethod)="onSearch($event)"
       [invalid]="config.control.invalid && (config.control.dirty || config.control.touched)"
-    ></p-autoComplete
-  ></nz-form-field>`,
+    ></p-autoComplete>
+  </nz-form-field>`,
   styles: ``,
   standalone: true,
 })
-export class NzAutocomplete extends NzFormFieldComponent implements OnInit {
+export class NzAutocompleteComponent extends NzFormFieldComponent implements OnInit {
   @Input() config!: NzAutoComplete;
 
   options = signal<NzOption[]>([]);
+  httpService = inject(NzHttpService);
 
   constructor() {
     super();
   }
 
   ngOnInit(): void {
-    if (this.config.api) {
-      this.getOptions(this.config.api);
-    } else if (this.config.options) {
-      this.options.set(this.config.options);
+    const settings = this.config.settings;
+    if (settings?.dataSource) {
+      this.getOptions(settings?.dataSource);
+    } else if (settings?.dataOptions) {
+      this.options.set(settings?.dataOptions);
     }
   }
 
   async getOptions(api: string): Promise<void> {
-    const httpService = inject(NzHttpService);
-    const data = await firstValueFrom(httpService.getAll(api));
+    const data = await firstValueFrom(this.httpService.getAll(api));
     const newOptions = data.flatMap((row) =>
       row.id
         ? [
             {
-              id: row.id,
-              label: row['title'] || row['name'] || row['label'] || '',
+              id: this.config.optionValue ? row[this.config.optionValue] : row.id,
+              label: this.config.optionLabel
+                ? this.config.optionLabel
+                : row['title'] || row['name'] || row['label'] || '',
             },
           ]
         : [],
     );
 
     this.options.set(newOptions);
+  }
+  onSearch(event: { query: string }) {
+    const query = event.query.toLowerCase();
+
+    this.options.set(this.options().filter((opt) => opt.label.toLowerCase().includes(query)));
   }
 }

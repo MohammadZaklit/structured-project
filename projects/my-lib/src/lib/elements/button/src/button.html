@@ -5,5 +5,8 @@
   [disabled]="config.disabled?.() || false"
   (click)="config.onclick($event)"
 >
-  {{ config.label || 'Click' }}
+  @if (config.icon) {
+    <i cdkDragHandle class="pi {{ config.icon }}"></i>
+  }
+  {{ config.label }}
 </p-button>

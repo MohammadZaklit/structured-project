@@ -20,8 +20,8 @@ export class AppSettingsService {
       map(({ menuGroups, modules }) => {
         return menuGroups
           .map((group) => {
-            // group['children'] = modules.filter((mod) => mod['menuGroupId'] === group.id);
-            group['children'] = modules;
+            group['children'] = modules.filter((mod) => mod['menuGroupId'] === group.id);
+
             return group;
           })
           .filter((group) => group['children'].length > 0);
