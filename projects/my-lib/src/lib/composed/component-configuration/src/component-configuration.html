@@ -19,34 +19,35 @@
           <nz-input [config]="patternFieldConfig"></nz-input>
           <nz-input [config]="extraPropsFieldConfig"></nz-input>
           <nz-input [config]="apiToValidateFieldConfig"></nz-input>
-          <nz-autocomplete [config]="dataSourceDropdownConfig"></nz-autocomplete>
-          <div formArrayName="dataOptions">
-            @for (option of dataOptions.controls; track option; let i = $index) {
-              <div [formGroupName]="i" class="d-flex gap-2 align-items-center">
-                <nz-input
-                  [config]="{
-                    control: $any(option.get('id')),
-                    label: 'Key',
-                    name: 'id',
-                    form: form,
-                  }"
-                />
+          <div [hidden]="!showSelectFields">
+            <nz-autocomplete [config]="dataSourceDropdownConfig"></nz-autocomplete>
+            <div formArrayName="dataOptions">
+              @for (option of dataOptions.controls; track option; let i = $index) {
+                <div [formGroupName]="i" class="d-flex gap-2 align-items-center">
+                  <nz-input
+                    [config]="{
+                      control: $any(option.get('id')),
+                      label: 'Key',
+                      name: 'id',
+                      form: form,
+                    }"
+                  />
 
-                <nz-input
-                  [config]="{
-                    control: $any(option.get('id')),
-                    label: 'Value',
-                    name: 'label',
-                    form: form,
-                  }"
-                />
+                  <nz-input
+                    [config]="{
+                      control: $any(option.get('id')),
+                      label: 'Value',
+                      name: 'label',
+                      form: form,
+                    }"
+                  />
 
-                <nz-standard-button [config]="getRemoveOptionBtn(i)"></nz-standard-button>
-              </div>
-            }
+                  <nz-standard-button [config]="getRemoveOptionBtn(i)"></nz-standard-button>
+                </div>
+              }
+            </div>
+            <nz-standard-button [config]="addOptionBtn"></nz-standard-button>
           </div>
-          <nz-standard-button [config]="addOptionBtn"></nz-standard-button>
-
           <nz-toggle-switch [config]="isRequiredFieldConfig"></nz-toggle-switch>
           <nz-toggle-switch [config]="isDisabledFieldConfig"></nz-toggle-switch>
           <nz-toggle-switch [config]="isVisibleFieldConfig"></nz-toggle-switch>
