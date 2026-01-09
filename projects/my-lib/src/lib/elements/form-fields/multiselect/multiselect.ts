@@ -31,10 +31,11 @@ export class NzMultiSelectComponent extends NzFormFieldComponent implements OnIn
   }
 
   ngOnInit(): void {
-    if (this.config.api) {
-      this.getOptions(this.config.api);
-    } else if (this.config.options) {
-      this.options.set(this.config.options);
+    const settings = this.config.settings;
+    if (settings?.dataSource) {
+      this.getOptions(settings?.dataSource);
+    } else if (settings?.dataOptions) {
+      this.options.set(settings?.dataOptions);
     }
   }
 
