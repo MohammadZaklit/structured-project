@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { NzUploadFileComponent } from '@zak-lib/ui-library/elements/upload-file';
+import { NzUploadFileComponent } from '@zak-lib/ui-library/elements/form-fields/fileuploader';
 @Component({
   selector: 'nz-standarduploadfile',
   imports: [NzUploadFileComponent],

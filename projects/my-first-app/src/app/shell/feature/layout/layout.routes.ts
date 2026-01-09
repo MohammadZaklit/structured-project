@@ -19,6 +19,10 @@ export const layoutRoutes: Routes = [
         path: 'register',
         loadComponent: () => import('../../../features/register/register').then((m) => m.Register),
       },
+      {
+        path: 'file-manager',
+        loadComponent: () => import('../../../features/file-manager-demo/file-manager-demo.component').then((m) => m.FileManagerDemoComponent),
+      },
     ],
   },
 ];

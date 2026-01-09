@@ -455,6 +455,36 @@
           }
         }
       }
+    },
+    "file-manager": {
+      "projectType": "library",
+      "root": "projects/file-manager",
+      "sourceRoot": "projects/file-manager/src",
+      "prefix": "fm",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/file-manager/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/file-manager/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/file-manager/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

@@ -10,7 +10,14 @@
     "noImplicitReturns": true,
     "paths": {
       "@angular/": ["./node_modules/@angular/"],
-      "@zak-lib/ui-library/*": ["projects/my-lib/src/lib/*", "dist/my-lib/src/lib/*"]
+      "@zak-lib/ui-library/*": [
+        "projects/my-lib/src/lib/*",
+        "dist/my-lib/src/lib/*"
+      ],
+      "@zak-lib/file-manager/*": [
+        "projects/file-manager/src/lib/*",
+        "dist/file-manager/src/lib/*"
+      ]
     },
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
@@ -65,6 +72,12 @@
     },
     {
       "path": "./projects/testing/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/file-manager/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/file-manager/tsconfig.spec.json"
     }
   ]
 }
