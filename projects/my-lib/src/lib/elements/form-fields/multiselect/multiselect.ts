@@ -23,7 +23,7 @@ export interface NzMultiSelect extends NzFormField, NzBaseSelect {}
 })
 export class NzMultiSelectComponent extends NzFormFieldComponent implements OnInit {
   @Input() config!: NzMultiSelect;
-
+  httpService = inject(NzHttpService);
   options = signal<NzOption[]>([]);
 
   constructor() {
@@ -33,15 +33,14 @@ export class NzMultiSelectComponent extends NzFormFieldComponent implements OnIn
   ngOnInit(): void {
     const settings = this.config.settings;
     if (settings?.dataSource) {
-      this.getOptions(settings?.dataSource);
+      this.getOptions(settings?.dataSource.label);
     } else if (settings?.dataOptions) {
       this.options.set(settings?.dataOptions);
     }
   }
 
   async getOptions(api: string): Promise<void> {
-    const httpService = inject(NzHttpService);
-    const data = await firstValueFrom(httpService.getAll(api));
+    const data = await firstValueFrom(this.httpService.getAll(api));
     const newOptions = data.flatMap((row) =>
       row.id
         ? [

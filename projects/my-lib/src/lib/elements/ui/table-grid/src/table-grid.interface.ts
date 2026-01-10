@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 export interface NzTableColumn extends NzModuleFieldConfig {
   type: string;
   isSortable?: boolean;
-  enableFilter?: boolean; // For inline filtering
+  enableFilter?: boolean; // For inline filtering,
+  customDisplay?: (row: NzGenericRecord) => string;
 }
 export interface NzTableGrid {
   title?: string;

@@ -116,3 +116,17 @@ export const isSelectComponent = (type: NzFieldType): boolean => {
     NzFieldTypeEnum.RadioButtonOptions,
   ].includes(type);
 };
+
+export const isMultiSelectComponent = (type: NzFieldType): boolean => {
+  return [
+    NzFieldTypeEnum.CascadeSelect,
+    NzFieldTypeEnum.Checkbox,
+    NzFieldTypeEnum.Listbox,
+    NzFieldTypeEnum.MultiSelect,
+    NzFieldTypeEnum.PickList,
+    NzFieldTypeEnum.TreeSelectDB,
+    NzFieldTypeEnum.TreeSelectOptions,
+    NzFieldTypeEnum.RadioButtonDB,
+    NzFieldTypeEnum.RadioButtonOptions,
+  ].includes(type);
+};

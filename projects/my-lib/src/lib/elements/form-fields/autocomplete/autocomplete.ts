@@ -20,7 +20,7 @@ export interface NzAutoComplete extends NzFormField, NzBaseSelect {
       [dropdown]="true"
       [suggestions]="options()"
       [optionLabel]="'label'"
-      [optionValue]="'id'"
+      [optionValue]="config.optionValue || undefined"
       [placeholder]="config.settings?.placeholder || ''"
       (completeMethod)="onSearch($event)"
       [invalid]="config.control.invalid && (config.control.dirty || config.control.touched)"
@@ -42,7 +42,7 @@ export class NzAutocompleteComponent extends NzFormFieldComponent implements OnI
   ngOnInit(): void {
     const settings = this.config.settings;
     if (settings?.dataSource) {
-      this.getOptions(settings?.dataSource);
+      this.getOptions(settings?.dataSource.label);
     } else if (settings?.dataOptions) {
       this.options.set(settings?.dataOptions);
     }
