@@ -47,7 +47,7 @@
       >
         @for (component of canvascomponents; track component.rowid; let rIndex = $index) {
           <div
-            class="p-2 m-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition is-draggable component-item"
+            class="p-2 m-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition is-draggable"
           >
             <div
               [id]="component.rowid"
@@ -57,11 +57,13 @@
               cdkDrag
               [cdkDragData]="component"
             >
-              <i cdkDragHandle class="pi pi-ellipsis-v text-gray-400 cursor-move"></i>
-              <div class="flex items-center justify-between px-3 py-2">
+              <div class="flex justify-between px-4 py-1 mt-5">
                 <span class="font-medium">{{ component.label }} - {{ component.rowid }}</span>
-                <a (click)="selectField(component)">edit</a>
-                <a (click)="removeComponent(component)">X</a>
+                <div class="flex gap-4">
+                  <i cdkDragHandle class="pi pi-ellipsis-v text-gray-400 cursor-move"></i>
+                  <a (click)="selectField(component)" class="pi pi-pencil cursor-pointer"></a>
+                  <a (click)="removeComponent(component)" class="pi pi-times cursor-pointer"></a>
+                </div>
               </div>
             </div>
 
