@@ -35,7 +35,7 @@
       let-parentitem="parentitem"
     >
       <div
-        class="max-w-3xl bg-white border-2 border-dashed border-gray-300 rounded-xl transition"
+        class="max-w-3xl bg-white border-2 border-gray-300 rounded-xl mt-2 transition-all duration-200 ease-in-out"
         [class.border-blue-400]="isDragging"
         [class.bg-blue-50]="isDragging"
         [ngClass]="!parentitem ? 'min-h-[500px]' : ''"
@@ -44,10 +44,11 @@
         (cdkDropListDropped)="dropItem($event)"
         [cdkDropListConnectedTo]="connectedList"
         [id]="parentitem ? parentitem.rowid : canvasContainerId"
+        [cdkDropListEnterPredicate]="canEnterDropList"
       >
         @for (component of canvascomponents; track component.rowid; let rIndex = $index) {
           <div
-            class="p-2 m-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition is-draggable"
+            class="p-2 m-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-transform duration-200 ease-in-out is-draggable"
           >
             <div
               [id]="component.rowid"
@@ -56,8 +57,11 @@
               [attr.data-component-index]="rIndex"
               cdkDrag
               [cdkDragData]="component"
+              (cdkDragStarted)="cdkDragStarted()"
+              (cdkDragEnded)="cdkDragEnded()"
+              class="relative"
             >
-              <div class="flex justify-between px-4 py-1 mt-5">
+              <div class="flex justify-between px-4 py-1 mt-2 items-center">
                 <span class="font-medium">{{ component.label }} - {{ component.rowid }}</span>
                 <div class="flex gap-4">
                   <i cdkDragHandle class="pi pi-ellipsis-v text-gray-400 cursor-move"></i>
@@ -68,35 +72,38 @@
             </div>
 
             <div
-              class="is-droppable min-h-10 flex flex-col"
-              [attr.data-component-id]="component.rowid"
+              class="is-droppable relative border-dashed border-2 border-gray-200 rounded-lg p-3 mt-2 transition-all duration-300"
+              [class.border-blue-500]="isDragging"
+              [class.bg-blue-50]="isDragging"
               [attr.data-component-type]="component.type"
-              [attr.data-component-index]="rIndex"
               cdkDropList
               [id]="component.rowid"
               [cdkDropListData]="component.childComponents"
-              [cdkDropListConnectedTo]="connectedListsIds(component.rowid)"
+              [cdkDropListEnterPredicate]="canEnterDropList"
+              [cdkDropListConnectedTo]="connectedList"
               (cdkDropListDropped)="dropItem($event)"
-              [ngClass]="{
-                'align-center justify-center': component.childComponents.length === 0,
-              }"
             >
-              @if (component.childComponents.length > 0) {
-                <ng-container
-                  *ngTemplateOutlet="
-                    renderRowTemplate;
-                    context: {
-                      parentitem: component,
-                      canvascomponents: component.childComponents,
-                    }
-                  "
-                ></ng-container>
+              @if (component.childComponents.length === 0) {
+                <div class="text-gray-400 text-xs text-center py-2 pointer-events-none">
+                  Drop components here
+                </div>
               }
+
+              <ng-container
+                *ngTemplateOutlet="
+                  renderRowTemplate;
+                  context: {
+                    parentitem: component,
+                    canvascomponents: component.childComponents,
+                  }
+                "
+              ></ng-container>
             </div>
           </div>
         }
       </div>
     </ng-template>
+
     <ng-container
       *ngTemplateOutlet="
         renderRowTemplate;

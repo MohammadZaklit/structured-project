@@ -18,5 +18,70 @@
 
 .cdk-drop-list.cdk-drop-list-dragging {
   background: #eff6ff;
-  border-color: #3b82f6;
+  border-color: black;
+}
+
+/* Smooth Drag Preview */
+/* Drag preview smooth and professional */
+.cdk-drag-preview {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 0.75rem !important;
+  transition:
+    transform 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+  background-color: #ffffff !important;
+  padding: 25px;
+}
+
+/* Placeholder while sorting */
+.cdk-drag-placeholder {
+  border: 2px dashed black;
+  min-height: 50px;
+  background-color: rgba(96, 165, 250, 0.05);
+  transition: all 0.15s ease-in-out;
+  margin-top: 10px;
+}
+
+/* Drop list container animation */
+.cdk-drop-list-dragging {
+  transition: all 0.15s ease-in-out;
+}
+
+/* Smooth transition for sortable items */
+.is-draggable {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Subtle shadow on hover */
+.is-draggable:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Prevent shifting during reorder */
+.is-draggable > .flex {
+  flex-wrap: nowrap;
+}
+/* Column inside row */
+.is-droppable {
+  min-height: 50px;
+  transition:
+    min-height 0.2s ease,
+    background-color 0.2s ease;
+}
+
+/* Highlight on drag over */
+.cdk-drop-list-dragging .is-droppable {
+  background-color: rgba(96, 165, 250, 0.05);
+}
+
+/* Smooth shadow on hover */
+.is-draggable:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Column spacing inside row */
+.is-droppable > .is-draggable {
+  margin-bottom: 0.5rem;
 }
