@@ -112,7 +112,11 @@
               </span>
             }
             @default {
-              {{ rowData[col.name] }}
+              @if (col.customDisplay) {
+                {{ col.customDisplay(rowData) }}
+              } @else {
+                {{ rowData[col.name] }}
+              }
             }
           }
         </td>

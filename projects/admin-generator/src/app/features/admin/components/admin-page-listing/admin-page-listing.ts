@@ -7,11 +7,16 @@ import {
   NzGenericRecord,
   NzModuleConfig,
   COMPONENTS,
+  NzDataSource,
 } from '@zak-lib/ui-library/shared';
 import { ModuleSettingsService } from '../../../../features/admin/services/module-settings.service';
 import { CONSTANTS } from '../../../../shared/constants/constants';
 import { NzStandardButton } from '@zak-lib/ui-library/components/standardbutton';
 import { of } from 'rxjs';
+import {
+  isMultiSelectComponent,
+  NzFieldType,
+} from '@zak-lib/ui-library/elements/form-fields/form-field';
 
 @Component({
   selector: 'app-admin-page-listing',
@@ -82,13 +87,23 @@ export class AdminPageListing {
       fields
         .filter((field) => field.isFormField)
         .map((field) => {
-          return Object.assign(field, {
+          const colMap: NzTableColumn = Object.assign(field, {
             type:
               COMPONENTS.find((component) => component.id === field['componentId'])
                 ?.componentName ?? 'InputText',
             isSortable: true,
             enableFilter: true,
           });
+
+          if (isMultiSelectComponent(colMap.type as NzFieldType) && colMap.referenceModuleId) {
+            colMap.customDisplay = (row: NzGenericRecord): string => {
+              return (row[colMap.name] as NzGenericRecord[])
+                .map((data: NzGenericRecord) => data['title'] || data['label'] || data['name'])
+                .join(', ');
+            };
+          }
+
+          return colMap;
         }) || []
     );
   }

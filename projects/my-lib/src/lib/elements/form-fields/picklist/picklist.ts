@@ -21,8 +21,8 @@ export interface NzPickList extends NzFormField, NzBaseSelect {
         [formControl]="config.control"
         [source]="sourceOptions()"
         [target]="targetOptions()"
-        [sourceHeader]="config.settings?.dataSource || 'Available'"
-        [targetHeader]="config.settings?.dataSource || 'Selected'"
+        [sourceHeader]="config.settings?.dataSource?.label || 'Available'"
+        [targetHeader]="config.settings?.dataSource?.label || 'Selected'"
         [dragdrop]="true"
       ></p-picklist>
     </nz-form-field>
@@ -48,7 +48,7 @@ export class NzPickListComponent extends NzFormFieldComponent implements OnInit 
     const settings = this.config.settings;
 
     if (settings?.dataSource) {
-      this.getOptions(settings.dataSource);
+      this.getOptions(settings.dataSource.label);
     } else if (settings?.dataOptions) {
       this.sourceOptions.set(settings.dataOptions);
     }

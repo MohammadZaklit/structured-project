@@ -65,7 +65,7 @@ export class AdminPageBuilder implements OnInit {
     data.forEach((row, index) => {
       const component = COMPONENTS.find((component) => component.componentName === row.type);
 
-      const referenceModuleId = row.configuration['settings'].dataSource || undefined;
+      const referenceModuleId = row.configuration?.['settings']?.dataSource?.id || undefined;
       newFields.push({
         id: row.id || null,
         sortOrder: index,

@@ -40,7 +40,7 @@ export class NzListboxComponent extends NzFormFieldComponent implements OnInit {
       const settings = this.config.settings;
 
       if (settings?.dataSource) {
-        this.getOptions(settings.dataSource);
+        this.getOptions(settings.dataSource.label);
       } else if (settings?.dataOptions) {
         this.options.set(settings.dataOptions);
       }

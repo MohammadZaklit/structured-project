@@ -122,7 +122,7 @@ export class NzConfigurationComponent implements OnInit {
     this.initConfig();
     if (isSelectComponent(this.config.type as NzFieldType)) {
       this.HideSelectFields = !isSelectComponent(this.config.type as NzFieldType);
-      this.config.configuration['settings']?.dataOptions.forEach((row: NzGenericRecord) => {
+      this.config.configuration?.['settings']?.dataOptions?.forEach((row: NzGenericRecord) => {
         this.addOption(row);
       });
     }
@@ -224,9 +224,10 @@ export class NzConfigurationComponent implements OnInit {
       name: 'Data Source',
       form: this.form,
       settings: {
-        dataSource: 'modules',
+        dataSource: {
+          label: 'modules',
+        },
       },
-      optionValue: 'name',
     };
 
     this.extraPropsFieldConfig = {

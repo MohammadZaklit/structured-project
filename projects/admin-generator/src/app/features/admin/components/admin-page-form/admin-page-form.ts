@@ -6,6 +6,7 @@ import {
   NzWizardFormFieldConfig,
 } from '@zak-lib/ui-library/layouts/form-wizard';
 import {
+  COMPONENTS,
   NzFormGroup,
   NzGenericRecord,
   NzHttpService,
@@ -14,6 +15,11 @@ import {
 import { ModuleSettingsService } from '../../services/module-settings.service';
 import { firstValueFrom } from 'rxjs';
 import { WizardFieldsMapperService } from '../../services/wizard-fields-mapper.service';
+import {
+  isMultiSelectComponent,
+  NzFieldType,
+  NzFormFieldLoaderConfig,
+} from '@zak-lib/ui-library/elements/form-fields/form-field';
 
 @Component({
   selector: 'app-admin-page-form',
@@ -82,7 +88,24 @@ export class AdminPageForm {
   }
 
   private async getData(id: number): Promise<void> {
-    this.data = await firstValueFrom(this.httpService.getById(this.module.name, id));
+    const row = await firstValueFrom(this.httpService.getById(this.module.name, id));
+    const formFields = this.moduleSettings.fields().filter((fld) => fld.isFormField);
+    formFields.forEach((field) => {
+      const componentType =
+        COMPONENTS.find((component) => component.id === field.componentId)?.componentName ||
+        'InputText';
+      if (isMultiSelectComponent(componentType as NzFieldType)) {
+        if (row[field.name]) {
+          row[field.name] = row[field.name].map((data: NzGenericRecord) => {
+            return {
+              id: data.id,
+              label: data['label'] || data['title'] || data['name'] || '',
+            };
+          });
+        }
+      }
+    });
+    this.data = row;
   }
 
   public onFormSubmit(data: any): void {
