@@ -1,6 +1,7 @@
 <div class="h-screen flex bg-gray-100 text-sm gap-4">
   <aside class="w-72 bg-white border-r border-gray-200 p-4 overflow-y-auto">
     <nz-typography [config]="leftHeading"></nz-typography>
+
     <div
       class="form-field-palette space-y-2"
       cdkDropList
@@ -13,90 +14,92 @@
         <div
           cdkDrag
           [cdkDragData]="field"
-          class="flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-move hover:bg-gray-100 hover:shadow-sm transition component-item draggable-field is-draggable main-field"
-          [attr.data-component-type]="field.type"
+          class="flex bg-gray-50 border border-gray-200 rounded-lg cursor-move hover:bg-gray-100 hover:shadow-sm transition component-item draggable-field is-draggable main-field"
         >
-          <i class="pi pi-bars mr-2 text-gray-400"></i>
-          <span class="font-medium">{{ field.label }}</span>
+          <div class="flex items-center gap-4 p-3">
+            <i class="pi pi-bars mr-2 text-gray-400"></i>
+
+            <span class="font-medium">{{ field.label }}</span>
+          </div>
         </div>
       }
     </div>
   </aside>
 
-  <main class="flex-auto overflow-auto">
+  <main class="flex-auto overflow-auto p-6">
     <nz-typography [config]="middleHeading"></nz-typography>
-    <div class="flex gap-2">
+
+    <div class="flex gap-2 mb-4">
       <nz-standard-button [config]="saveBtn"></nz-standard-button>
+
       <nz-standard-button [config]="migrateBtn"></nz-standard-button>
     </div>
+
     <ng-template
       #renderRowTemplate
       let-canvascomponents="canvascomponents"
       let-parentitem="parentitem"
     >
       <div
-        class="max-w-3xl bg-white border-2 border-dashed border-gray-300 rounded-xl transition"
+        class="min-h-[60px] bg-white border-2 border-gray-300 rounded-xl mt-2 transition-all duration-200"
         [class.border-blue-400]="isDragging"
         [class.bg-blue-50]="isDragging"
-        [ngClass]="!parentitem ? 'min-h-[500px]' : ''"
+        [ngClass]="!parentitem ? 'min-h-[500px] p-4' : 'p-2'"
         cdkDropList
         [cdkDropListData]="canvascomponents"
         (cdkDropListDropped)="dropItem($event)"
         [cdkDropListConnectedTo]="connectedList"
         [id]="parentitem ? parentitem.rowid : canvasContainerId"
+        [cdkDropListEnterPredicate]="canEnterDropList"
+        [attr.data-component-type]="parentitem?.type"
       >
         @for (component of canvascomponents; track component.rowid; let rIndex = $index) {
           <div
-            class="p-2 m-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition is-draggable"
+            class="mb-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all is-draggable"
+            *ngIf="!component.isDeleted"
           >
             <div
-              [id]="component.rowid"
-              [attr.data-component-id]="component.rowid"
-              [attr.data-component-type]="component.type"
-              [attr.data-component-index]="rIndex"
               cdkDrag
               [cdkDragData]="component"
+              (cdkDragStarted)="cdkDragStarted()"
+              (cdkDragEnded)="cdkDragEnded()"
+              class="relative"
             >
-              <div class="flex justify-between px-4 py-1 mt-5">
-                <span class="font-medium">{{ component.label }} - {{ component.rowid }}</span>
-                <div class="flex gap-4">
-                  <i cdkDragHandle class="pi pi-ellipsis-v text-gray-400 cursor-move"></i>
-                  <a (click)="selectField(component)" class="pi pi-pencil cursor-pointer"></a>
-                  <a (click)="removeComponent(component)" class="pi pi-times cursor-pointer"></a>
+              <div class="flex justify-between px-4 py-3 items-center border-b border-gray-50">
+                <span class="font-medium text-gray-700">{{ component.label }}</span>
+
+                <div class="gap-3 flex items-end">
+                  <i
+                    cdkDragHandle
+                    class="pi pi-arrows-alt text-gray-400 cursor-move hover:text-blue-500"
+                  ></i>
+
+                  <a
+                    (click)="selectField(component)"
+                    class="pi pi-pencil cursor-pointer text-gray-400 hover:text-blue-500"
+                  ></a>
+
+                  <a
+                    (click)="removeComponent(component)"
+                    class="pi pi-trash cursor-pointer text-gray-400 hover:text-red-500"
+                  ></a>
                 </div>
               </div>
-            </div>
 
-            <div
-              class="is-droppable min-h-10 flex flex-col"
-              [attr.data-component-id]="component.rowid"
-              [attr.data-component-type]="component.type"
-              [attr.data-component-index]="rIndex"
-              cdkDropList
-              [id]="component.rowid"
-              [cdkDropListData]="component.childComponents"
-              [cdkDropListConnectedTo]="connectedListsIds(component.rowid)"
-              (cdkDropListDropped)="dropItem($event)"
-              [ngClass]="{
-                'align-center justify-center': component.childComponents.length === 0,
-              }"
-            >
-              @if (component.childComponents.length > 0) {
+              <div class="p-3">
                 <ng-container
                   *ngTemplateOutlet="
                     renderRowTemplate;
-                    context: {
-                      parentitem: component,
-                      canvascomponents: component.childComponents,
-                    }
+                    context: { parentitem: component, canvascomponents: component.childComponents }
                   "
                 ></ng-container>
-              }
+              </div>
             </div>
           </div>
         }
       </div>
     </ng-template>
+
     <ng-container
       *ngTemplateOutlet="
         renderRowTemplate;
@@ -106,18 +109,17 @@
   </main>
 
   <aside
-    class="right-sidebar w-80 bg-white border-l border-gray-200 p-4 overflow-y-auto"
+    class="right-sidebar w-80 bg-white border-l border-gray-200 p-4"
     [hidden]="!componentConfig"
   >
     <nz-typography [config]="customizeHeading"></nz-typography>
+
     @if (componentConfig) {
-      <div class="text-gray-400 text-center mt-20">
-        <nz-component-configuration
-          (cancel)="closeSettings()"
-          (save)="saveField($event)"
-          [config]="componentConfig"
-        ></nz-component-configuration>
-      </div>
+      <nz-component-configuration
+        (cancel)="closeSettings()"
+        (save)="saveField($event)"
+        [config]="componentConfig"
+      ></nz-component-configuration>
     }
   </aside>
 </div>

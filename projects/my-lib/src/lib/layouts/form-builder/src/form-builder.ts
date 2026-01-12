@@ -22,6 +22,7 @@ import {
   moveItemInArray,
   transferArrayItem,
   CdkDropList,
+  CdkDrag,
 } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -228,6 +229,30 @@ export class NzFormBuilderComponent {
 
     return true;
   }
+  canEnterDropList = (
+    drag: CdkDrag<FormBuilderComponent>,
+    drop: CdkDropList<FormBuilderComponent[]>,
+  ): boolean => {
+    const draggedType = drag.data.type;
+    const containerType = drop.element.nativeElement.dataset['componentType'];
+
+    // ❌ Fields can ONLY enter Columns
+    if (this.isComponent(draggedType)) {
+      return containerType === this.componentTypeEnum.Column;
+    }
+
+    // ❌ Columns can ONLY enter Rows
+    if (draggedType === this.componentTypeEnum.Column) {
+      return containerType === this.componentTypeEnum.Row;
+    }
+
+    // ❌ Rows can ONLY enter Canvas or Column
+    if (draggedType === this.componentTypeEnum.Row) {
+      return containerType === this.componentTypeEnum.Column || drop.id === this.canvasContainerId;
+    }
+
+    return true;
+  };
 
   private isComponent(type: NzComponentType): boolean {
     if (type === this.componentTypeEnum.Row || type == this.componentTypeEnum.Column) {
