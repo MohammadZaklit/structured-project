@@ -6,6 +6,7 @@ import configuration from './configuration';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: 'projects/api/.env',
       load: [configuration],
       isGlobal: true,
     }),
