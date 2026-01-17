@@ -1,22 +1,89 @@
-/* Dragged element */
+/* --- Drag & Drop Core Transitions --- */
+
+/* Smooth sorting movement for items shifting to make room */
+
+.cdk-drop-list-dragging .cdk-drag,
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Ensure the preview (the item in your hand) keeps its layout */
+
+.cdk-drag-preview {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  border-radius: 0.75rem;
+  width: 100%;
+  max-width: 400px;
+  background-color: white;
+  overflow: hidden;
+}
+
+/* --- Placeholder (The ghost/dash box in the list) --- */
+
+.cdk-drag-placeholder {
+  background: #eff6ff;
+  border: 2px dashed #3b82f6;
+  border-radius: 8px;
+  min-height: 50px;
+  margin: 10px 0;
+  opacity: 0.5;
+  transition: all 0.15s ease-in-out;
+}
+
+/* --- Containers & Drop Zones --- */
+
+.cdk-drop-list-dragging {
+  transition: all 0.2s ease-in-out;
+  /* Highlight container when dragging over */
+  &.is-droppable,
+  &.max-w-3xl {
+    background-color: rgba(96, 165, 250, 0.05);
+  }
+}
+
+.is-droppable {
+  min-height: 50px;
+  transition:
+    min-height 0.2s ease,
+    background-color 0.2s ease;
+
+  /* Vertical spacing for children */
+
+  & > .is-draggable {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* --- Draggable Items (The actual cards) --- */
+
+.is-draggable {
+  user-select: none;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  &:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Prevent text wrapping/shifting during movement */
+
+  & > .flex {
+    flex-wrap: nowrap;
+  }
+}
+
+/* --- Compatibility for Dragula/Other (gu-mirror) if still used --- */
+
 .gu-mirror {
   background: white;
   border-radius: 0.75rem;
-  box-shadow: 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   opacity: 0.9;
   transform: rotate(2deg);
 }
 
-/* Item being moved */
 .gu-transit {
   opacity: 0.4;
-}
-
-.cdk-drag {
-  transition: transform 0.25s ease;
-}
-
-.cdk-drop-list.cdk-drop-list-dragging {
-  background: #eff6ff;
-  border-color: #3b82f6;
 }
