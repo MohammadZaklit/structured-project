@@ -1,0 +1,94 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "my-first-app",
+  "projectType": "application",
+  "generators": {
+    "@schematics/angular:component": {
+      "style": "scss"
+    }
+  },
+  "sourceRoot": "projects/my-first-app/src",
+  "prefix": "app",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "options": {
+        "browser": "projects/my-first-app/src/main.ts",
+        "polyfills": [
+          "zone.js"
+        ],
+        "tsConfig": "projects/my-first-app/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "projects/my-first-app/public"
+          }
+        ],
+        "styles": [
+          "node_modules/primeflex/primeflex.css",
+          "projects/my-first-app/src/styles.scss"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kB",
+              "maximumError": "1MB"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kB",
+              "maximumError": "8kB"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "my-first-app:build:production"
+        },
+        "development": {
+          "buildTarget": "my-first-app:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular/build:extract-i18n"
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "polyfills": [
+          "zone.js",
+          "zone.js/testing"
+        ],
+        "tsConfig": "projects/my-first-app/tsconfig.spec.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "projects/my-first-app/public"
+          }
+        ],
+        "styles": [
+          "node_modules/primeflex/primeflex.css",
+          "projects/my-first-app/src/styles.scss"
+        ]
+      }
+    }
+  }
+}

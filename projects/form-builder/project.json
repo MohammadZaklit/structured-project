@@ -1,0 +1,97 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "form-builder",
+  "projectType": "application",
+  "generators": {
+    "@schematics/angular:component": {
+      "style": "scss"
+    }
+  },
+  "sourceRoot": "projects/form-builder/src",
+  "prefix": "app",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "options": {
+        "browser": "projects/form-builder/src/main.ts",
+        "polyfills": [
+          "zone.js"
+        ],
+        "tsConfig": "projects/form-builder/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "projects/form-builder/public"
+          }
+        ],
+        "styles": [
+          "projects/form-builder/src/styles.scss",
+          "node_modules/bootstrap/dist/css/bootstrap.min.css",
+          "node_modules/font-awesome/css/font-awesome.min.css"
+        ],
+        "scripts": [
+          "projects/form-builder/src/polyfills.js"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kB",
+              "maximumError": "1MB"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kB",
+              "maximumError": "8kB"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "form-builder:build:production"
+        },
+        "development": {
+          "buildTarget": "form-builder:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular/build:extract-i18n"
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "polyfills": [
+          "zone.js",
+          "zone.js/testing"
+        ],
+        "tsConfig": "projects/form-builder/tsconfig.spec.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "projects/form-builder/public"
+          }
+        ],
+        "styles": [
+          "projects/form-builder/src/styles.scss"
+        ]
+      }
+    }
+  }
+}
