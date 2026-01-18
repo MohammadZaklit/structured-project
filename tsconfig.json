@@ -65,6 +65,12 @@
     },
     {
       "path": "./projects/testing/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/api/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/api/tsconfig.spec.json"
     }
   ]
 }

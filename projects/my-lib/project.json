@@ -1,0 +1,27 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "my-lib",
+  "projectType": "library",
+  "sourceRoot": "projects/my-lib/src",
+  "prefix": "lib",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:ng-packagr",
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/my-lib/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/my-lib/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "tsConfig": "projects/my-lib/tsconfig.spec.json"
+      }
+    }
+  }
+}
