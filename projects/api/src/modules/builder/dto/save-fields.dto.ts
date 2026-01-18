@@ -1,25 +1,30 @@
-import { IsArray, ValidateNested, IsOptional, IsNumber } from 'class-validator';
+import { IsArray, ValidateNested, IsOptional, IsNumber, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class ModuleFieldDto {
   @IsNumber()
   @IsOptional()
-  id: number | null = null;
+  id?: number | null = null;
 
   @IsOptional()
   parentFieldId?: number | null;
 
+  @IsString()
   label!: string;
 
+  @IsNumber()
   moduleId!: number;
 
+  @IsNumber()
   componentId!: number;
 
+  @IsNumber()
   sortOrder!: number;
 
   @IsOptional()
   referenceModuleId?: number | null;
 
+  @IsString()
   name!: string;
 
   @IsOptional()
@@ -27,6 +32,9 @@ export class ModuleFieldDto {
 
   @IsOptional()
   isFormField?: boolean;
+
+  @IsOptional()
+  isDefault?: boolean;
 
   @IsOptional()
   isDeleted?: boolean;

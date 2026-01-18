@@ -50,10 +50,7 @@ export class BuilderService {
         }
       };
 
-      const saveTree = async (
-        components: ModuleField[],
-        parentId: number | null = null,
-      ) => {
+      const saveTree = async (components: ModuleField[], parentId: number | null = null) => {
         if (!components || !components.length) return;
 
         const newItems: ModuleField[] = [];
@@ -146,7 +143,11 @@ export class BuilderService {
     const columnNames = Object.keys(columns);
 
     const migrationDir = './projects/api/migrations';
-    const fields = flds.filter((fld) => !columnNames.includes(fld.name));
+
+    const fields = flds.filter(
+      (fld) => fld.isFormField === true && !columnNames.includes(fld.name),
+    );
+
     const allModules = fields.some((fld) => fld.referenceModuleId)
       ? await this.getAllModules()
       : [];
@@ -162,8 +163,7 @@ export class BuilderService {
         migrationDir,
       };
 
-      const filePath =
-        this.migrationGeneratorService.generateMigration(migrationDetails);
+      const filePath = this.migrationGeneratorService.generateMigration(migrationDetails);
 
       try {
         await this.db.migrate.latest();
@@ -178,10 +178,7 @@ export class BuilderService {
     throw new BadRequestException('Empty Fields');
   }
 
-  async generateDropMigration(
-    type: 'module' | 'field',
-    record: any,
-  ): Promise<string> {
+  async generateDropMigration(type: 'module' | 'field', record: any): Promise<string> {
     const migrationDir = './projects/api/migrations';
     const allModules = await this.getAllModules();
 
@@ -193,9 +190,7 @@ export class BuilderService {
       const pivotTables: string[] = [];
       for (const field of moduleFields) {
         if (isMultiSelectComponent(field.componentId)) {
-          const refModule = allModules.find(
-            (m) => m.id === field.referenceModuleId,
-          );
+          const refModule = allModules.find((m) => m.id === field.referenceModuleId);
           if (refModule) {
             pivotTables.push(`${record.name}_${refModule.name}_rel`);
           }
@@ -225,35 +220,26 @@ export class BuilderService {
       await this.db.migrate.latest();
       return filePath;
     } else if (type === 'field') {
-      const moduleDetails = await this.db('modules')
-        .where('id', record.moduleId)
-        .first();
+      const moduleDetails = await this.db('modules').where('id', record.moduleId).first();
 
       if (!moduleDetails) {
-        throw new BadRequestException(
-          `Module with id '${record.moduleId}' not found.`,
-        );
+        throw new BadRequestException(`Module with id '${record.moduleId}' not found.`);
       }
 
       const pivotTables: string[] = [];
       let hasForeignKey = false;
       let foreignKeyRef: string | null = null;
 
-      const isManyToMany =
-        isMultiSelectComponent(record.componentId) && record.referenceModuleId;
+      const isManyToMany = isMultiSelectComponent(record.componentId) && record.referenceModuleId;
 
       if (isManyToMany) {
-        const refModule = allModules.find(
-          (m) => m.id === record.referenceModuleId,
-        );
+        const refModule = allModules.find((m) => m.id === record.referenceModuleId);
         if (refModule) {
           pivotTables.push(`${moduleDetails.name}_${refModule.name}_rel`);
         }
       } else if (record.referenceModuleId) {
         hasForeignKey = true;
-        const refModule = allModules.find(
-          (m) => m.id === record.referenceModuleId,
-        );
+        const refModule = allModules.find((m) => m.id === record.referenceModuleId);
         if (refModule) {
           foreignKeyRef = refModule.name;
         }
@@ -293,6 +279,7 @@ export class BuilderService {
         'componentId',
         'referenceModuleId',
         'parentFieldId',
+        'isFormField',
         'isDeleted',
       ])
       .from('module_fields')

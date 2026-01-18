@@ -9,9 +9,11 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CrudService } from './crud.service';
 import { BuilderService } from '../builder/builder.service';
+import { JwtAuthGuard } from '../../shared/guards';
 
 @Controller()
 export class CrudController {
@@ -21,6 +23,7 @@ export class CrudController {
   ) {}
 
   @Get(':moduleName')
+  @UseGuards(JwtAuthGuard)
   async getRecords(
     @Param('moduleName') moduleName: string,
     @Query() searchParams: Record<string, any>,
@@ -29,14 +32,13 @@ export class CrudController {
   }
 
   @Get(':moduleName/:id')
-  async getRecord(
-    @Param('moduleName') moduleName: string,
-    @Param('id') id: number,
-  ) {
+  @UseGuards(JwtAuthGuard)
+  async getRecord(@Param('moduleName') moduleName: string, @Param('id') id: number) {
     return this.crudService.getRecord(moduleName, id);
   }
 
   @Post(':moduleName')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createRecord(
     @Param('moduleName') moduleName: string,
@@ -46,6 +48,7 @@ export class CrudController {
   }
 
   @Put(':moduleName/:id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   async updateRecord(
     @Param('moduleName') moduleName: string,
@@ -56,11 +59,9 @@ export class CrudController {
   }
 
   @Delete(':moduleName/:id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async deleteRecord(
-    @Param('moduleName') moduleName: string,
-    @Param('id') id: number,
-  ) {
+  async deleteRecord(@Param('moduleName') moduleName: string, @Param('id') id: number) {
     // If deleting a module or module_field, generate drop migration first
     if (moduleName === 'modules' || moduleName === 'module_fields') {
       const record = await this.crudService.getRecordRaw(moduleName, id);
@@ -74,6 +75,7 @@ export class CrudController {
   }
 
   @Post('sort/:moduleName')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async sortRecords(
     @Param('moduleName') moduleName: string,

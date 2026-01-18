@@ -5,9 +5,10 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  ParseArrayPipe,
 } from '@nestjs/common';
-import { BuilderService } from './builder.service';
-import { SaveFieldsDto } from './dto/save-fields.dto';
+import { BuilderService, ModuleField } from './builder.service';
+import { ModuleFieldDto, SaveFieldsDto } from './dto/save-fields.dto';
 import { MigrateDto } from './dto/migrate.dto';
 import { JwtAuthGuard } from '../../shared/guards';
 
@@ -18,8 +19,17 @@ export class BuilderController {
   @Post('save-fields')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
-  async saveFields(@Body() dto: SaveFieldsDto) {
-    return this.builderService.saveFields(dto.fields);
+  async saveFields(
+    @Body(
+      new ParseArrayPipe({
+        items: ModuleFieldDto,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    fields: ModuleFieldDto[],
+  ) {
+    return this.builderService.saveFields(fields as ModuleField[]);
   }
 
   @Post('migrate')

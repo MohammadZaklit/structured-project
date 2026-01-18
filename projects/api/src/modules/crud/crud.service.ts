@@ -29,11 +29,7 @@ export class CrudService {
         !isMultiSelectComponent(fld.componentId),
     );
 
-    const { mappedData, errors } = mapAndValidatePayload(
-      payload,
-      nonRelFields,
-      true,
-    );
+    const { mappedData, errors } = mapAndValidatePayload(payload, nonRelFields, true);
 
     if (errors.length > 0) {
       throw new BadRequestException(`Validation failed: ${errors.join(', ')}`);
@@ -48,29 +44,17 @@ export class CrudService {
     );
 
     if (
-      moduleFields.some(
-        (fld) =>
-          isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
-      )
+      moduleFields.some((fld) => isMultiSelectComponent(fld.componentId) && fld.referenceModuleId)
     ) {
       const manyToManyFields = moduleFields.filter(
-        (fld) =>
-          isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
+        (fld) => isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
       );
-      await this.saveManyToManyRecord(
-        moduleName,
-        manyToManyFields,
-        insertedRow.id,
-        payload,
-      );
+      await this.saveManyToManyRecord(moduleName, manyToManyFields, insertedRow.id, payload);
     }
     return insertedRow;
   }
 
-  async getRecords(
-    moduleName: string,
-    searchParams: Record<string, any> = {},
-  ) {
+  async getRecords(moduleName: string, searchParams: Record<string, any> = {}) {
     const moduleDetails = await getModuleDetails(this.db, moduleName);
     if (!moduleDetails) {
       throw new BadRequestException(`Module '${moduleName}' not found.`);
@@ -103,20 +87,14 @@ export class CrudService {
 
     if (
       records.length > 0 &&
-      moduleFields.some(
-        (fld) =>
-          isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
-      )
+      moduleFields.some((fld) => isMultiSelectComponent(fld.componentId) && fld.referenceModuleId)
     ) {
       const manyToManyFields = moduleFields.filter(
-        (fld) =>
-          isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
+        (fld) => isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
       );
 
       const newRows = await Promise.all(
-        records.map((row) =>
-          this.getManyToManyRowData(moduleName, row, manyToManyFields),
-        ),
+        records.map((row) => this.getManyToManyRowData(moduleName, row, manyToManyFields)),
       );
 
       return newRows;
@@ -141,15 +119,11 @@ export class CrudService {
     const fields = this.getModuleAllFields(moduleName, getFields);
 
     if (
-      moduleFields.some(
-        (fld) =>
-          isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
-      )
+      moduleFields.some((fld) => isMultiSelectComponent(fld.componentId) && fld.referenceModuleId)
     ) {
       const row = await this.getRow(moduleName, fields, id);
       const manyToManyFields = moduleFields.filter(
-        (fld) =>
-          isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
+        (fld) => isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
       );
 
       return this.getManyToManyRowData(moduleName, row, manyToManyFields);
@@ -162,11 +136,7 @@ export class CrudService {
     return this.db(moduleName).where('id', id).first();
   }
 
-  async updateRecord(
-    moduleName: string,
-    recordId: number,
-    payload: Record<string, any>,
-  ) {
+  async updateRecord(moduleName: string, recordId: number, payload: Record<string, any>) {
     const moduleDetails = await getModuleDetails(this.db, moduleName);
     if (!moduleDetails) {
       throw new BadRequestException(`Module '${moduleName}' not found.`);
@@ -180,20 +150,13 @@ export class CrudService {
         !isMultiSelectComponent(fld.componentId),
     );
 
-    const { mappedData, errors } = mapAndValidatePayload(
-      payload,
-      nonRelFields,
-      true,
-    );
+    const { mappedData, errors } = mapAndValidatePayload(payload, nonRelFields, true);
 
     if (errors.length > 0) {
       throw new BadRequestException(`Validation failed: ${errors.join(', ')}`);
     }
 
-    const [id] = await this.db(moduleName)
-      .where('id', recordId)
-      .update(mappedData)
-      .returning('id');
+    const [id] = await this.db(moduleName).where('id', recordId).update(mappedData).returning('id');
     const getFields = nonRelFields.map((field) => field.name);
     const insertedRow = await this.getRow(
       moduleName,
@@ -202,21 +165,12 @@ export class CrudService {
     );
 
     if (
-      moduleFields.some(
-        (fld) =>
-          isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
-      )
+      moduleFields.some((fld) => isMultiSelectComponent(fld.componentId) && fld.referenceModuleId)
     ) {
       const manyToManyFields = moduleFields.filter(
-        (fld) =>
-          isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
+        (fld) => isMultiSelectComponent(fld.componentId) && fld.referenceModuleId,
       );
-      await this.saveManyToManyRecord(
-        moduleName,
-        manyToManyFields,
-        insertedRow.id,
-        payload,
-      );
+      await this.saveManyToManyRecord(moduleName, manyToManyFields, insertedRow.id, payload);
     }
 
     return insertedRow;
@@ -244,9 +198,7 @@ export class CrudService {
     const { page, rows } = payload;
 
     if (!page || !Array.isArray(rows) || rows.length === 0) {
-      throw new BadRequestException(
-        'Page number and records are required to sort.',
-      );
+      throw new BadRequestException('Page number and records are required to sort.');
     }
 
     const caseStatement = this.db.raw(
@@ -286,16 +238,10 @@ export class CrudService {
     return record;
   }
 
-  private async getManyToManyRowData(
-    moduleName: string,
-    row: any,
-    fields: any[],
-  ) {
+  private async getManyToManyRowData(moduleName: string, row: any, fields: any[]) {
     const allModules = await getAllModules(this.db);
     for (const field of fields) {
-      const relModuleName = allModules.find(
-        (mod) => mod.id === field.referenceModuleId,
-      )?.name;
+      const relModuleName = allModules.find((mod) => mod.id === field.referenceModuleId)?.name;
 
       if (relModuleName) {
         const pivotTable = `${moduleName}_${relModuleName}_rel`;
@@ -336,22 +282,14 @@ export class CrudService {
       const data = payload[field.name];
       if (!data) continue;
 
-      const relTable = allModules.find(
-        (mod) => mod.id === field.referenceModuleId,
-      )?.name;
+      const relTable = allModules.find((mod) => mod.id === field.referenceModuleId)?.name;
       if (!relTable) continue;
 
       const pivotTable = `${mainTable}_${relTable}_rel`;
       const mainColId = `${mainTable}_id`;
       const relColId = `${relTable}_id`;
       const relatedIds = data.map((obj: any) => obj.id);
-      await this.saveManyToMany(
-        pivotTable,
-        mainColId,
-        rowid,
-        relColId,
-        relatedIds,
-      );
+      await this.saveManyToMany(pivotTable, mainColId, rowid, relColId, relatedIds);
     }
   }
 
@@ -363,15 +301,11 @@ export class CrudService {
     relatedIds: number[] = [],
   ) {
     if (!pivotTable || !mainColumn || !mainId || !relatedColumn) {
-      throw new BadRequestException(
-        'Missing required parameters for Many-to-Many save.',
-      );
+      throw new BadRequestException('Missing required parameters for Many-to-Many save.');
     }
 
     await this.db.transaction(async (trx) => {
-      const existingRows = await trx(pivotTable)
-        .where(mainColumn, mainId)
-        .select(relatedColumn);
+      const existingRows = await trx(pivotTable).where(mainColumn, mainId).select(relatedColumn);
 
       const existingIds = new Set(existingRows.map((row) => row[relatedColumn]));
       const newIds = new Set(relatedIds);
@@ -386,10 +320,7 @@ export class CrudService {
       const toDelete = [...existingIds].filter((id) => !newIds.has(id));
 
       if (toDelete.length > 0) {
-        await trx(pivotTable)
-          .where(mainColumn, mainId)
-          .whereIn(relatedColumn, toDelete)
-          .delete();
+        await trx(pivotTable).where(mainColumn, mainId).whereIn(relatedColumn, toDelete).delete();
       }
 
       if (toInsert.length > 0) {
